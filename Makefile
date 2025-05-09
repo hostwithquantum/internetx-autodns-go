@@ -1,6 +1,6 @@
 swagger:=quay.io/goswagger/swagger
 swagger_file:=https://raw.githubusercontent.com/InterNetX/internetx-swagger-files/master/src/domainrobot.json
-project=$(HOME)/go/src/github.com/hostwithquantum/internetx-autodns-go
+project=$(HOME)/Documents/workspaces/internetx-autodns-go
 
 .PHONY: clean
 clean:
