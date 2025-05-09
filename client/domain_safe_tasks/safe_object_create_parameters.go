@@ -18,56 +18,72 @@ import (
 	"github.com/hostwithquantum/internetx-autodns-go/models"
 )
 
-// NewSafeObjectCreateParams creates a new SafeObjectCreateParams object
-// with the default values initialized.
+// NewSafeObjectCreateParams creates a new SafeObjectCreateParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewSafeObjectCreateParams() *SafeObjectCreateParams {
-	var ()
 	return &SafeObjectCreateParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewSafeObjectCreateParamsWithTimeout creates a new SafeObjectCreateParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewSafeObjectCreateParamsWithTimeout(timeout time.Duration) *SafeObjectCreateParams {
-	var ()
 	return &SafeObjectCreateParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewSafeObjectCreateParamsWithContext creates a new SafeObjectCreateParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewSafeObjectCreateParamsWithContext(ctx context.Context) *SafeObjectCreateParams {
-	var ()
 	return &SafeObjectCreateParams{
-
 		Context: ctx,
 	}
 }
 
 // NewSafeObjectCreateParamsWithHTTPClient creates a new SafeObjectCreateParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewSafeObjectCreateParamsWithHTTPClient(client *http.Client) *SafeObjectCreateParams {
-	var ()
 	return &SafeObjectCreateParams{
 		HTTPClient: client,
 	}
 }
 
-/*SafeObjectCreateParams contains all the parameters to send to the API endpoint
-for the safe object create operation typically these are written to a http.Request
+/*
+SafeObjectCreateParams contains all the parameters to send to the API endpoint
+
+	for the safe object create operation.
+
+	Typically these are written to a http.Request.
 */
 type SafeObjectCreateParams struct {
 
-	/*SafeObject*/
+	// SafeObject.
 	SafeObject *models.DomainSafeObject
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the safe object create params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *SafeObjectCreateParams) WithDefaults() *SafeObjectCreateParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the safe object create params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *SafeObjectCreateParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the safe object create params
@@ -121,7 +137,6 @@ func (o *SafeObjectCreateParams) WriteToRequest(r runtime.ClientRequest, reg str
 		return err
 	}
 	var res []error
-
 	if o.SafeObject != nil {
 		if err := r.SetBodyParam(o.SafeObject); err != nil {
 			return err

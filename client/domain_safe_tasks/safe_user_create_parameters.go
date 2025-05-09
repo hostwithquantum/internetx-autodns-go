@@ -18,56 +18,72 @@ import (
 	"github.com/hostwithquantum/internetx-autodns-go/models"
 )
 
-// NewSafeUserCreateParams creates a new SafeUserCreateParams object
-// with the default values initialized.
+// NewSafeUserCreateParams creates a new SafeUserCreateParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewSafeUserCreateParams() *SafeUserCreateParams {
-	var ()
 	return &SafeUserCreateParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewSafeUserCreateParamsWithTimeout creates a new SafeUserCreateParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewSafeUserCreateParamsWithTimeout(timeout time.Duration) *SafeUserCreateParams {
-	var ()
 	return &SafeUserCreateParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewSafeUserCreateParamsWithContext creates a new SafeUserCreateParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewSafeUserCreateParamsWithContext(ctx context.Context) *SafeUserCreateParams {
-	var ()
 	return &SafeUserCreateParams{
-
 		Context: ctx,
 	}
 }
 
 // NewSafeUserCreateParamsWithHTTPClient creates a new SafeUserCreateParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewSafeUserCreateParamsWithHTTPClient(client *http.Client) *SafeUserCreateParams {
-	var ()
 	return &SafeUserCreateParams{
 		HTTPClient: client,
 	}
 }
 
-/*SafeUserCreateParams contains all the parameters to send to the API endpoint
-for the safe user create operation typically these are written to a http.Request
+/*
+SafeUserCreateParams contains all the parameters to send to the API endpoint
+
+	for the safe user create operation.
+
+	Typically these are written to a http.Request.
 */
 type SafeUserCreateParams struct {
 
-	/*DomainSafeUser*/
+	// DomainSafeUser.
 	DomainSafeUser *models.DomainSafeUser
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the safe user create params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *SafeUserCreateParams) WithDefaults() *SafeUserCreateParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the safe user create params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *SafeUserCreateParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the safe user create params
@@ -121,7 +137,6 @@ func (o *SafeUserCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		return err
 	}
 	var res []error
-
 	if o.DomainSafeUser != nil {
 		if err := r.SetBodyParam(o.DomainSafeUser); err != nil {
 			return err

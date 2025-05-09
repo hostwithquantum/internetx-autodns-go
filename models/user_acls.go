@@ -6,12 +6,12 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // UserAcls user acls
@@ -20,13 +20,10 @@ import (
 type UserAcls struct {
 
 	// The acls of the user.
-	// Max Items: 2147483647
-	// Min Items: 1
 	Acls []*UserACL `json:"acls"`
 
 	// The user which has been effected
-	// Required: true
-	User *BasicUser `json:"user"`
+	User *BasicUser `json:"user,omitempty"`
 }
 
 // Validate validates this user acls
@@ -48,19 +45,8 @@ func (m *UserAcls) Validate(formats strfmt.Registry) error {
 }
 
 func (m *UserAcls) validateAcls(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Acls) { // not required
 		return nil
-	}
-
-	iAclsSize := int64(len(m.Acls))
-
-	if err := validate.MinItems("acls", "body", iAclsSize, 1); err != nil {
-		return err
-	}
-
-	if err := validate.MaxItems("acls", "body", iAclsSize, 2147483647); err != nil {
-		return err
 	}
 
 	for i := 0; i < len(m.Acls); i++ {
@@ -72,6 +58,8 @@ func (m *UserAcls) validateAcls(formats strfmt.Registry) error {
 			if err := m.Acls[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("acls" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("acls" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -83,15 +71,80 @@ func (m *UserAcls) validateAcls(formats strfmt.Registry) error {
 }
 
 func (m *UserAcls) validateUser(formats strfmt.Registry) error {
-
-	if err := validate.Required("user", "body", m.User); err != nil {
-		return err
+	if swag.IsZero(m.User) { // not required
+		return nil
 	}
 
 	if m.User != nil {
 		if err := m.User.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("user")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("user")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this user acls based on the context it is used
+func (m *UserAcls) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateAcls(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUser(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *UserAcls) contextValidateAcls(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Acls); i++ {
+
+		if m.Acls[i] != nil {
+
+			if swag.IsZero(m.Acls[i]) { // not required
+				return nil
+			}
+
+			if err := m.Acls[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("acls" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("acls" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *UserAcls) contextValidateUser(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.User != nil {
+
+		if swag.IsZero(m.User) { // not required
+			return nil
+		}
+
+		if err := m.User.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("user")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("user")
 			}
 			return err
 		}

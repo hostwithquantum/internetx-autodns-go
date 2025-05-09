@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -15,15 +17,20 @@ import (
 // swagger:model ContactSwissExtensions
 type ContactSwissExtensions struct {
 
-	// The enterprise ID, in the specific context of .swiss based on current rules, is the Swiss UID/IDE/IDI.
+	// The enterprise ID, in the specific context of .swiss based on current rules, is the Swiss UID/IDE/IDI.The full name is in German "Unternehmens-ID",  in French "Numéro d’identification des entreprises (IDE)" and in Italian "Numero d’identificazione delle imprese" (IDI).
 	EnterpriseID string `json:"enterpriseId,omitempty"`
 
-	// The statement of intended use for the domain name.
-	IntededUse string `json:"intededUse,omitempty"`
+	// The intended use for the domain.
+	IntendedUse string `json:"intendedUse,omitempty"`
 }
 
 // Validate validates this contact swiss extensions
 func (m *ContactSwissExtensions) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this contact swiss extensions based on context it is used
+func (m *ContactSwissExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

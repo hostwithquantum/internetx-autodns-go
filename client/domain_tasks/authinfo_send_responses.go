@@ -6,6 +6,7 @@ package domain_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *AuthinfoSendReader) ReadResponse(response runtime.ClientResponse, consu
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[PUT /domain/{name}/_sendAuthinfoToOwnerc] authinfoSend", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewAuthinfoSendOK() *AuthinfoSendOK {
 	return &AuthinfoSendOK{}
 }
 
-/*AuthinfoSendOK handles this case with default header values.
+/*
+AuthinfoSendOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type AuthinfoSendOK struct {
 	Payload *models.JSONResponseDataJSONNoData
 }
 
+// IsSuccess returns true when this authinfo send o k response has a 2xx status code
+func (o *AuthinfoSendOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this authinfo send o k response has a 3xx status code
+func (o *AuthinfoSendOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this authinfo send o k response has a 4xx status code
+func (o *AuthinfoSendOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this authinfo send o k response has a 5xx status code
+func (o *AuthinfoSendOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this authinfo send o k response a status code equal to that given
+func (o *AuthinfoSendOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the authinfo send o k response
+func (o *AuthinfoSendOK) Code() int {
+	return 200
+}
+
 func (o *AuthinfoSendOK) Error() string {
-	return fmt.Sprintf("[PUT /domain/{name}/_sendAuthinfoToOwnerc][%d] authinfoSendOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /domain/{name}/_sendAuthinfoToOwnerc][%d] authinfoSendOK %s", 200, payload)
+}
+
+func (o *AuthinfoSendOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /domain/{name}/_sendAuthinfoToOwnerc][%d] authinfoSendOK %s", 200, payload)
 }
 
 func (o *AuthinfoSendOK) GetPayload() *models.JSONResponseDataJSONNoData {

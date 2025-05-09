@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -30,6 +32,9 @@ type ContactReference struct {
 
 	// The contact reference type
 	Type ContactReferenceType `json:"type,omitempty"`
+
+	// The external verification status
+	Verification GenericStatusConstants `json:"verification,omitempty"`
 }
 
 // Validate validates this contact reference
@@ -52,6 +57,10 @@ func (m *ContactReference) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateVerification(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -59,7 +68,6 @@ func (m *ContactReference) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ContactReference) validateNic(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Nic) { // not required
 		return nil
 	}
@@ -68,6 +76,8 @@ func (m *ContactReference) validateNic(formats strfmt.Registry) error {
 		if err := m.Nic.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("nic")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("nic")
 			}
 			return err
 		}
@@ -77,7 +87,6 @@ func (m *ContactReference) validateNic(formats strfmt.Registry) error {
 }
 
 func (m *ContactReference) validateRole(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Role) { // not required
 		return nil
 	}
@@ -85,6 +94,8 @@ func (m *ContactReference) validateRole(formats strfmt.Registry) error {
 	if err := m.Role.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("role")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("role")
 		}
 		return err
 	}
@@ -93,7 +104,6 @@ func (m *ContactReference) validateRole(formats strfmt.Registry) error {
 }
 
 func (m *ContactReference) validateStatus(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Status) { // not required
 		return nil
 	}
@@ -101,6 +111,8 @@ func (m *ContactReference) validateStatus(formats strfmt.Registry) error {
 	if err := m.Status.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
 		}
 		return err
 	}
@@ -109,7 +121,6 @@ func (m *ContactReference) validateStatus(formats strfmt.Registry) error {
 }
 
 func (m *ContactReference) validateType(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Type) { // not required
 		return nil
 	}
@@ -117,6 +128,148 @@ func (m *ContactReference) validateType(formats strfmt.Registry) error {
 	if err := m.Type.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *ContactReference) validateVerification(formats strfmt.Registry) error {
+	if swag.IsZero(m.Verification) { // not required
+		return nil
+	}
+
+	if err := m.Verification.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("verification")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("verification")
+		}
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this contact reference based on the context it is used
+func (m *ContactReference) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateNic(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRole(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateVerification(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ContactReference) contextValidateNic(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Nic != nil {
+
+		if swag.IsZero(m.Nic) { // not required
+			return nil
+		}
+
+		if err := m.Nic.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("nic")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("nic")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactReference) contextValidateRole(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Role) { // not required
+		return nil
+	}
+
+	if err := m.Role.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("role")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("role")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *ContactReference) contextValidateStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	if err := m.Status.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *ContactReference) contextValidateType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	if err := m.Type.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *ContactReference) contextValidateVerification(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Verification) { // not required
+		return nil
+	}
+
+	if err := m.Verification.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("verification")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("verification")
 		}
 		return err
 	}

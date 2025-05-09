@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -15,12 +17,17 @@ import (
 // swagger:model ContactBarcelonaExtensions
 type ContactBarcelonaExtensions struct {
 
-	// The statement of intended use for the domain name.
-	IntededUse string `json:"intededUse,omitempty"`
+	// The intended use for the domain.
+	IntendedUse string `json:"intendedUse,omitempty"`
 }
 
 // Validate validates this contact barcelona extensions
 func (m *ContactBarcelonaExtensions) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this contact barcelona extensions based on context it is used
+func (m *ContactBarcelonaExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

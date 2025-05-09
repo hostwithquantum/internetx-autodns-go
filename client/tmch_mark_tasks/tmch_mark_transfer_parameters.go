@@ -16,56 +16,72 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-// NewTmchMarkTransferParams creates a new TmchMarkTransferParams object
-// with the default values initialized.
+// NewTmchMarkTransferParams creates a new TmchMarkTransferParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewTmchMarkTransferParams() *TmchMarkTransferParams {
-	var ()
 	return &TmchMarkTransferParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewTmchMarkTransferParamsWithTimeout creates a new TmchMarkTransferParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewTmchMarkTransferParamsWithTimeout(timeout time.Duration) *TmchMarkTransferParams {
-	var ()
 	return &TmchMarkTransferParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewTmchMarkTransferParamsWithContext creates a new TmchMarkTransferParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewTmchMarkTransferParamsWithContext(ctx context.Context) *TmchMarkTransferParams {
-	var ()
 	return &TmchMarkTransferParams{
-
 		Context: ctx,
 	}
 }
 
 // NewTmchMarkTransferParamsWithHTTPClient creates a new TmchMarkTransferParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewTmchMarkTransferParamsWithHTTPClient(client *http.Client) *TmchMarkTransferParams {
-	var ()
 	return &TmchMarkTransferParams{
 		HTTPClient: client,
 	}
 }
 
-/*TmchMarkTransferParams contains all the parameters to send to the API endpoint
-for the tmch mark transfer operation typically these are written to a http.Request
+/*
+TmchMarkTransferParams contains all the parameters to send to the API endpoint
+
+	for the tmch mark transfer operation.
+
+	Typically these are written to a http.Request.
 */
 type TmchMarkTransferParams struct {
 
-	/*Reference*/
+	// Reference.
 	Reference string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the tmch mark transfer params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *TmchMarkTransferParams) WithDefaults() *TmchMarkTransferParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the tmch mark transfer params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *TmchMarkTransferParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the tmch mark transfer params

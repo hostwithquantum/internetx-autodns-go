@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,25 +19,27 @@ import (
 // swagger:model ContactTrademarkExtensions
 type ContactTrademarkExtensions struct {
 
-	// The application date.
-	// Format: date-time
-	Appdate strfmt.DateTime `json:"appdate,omitempty"`
+	// Application date of the trade mark (yyyy-MM-dd).
+	// Example: 2022-07-29
+	// Format: date
+	Appdate strfmt.Date `json:"appdate,omitempty"`
 
-	// The country.
+	// Country in which the trade mark is valid (ISO 3166 Country Code).
+	// Example: DE
 	Country string `json:"country,omitempty"`
 
-	// The name.
+	// Trademark name.
 	Name string `json:"name,omitempty"`
 
-	// The number.
+	// Trademark number.
 	Number string `json:"number,omitempty"`
 
-	// The office.
+	// The trademark office where the trademark is registered at.
 	Office string `json:"office,omitempty"`
 
-	// The registration date.
-	// Format: date-time
-	Regdate strfmt.DateTime `json:"regdate,omitempty"`
+	// Registration date.
+	// Format: date
+	Regdate strfmt.Date `json:"regdate,omitempty"`
 }
 
 // Validate validates this contact trademark extensions
@@ -57,12 +61,11 @@ func (m *ContactTrademarkExtensions) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ContactTrademarkExtensions) validateAppdate(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Appdate) { // not required
 		return nil
 	}
 
-	if err := validate.FormatOf("appdate", "body", "date-time", m.Appdate.String(), formats); err != nil {
+	if err := validate.FormatOf("appdate", "body", "date", m.Appdate.String(), formats); err != nil {
 		return err
 	}
 
@@ -70,15 +73,19 @@ func (m *ContactTrademarkExtensions) validateAppdate(formats strfmt.Registry) er
 }
 
 func (m *ContactTrademarkExtensions) validateRegdate(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Regdate) { // not required
 		return nil
 	}
 
-	if err := validate.FormatOf("regdate", "body", "date-time", m.Regdate.String(), formats); err != nil {
+	if err := validate.FormatOf("regdate", "body", "date", m.Regdate.String(), formats); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this contact trademark extensions based on context it is used
+func (m *ContactTrademarkExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

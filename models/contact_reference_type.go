@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model ContactReferenceType
 type ContactReferenceType string
+
+func NewContactReferenceType(value ContactReferenceType) *ContactReferenceType {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated ContactReferenceType.
+func (m ContactReferenceType) Pointer() *ContactReferenceType {
+	return &m
+}
 
 const (
 
@@ -71,5 +81,10 @@ func (m ContactReferenceType) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this contact reference type based on context it is used
+func (m ContactReferenceType) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

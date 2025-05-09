@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,19 +19,17 @@ import (
 // swagger:model TmchMarkDocument
 type TmchMarkDocument struct {
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
 	// document
-	// Required: true
-	Document *Document `json:"document"`
+	Document *Document `json:"document,omitempty"`
 
 	// type
-	// Required: true
-	Type DocumentTypeConstants `json:"type"`
+	Type DocumentTypeConstants `json:"type,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 }
@@ -61,7 +61,6 @@ func (m *TmchMarkDocument) Validate(formats strfmt.Registry) error {
 }
 
 func (m *TmchMarkDocument) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -74,15 +73,16 @@ func (m *TmchMarkDocument) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *TmchMarkDocument) validateDocument(formats strfmt.Registry) error {
-
-	if err := validate.Required("document", "body", m.Document); err != nil {
-		return err
+	if swag.IsZero(m.Document) { // not required
+		return nil
 	}
 
 	if m.Document != nil {
 		if err := m.Document.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("document")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("document")
 			}
 			return err
 		}
@@ -92,10 +92,15 @@ func (m *TmchMarkDocument) validateDocument(formats strfmt.Registry) error {
 }
 
 func (m *TmchMarkDocument) validateType(formats strfmt.Registry) error {
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
 
 	if err := m.Type.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
 		}
 		return err
 	}
@@ -104,12 +109,68 @@ func (m *TmchMarkDocument) validateType(formats strfmt.Registry) error {
 }
 
 func (m *TmchMarkDocument) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
 
 	if err := validate.FormatOf("updated", "body", "date-time", m.Updated.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this tmch mark document based on the context it is used
+func (m *TmchMarkDocument) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateDocument(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *TmchMarkDocument) contextValidateDocument(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Document != nil {
+
+		if swag.IsZero(m.Document) { // not required
+			return nil
+		}
+
+		if err := m.Document.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("document")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("document")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *TmchMarkDocument) contextValidateType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	if err := m.Type.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
+		}
 		return err
 	}
 

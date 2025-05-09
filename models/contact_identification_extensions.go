@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,19 +19,19 @@ import (
 // swagger:model ContactIdentificationExtensions
 type ContactIdentificationExtensions struct {
 
-	// The authority.
+	// Issuing authority of the identification card.
 	Authority string `json:"authority,omitempty"`
 
-	// The date of issue.
-	// Format: date-time
-	DateOfIssue strfmt.DateTime `json:"dateOfIssue,omitempty"`
+	// Date on which the identification card was issued.
+	// Format: date
+	DateOfIssue strfmt.Date `json:"dateOfIssue,omitempty"`
 
-	// The number.
+	// Id card number.
 	Number string `json:"number,omitempty"`
 
-	// The valid till date.
-	// Format: date-time
-	ValidTill strfmt.DateTime `json:"validTill,omitempty"`
+	// Date on which the validity of the identification card expires.
+	// Format: date
+	ValidTill strfmt.Date `json:"validTill,omitempty"`
 }
 
 // Validate validates this contact identification extensions
@@ -51,12 +53,11 @@ func (m *ContactIdentificationExtensions) Validate(formats strfmt.Registry) erro
 }
 
 func (m *ContactIdentificationExtensions) validateDateOfIssue(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.DateOfIssue) { // not required
 		return nil
 	}
 
-	if err := validate.FormatOf("dateOfIssue", "body", "date-time", m.DateOfIssue.String(), formats); err != nil {
+	if err := validate.FormatOf("dateOfIssue", "body", "date", m.DateOfIssue.String(), formats); err != nil {
 		return err
 	}
 
@@ -64,15 +65,19 @@ func (m *ContactIdentificationExtensions) validateDateOfIssue(formats strfmt.Reg
 }
 
 func (m *ContactIdentificationExtensions) validateValidTill(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ValidTill) { // not required
 		return nil
 	}
 
-	if err := validate.FormatOf("validTill", "body", "date-time", m.ValidTill.String(), formats); err != nil {
+	if err := validate.FormatOf("validTill", "body", "date", m.ValidTill.String(), formats); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this contact identification extensions based on context it is used
+func (m *ContactIdentificationExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

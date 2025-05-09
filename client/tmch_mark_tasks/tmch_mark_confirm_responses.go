@@ -6,6 +6,7 @@ package tmch_mark_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *TmchMarkConfirmReader) ReadResponse(response runtime.ClientResponse, co
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[POST /tmchMark/{reference}/_confirm] tmchMarkConfirm", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewTmchMarkConfirmOK() *TmchMarkConfirmOK {
 	return &TmchMarkConfirmOK{}
 }
 
-/*TmchMarkConfirmOK handles this case with default header values.
+/*
+TmchMarkConfirmOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type TmchMarkConfirmOK struct {
 	Payload *models.JSONResponseDataVoid
 }
 
+// IsSuccess returns true when this tmch mark confirm o k response has a 2xx status code
+func (o *TmchMarkConfirmOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this tmch mark confirm o k response has a 3xx status code
+func (o *TmchMarkConfirmOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this tmch mark confirm o k response has a 4xx status code
+func (o *TmchMarkConfirmOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this tmch mark confirm o k response has a 5xx status code
+func (o *TmchMarkConfirmOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this tmch mark confirm o k response a status code equal to that given
+func (o *TmchMarkConfirmOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the tmch mark confirm o k response
+func (o *TmchMarkConfirmOK) Code() int {
+	return 200
+}
+
 func (o *TmchMarkConfirmOK) Error() string {
-	return fmt.Sprintf("[POST /tmchMark/{reference}/_confirm][%d] tmchMarkConfirmOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /tmchMark/{reference}/_confirm][%d] tmchMarkConfirmOK %s", 200, payload)
+}
+
+func (o *TmchMarkConfirmOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /tmchMark/{reference}/_confirm][%d] tmchMarkConfirmOK %s", 200, payload)
 }
 
 func (o *TmchMarkConfirmOK) GetPayload() *models.JSONResponseDataVoid {

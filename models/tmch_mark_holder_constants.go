@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model TmchMarkHolderConstants
 type TmchMarkHolderConstants string
+
+func NewTmchMarkHolderConstants(value TmchMarkHolderConstants) *TmchMarkHolderConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated TmchMarkHolderConstants.
+func (m TmchMarkHolderConstants) Pointer() *TmchMarkHolderConstants {
+	return &m
+}
 
 const (
 
@@ -62,5 +72,10 @@ func (m TmchMarkHolderConstants) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this tmch mark holder constants based on context it is used
+func (m TmchMarkHolderConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

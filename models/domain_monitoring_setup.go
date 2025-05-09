@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,14 +19,11 @@ import (
 // swagger:model DomainMonitoringSetup
 type DomainMonitoringSetup struct {
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// The data
-	Data string `json:"data,omitempty"`
-
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 }
@@ -48,7 +47,6 @@ func (m *DomainMonitoringSetup) Validate(formats strfmt.Registry) error {
 }
 
 func (m *DomainMonitoringSetup) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -61,7 +59,6 @@ func (m *DomainMonitoringSetup) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *DomainMonitoringSetup) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -70,6 +67,11 @@ func (m *DomainMonitoringSetup) validateUpdated(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this domain monitoring setup based on context it is used
+func (m *DomainMonitoringSetup) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

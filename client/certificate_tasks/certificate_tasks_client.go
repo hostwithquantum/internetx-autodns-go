@@ -9,12 +9,38 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime"
+	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new certificate tasks API client.
 func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new certificate tasks API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new certificate tasks API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -25,43 +51,99 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
 // ClientService is the interface for Client methods
 type ClientService interface {
-	CertificateCommentUpdate(params *CertificateCommentUpdateParams) (*CertificateCommentUpdateOK, error)
+	CertificatRenews(params *CertificatRenewsParams, opts ...ClientOption) (*CertificatRenewsOK, error)
 
-	CertificateCreate(params *CertificateCreateParams) (*CertificateCreateOK, error)
+	CertificateCommentUpdate(params *CertificateCommentUpdateParams, opts ...ClientOption) (*CertificateCommentUpdateOK, error)
 
-	CertificateDelete(params *CertificateDeleteParams) (*CertificateDeleteOK, error)
+	CertificateCreate(params *CertificateCreateParams, opts ...ClientOption) (*CertificateCreateOK, error)
 
-	CertificateList(params *CertificateListParams) (*CertificateListOK, error)
+	CertificateCreates(params *CertificateCreatesParams, opts ...ClientOption) (*CertificateCreatesOK, error)
 
-	CertificatePrepareOrder(params *CertificatePrepareOrderParams) (*CertificatePrepareOrderOK, error)
+	CertificateDelete(params *CertificateDeleteParams, opts ...ClientOption) (*CertificateDeleteOK, error)
 
-	CertificateRealtime(params *CertificateRealtimeParams) (*CertificateRealtimeOK, error)
+	CertificateDeletes(params *CertificateDeletesParams, opts ...ClientOption) (*CertificateDeletesOK, error)
 
-	CertificateReissue(params *CertificateReissueParams) (*CertificateReissueOK, error)
+	CertificateGetSiteSeal(params *CertificateGetSiteSealParams, opts ...ClientOption) (*CertificateGetSiteSealOK, error)
 
-	CertificateRenew(params *CertificateRenewParams) (*CertificateRenewOK, error)
+	CertificateInstallCheck(params *CertificateInstallCheckParams, opts ...ClientOption) (*CertificateInstallCheckOK, error)
 
-	CertificateRevoke(params *CertificateRevokeParams) (*CertificateRevokeOK, error)
+	CertificateList(params *CertificateListParams, opts ...ClientOption) (*CertificateListOK, error)
 
-	Certificateinfo(params *CertificateinfoParams) (*CertificateinfoOK, error)
+	CertificatePatches(params *CertificatePatchesParams, opts ...ClientOption) (*CertificatePatchesOK, error)
+
+	CertificatePrepareOrder(params *CertificatePrepareOrderParams, opts ...ClientOption) (*CertificatePrepareOrderOK, error)
+
+	CertificateRealtime(params *CertificateRealtimeParams, opts ...ClientOption) (*CertificateRealtimeOK, error)
+
+	CertificateReissue(params *CertificateReissueParams, opts ...ClientOption) (*CertificateReissueOK, error)
+
+	CertificateRenew(params *CertificateRenewParams, opts ...ClientOption) (*CertificateRenewOK, error)
+
+	CertificateRevoke(params *CertificateRevokeParams, opts ...ClientOption) (*CertificateRevokeOK, error)
+
+	Certificateinfo(params *CertificateinfoParams, opts ...ClientOption) (*CertificateinfoOK, error)
+
+	VmcDataCheck(params *VmcDataCheckParams, opts ...ClientOption) (*VmcDataCheckOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
 
 /*
-  CertificateCommentUpdate certificates comment update
+CertificatRenews certificates update bulk 400106
 
-  Updating a comment for an existing certificate.
+Renewing several existing certificates.
 */
-func (a *Client) CertificateCommentUpdate(params *CertificateCommentUpdateParams) (*CertificateCommentUpdateOK, error) {
+func (a *Client) CertificatRenews(params *CertificatRenewsParams, opts ...ClientOption) (*CertificatRenewsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCertificatRenewsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "certificatRenews",
+		Method:             "PATCH",
+		PathPattern:        "/bulk/certificate/_renew",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &CertificatRenewsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*CertificatRenewsOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for certificatRenews: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+CertificateCommentUpdate certificates comment update 4001024
+
+Updating a comment for an existing certificate.
+*/
+func (a *Client) CertificateCommentUpdate(params *CertificateCommentUpdateParams, opts ...ClientOption) (*CertificateCommentUpdateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCertificateCommentUpdateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "certificateCommentUpdate",
 		Method:             "PUT",
 		PathPattern:        "/certificate/{id}/_comment",
@@ -72,7 +154,12 @@ func (a *Client) CertificateCommentUpdate(params *CertificateCommentUpdateParams
 		Reader:             &CertificateCommentUpdateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -87,17 +174,16 @@ func (a *Client) CertificateCommentUpdate(params *CertificateCommentUpdateParams
 }
 
 /*
-  CertificateCreate certificates create
+CertificateCreate certificates create 400101
 
-  Ordering a new certificate. The operation is asynchronous and creates a job.
+Ordering a new certificate. The operation is asynchronous and creates a new job.
 */
-func (a *Client) CertificateCreate(params *CertificateCreateParams) (*CertificateCreateOK, error) {
+func (a *Client) CertificateCreate(params *CertificateCreateParams, opts ...ClientOption) (*CertificateCreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCertificateCreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "certificateCreate",
 		Method:             "POST",
 		PathPattern:        "/certificate",
@@ -108,7 +194,12 @@ func (a *Client) CertificateCreate(params *CertificateCreateParams) (*Certificat
 		Reader:             &CertificateCreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -123,17 +214,56 @@ func (a *Client) CertificateCreate(params *CertificateCreateParams) (*Certificat
 }
 
 /*
-  CertificateDelete certificates delete
+CertificateCreates certificates create bulk 400101
 
-  Deleting an existing certificate. The operation is asynchronous and creates a job.
+Creating several new certificates.
 */
-func (a *Client) CertificateDelete(params *CertificateDeleteParams) (*CertificateDeleteOK, error) {
+func (a *Client) CertificateCreates(params *CertificateCreatesParams, opts ...ClientOption) (*CertificateCreatesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCertificateCreatesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "certificateCreates",
+		Method:             "POST",
+		PathPattern:        "/bulk/certificate",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &CertificateCreatesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*CertificateCreatesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for certificateCreates: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+CertificateDelete certificates delete 400103
+
+Deleting an existing certificate. The operation is asynchronous and creates a job.
+*/
+func (a *Client) CertificateDelete(params *CertificateDeleteParams, opts ...ClientOption) (*CertificateDeleteOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCertificateDeleteParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "certificateDelete",
 		Method:             "DELETE",
 		PathPattern:        "/certificate/{id}",
@@ -144,7 +274,12 @@ func (a *Client) CertificateDelete(params *CertificateDeleteParams) (*Certificat
 		Reader:             &CertificateDeleteReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -159,17 +294,136 @@ func (a *Client) CertificateDelete(params *CertificateDeleteParams) (*Certificat
 }
 
 /*
-  CertificateList certificates list
+CertificateDeletes certificates delete bulk 400103
 
-  Inquiring a list of certificates with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: product, technical, orderId, created, admin, type, expire, domain, name, comment, id, updated, authentication.
+Deleting several existing certificates.
 */
-func (a *Client) CertificateList(params *CertificateListParams) (*CertificateListOK, error) {
+func (a *Client) CertificateDeletes(params *CertificateDeletesParams, opts ...ClientOption) (*CertificateDeletesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCertificateDeletesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "certificateDeletes",
+		Method:             "DELETE",
+		PathPattern:        "/bulk/certificate",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &CertificateDeletesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*CertificateDeletesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for certificateDeletes: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+CertificateGetSiteSeal certificates get site seal 4001014
+
+Fetches the site seal information for the given certificate
+*/
+func (a *Client) CertificateGetSiteSeal(params *CertificateGetSiteSealParams, opts ...ClientOption) (*CertificateGetSiteSealOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCertificateGetSiteSealParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "certificateGetSiteSeal",
+		Method:             "GET",
+		PathPattern:        "/certificate/{id}/_siteseal",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &CertificateGetSiteSealReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*CertificateGetSiteSealOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for certificateGetSiteSeal: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+CertificateInstallCheck certificates install check 4001013
+
+Checks an installed certificate on a server
+*/
+func (a *Client) CertificateInstallCheck(params *CertificateInstallCheckParams, opts ...ClientOption) (*CertificateInstallCheckOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCertificateInstallCheckParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "certificateInstallCheck",
+		Method:             "POST",
+		PathPattern:        "/certificate/_installcheck",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &CertificateInstallCheckReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*CertificateInstallCheckOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for certificateInstallCheck: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+CertificateList certificates list 400105
+
+Inquiring a list of certificates with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: product, technical, orderId, created, admin, type, expire, domain, name, comment, id, updated, authentication.
+*/
+func (a *Client) CertificateList(params *CertificateListParams, opts ...ClientOption) (*CertificateListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCertificateListParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "certificateList",
 		Method:             "POST",
 		PathPattern:        "/certificate/_search",
@@ -180,7 +434,12 @@ func (a *Client) CertificateList(params *CertificateListParams) (*CertificateLis
 		Reader:             &CertificateListReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -195,17 +454,56 @@ func (a *Client) CertificateList(params *CertificateListParams) (*CertificateLis
 }
 
 /*
-  CertificatePrepareOrder certificates order prepare
+CertificatePatches certificates update bulk 400102
 
-  Preparing a certificate order. This call checks the csr and generates authentication data required for further calls like order, renew, reissue, revoke, delete.
+Updating several existing certificates.
 */
-func (a *Client) CertificatePrepareOrder(params *CertificatePrepareOrderParams) (*CertificatePrepareOrderOK, error) {
+func (a *Client) CertificatePatches(params *CertificatePatchesParams, opts ...ClientOption) (*CertificatePatchesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCertificatePatchesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "certificatePatches",
+		Method:             "PATCH",
+		PathPattern:        "/bulk/certificate",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &CertificatePatchesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*CertificatePatchesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for certificatePatches: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+CertificatePrepareOrder certificates order prepare 400110
+
+Preparing a certificate order. This call checks the csr and generates authentication data required for further calls like order, renew, reissue, revoke, delete.
+*/
+func (a *Client) CertificatePrepareOrder(params *CertificatePrepareOrderParams, opts ...ClientOption) (*CertificatePrepareOrderOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCertificatePrepareOrderParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "certificatePrepareOrder",
 		Method:             "POST",
 		PathPattern:        "/certificate/_prepareOrder",
@@ -216,7 +514,12 @@ func (a *Client) CertificatePrepareOrder(params *CertificatePrepareOrderParams) 
 		Reader:             &CertificatePrepareOrderReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -231,17 +534,16 @@ func (a *Client) CertificatePrepareOrder(params *CertificatePrepareOrderParams) 
 }
 
 /*
-  CertificateRealtime certificates realtime order
+CertificateRealtime certificates realtime order 4001012
 
-  Ordering or renewing a certificate in realtime. Only supported by a few certificate products!
+Ordering or renewing a certificate in realtime. Only supported by a few certificate products!
 */
-func (a *Client) CertificateRealtime(params *CertificateRealtimeParams) (*CertificateRealtimeOK, error) {
+func (a *Client) CertificateRealtime(params *CertificateRealtimeParams, opts ...ClientOption) (*CertificateRealtimeOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCertificateRealtimeParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "certificateRealtime",
 		Method:             "POST",
 		PathPattern:        "/certificate/_realtime",
@@ -252,7 +554,12 @@ func (a *Client) CertificateRealtime(params *CertificateRealtimeParams) (*Certif
 		Reader:             &CertificateRealtimeReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -267,17 +574,16 @@ func (a *Client) CertificateRealtime(params *CertificateRealtimeParams) (*Certif
 }
 
 /*
-  CertificateReissue certificates reissue
+CertificateReissue certificates reissue 400102
 
-  Reissuing an existing certificate. The operation is asynchronous and creates a job.
+Reissuing an existing certificate. The operation is asynchronous and creates a job.
 */
-func (a *Client) CertificateReissue(params *CertificateReissueParams) (*CertificateReissueOK, error) {
+func (a *Client) CertificateReissue(params *CertificateReissueParams, opts ...ClientOption) (*CertificateReissueOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCertificateReissueParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "certificateReissue",
 		Method:             "PUT",
 		PathPattern:        "/certificate/{id}",
@@ -288,7 +594,12 @@ func (a *Client) CertificateReissue(params *CertificateReissueParams) (*Certific
 		Reader:             &CertificateReissueReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -303,17 +614,16 @@ func (a *Client) CertificateReissue(params *CertificateReissueParams) (*Certific
 }
 
 /*
-  CertificateRenew certificates renew
+CertificateRenew certificates renew 400106
 
-  Renewin an existing certificate. The operation is asynchronous and creates a job.
+Renewin an existing certificate. The operation is asynchronous and creates a job.
 */
-func (a *Client) CertificateRenew(params *CertificateRenewParams) (*CertificateRenewOK, error) {
+func (a *Client) CertificateRenew(params *CertificateRenewParams, opts ...ClientOption) (*CertificateRenewOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCertificateRenewParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "certificateRenew",
 		Method:             "PUT",
 		PathPattern:        "/certificate/{id}/_renew",
@@ -324,7 +634,12 @@ func (a *Client) CertificateRenew(params *CertificateRenewParams) (*CertificateR
 		Reader:             &CertificateRenewReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -339,19 +654,18 @@ func (a *Client) CertificateRenew(params *CertificateRenewParams) (*CertificateR
 }
 
 /*
-  CertificateRevoke certificates revoke
+CertificateRevoke certificates revoke 4001031
 
-  Revoking an existing certificate. The operation is asynchronous and creates a job.
+Revoking an existing old certificate by serialnumber. The operation is in realtime
 */
-func (a *Client) CertificateRevoke(params *CertificateRevokeParams) (*CertificateRevokeOK, error) {
+func (a *Client) CertificateRevoke(params *CertificateRevokeParams, opts ...ClientOption) (*CertificateRevokeOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCertificateRevokeParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "certificateRevoke",
-		Method:             "DELETE",
+		Method:             "POST",
 		PathPattern:        "/certificate/{id}/_revoke",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
@@ -360,7 +674,12 @@ func (a *Client) CertificateRevoke(params *CertificateRevokeParams) (*Certificat
 		Reader:             &CertificateRevokeReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -375,17 +694,16 @@ func (a *Client) CertificateRevoke(params *CertificateRevokeParams) (*Certificat
 }
 
 /*
-  Certificateinfo certificates info
+Certificateinfo certificates info 400104
 
-  Inquiring the data for the specified certificate.
+Inquiring the data for the specified certificate.
 */
-func (a *Client) Certificateinfo(params *CertificateinfoParams) (*CertificateinfoOK, error) {
+func (a *Client) Certificateinfo(params *CertificateinfoParams, opts ...ClientOption) (*CertificateinfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCertificateinfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "certificateinfo",
 		Method:             "GET",
 		PathPattern:        "/certificate/{id}",
@@ -396,7 +714,12 @@ func (a *Client) Certificateinfo(params *CertificateinfoParams) (*Certificateinf
 		Reader:             &CertificateinfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -407,6 +730,46 @@ func (a *Client) Certificateinfo(params *CertificateinfoParams) (*Certificateinf
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for certificateinfo: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+VmcDataCheck vmcs data check 4001015
+
+Checks the given data against requirements for VMC certificates
+*/
+func (a *Client) VmcDataCheck(params *VmcDataCheckParams, opts ...ClientOption) (*VmcDataCheckOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewVmcDataCheckParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "vmcDataCheck",
+		Method:             "POST",
+		PathPattern:        "/certificate/_checkVmcData",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &VmcDataCheckReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*VmcDataCheckOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for vmcDataCheck: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

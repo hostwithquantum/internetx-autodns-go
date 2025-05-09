@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model DomainStudioDomainSource
 type DomainStudioDomainSource string
+
+func NewDomainStudioDomainSource(value DomainStudioDomainSource) *DomainStudioDomainSource {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated DomainStudioDomainSource.
+func (m DomainStudioDomainSource) Pointer() *DomainStudioDomainSource {
+	return &m
+}
 
 const (
 
@@ -52,6 +62,15 @@ const (
 
 	// DomainStudioDomainSourceUPCOMING captures enum value "UPCOMING"
 	DomainStudioDomainSourceUPCOMING DomainStudioDomainSource = "UPCOMING"
+
+	// DomainStudioDomainSourceMARKET captures enum value "MARKET"
+	DomainStudioDomainSourceMARKET DomainStudioDomainSource = "MARKET"
+
+	// DomainStudioDomainSourceDOMAINSBOT captures enum value "DOMAINSBOT"
+	DomainStudioDomainSourceDOMAINSBOT DomainStudioDomainSource = "DOMAINSBOT"
+
+	// DomainStudioDomainSourcePLACEMENTPLUS captures enum value "PLACEMENT_PLUS"
+	DomainStudioDomainSourcePLACEMENTPLUS DomainStudioDomainSource = "PLACEMENT_PLUS"
 )
 
 // for schema
@@ -59,7 +78,7 @@ var domainStudioDomainSourceEnum []interface{}
 
 func init() {
 	var res []DomainStudioDomainSource
-	if err := json.Unmarshal([]byte(`["INITIAL","SUGGESTION","PREMIUM","GEO","SIMILAR","RECOMMENDED","CUSTOM","ONLINE_PRESENCE","SPIN_WORD","PERSONAL_NAMES","UPCOMING"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["INITIAL","SUGGESTION","PREMIUM","GEO","SIMILAR","RECOMMENDED","CUSTOM","ONLINE_PRESENCE","SPIN_WORD","PERSONAL_NAMES","UPCOMING","MARKET","DOMAINSBOT","PLACEMENT_PLUS"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -86,5 +105,10 @@ func (m DomainStudioDomainSource) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this domain studio domain source based on context it is used
+func (m DomainStudioDomainSource) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

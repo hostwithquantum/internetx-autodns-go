@@ -9,12 +9,38 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime"
+	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new poll tasks API client.
 func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new poll tasks API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new poll tasks API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -25,27 +51,29 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
 // ClientService is the interface for Client methods
 type ClientService interface {
-	PollConfirm(params *PollConfirmParams) (*PollConfirmOK, error)
+	PollConfirm(params *PollConfirmParams, opts ...ClientOption) (*PollConfirmOK, error)
 
-	PollInfo(params *PollInfoParams) (*PollInfoOK, error)
+	PollInfo(params *PollInfoParams, opts ...ClientOption) (*PollInfoOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
 
 /*
-  PollConfirm polls message confirm
+PollConfirm polls message confirm 0906
 
-  Confirming the specified poll message
+Confirming the specified poll message
 */
-func (a *Client) PollConfirm(params *PollConfirmParams) (*PollConfirmOK, error) {
+func (a *Client) PollConfirm(params *PollConfirmParams, opts ...ClientOption) (*PollConfirmOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewPollConfirmParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "pollConfirm",
 		Method:             "PUT",
 		PathPattern:        "/poll/{id}",
@@ -56,7 +84,12 @@ func (a *Client) PollConfirm(params *PollConfirmParams) (*PollConfirmOK, error) 
 		Reader:             &PollConfirmReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -71,17 +104,16 @@ func (a *Client) PollConfirm(params *PollConfirmParams) (*PollConfirmOK, error) 
 }
 
 /*
-  PollInfo polls message info
+PollInfo polls message info 0905
 
-  Inqiring the latest poll message.
+Inqiring the latest poll message.
 */
-func (a *Client) PollInfo(params *PollInfoParams) (*PollInfoOK, error) {
+func (a *Client) PollInfo(params *PollInfoParams, opts ...ClientOption) (*PollInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewPollInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "pollInfo",
 		Method:             "GET",
 		PathPattern:        "/poll",
@@ -92,7 +124,12 @@ func (a *Client) PollInfo(params *PollInfoParams) (*PollInfoOK, error) {
 		Reader:             &PollInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}

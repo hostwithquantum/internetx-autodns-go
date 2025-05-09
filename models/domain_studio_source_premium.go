@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -18,11 +19,20 @@ import (
 // swagger:model DomainStudioSourcePremium
 type DomainStudioSourcePremium struct {
 
+	// The generated domains of this source
+	Domains []string `json:"domains"`
+
 	// The maximum amount of fetched premium and market domains.
 	Max int32 `json:"max,omitempty"`
 
 	// Defines whether to return only free domain names when service WHOIS is used for a source.
 	OnlyAvailable bool `json:"onlyAvailable,omitempty"`
+
+	// The maximum price.
+	PriceMax int32 `json:"priceMax,omitempty"`
+
+	// The minumum price.
+	PriceMin int32 `json:"priceMin,omitempty"`
 
 	// Promo tlds
 	PromoTlds []string `json:"promoTlds"`
@@ -49,7 +59,6 @@ func (m *DomainStudioSourcePremium) Validate(formats strfmt.Registry) error {
 }
 
 func (m *DomainStudioSourcePremium) validateServices(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Services) { // not required
 		return nil
 	}
@@ -59,6 +68,44 @@ func (m *DomainStudioSourcePremium) validateServices(formats strfmt.Registry) er
 		if err := m.Services[i].Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("services" + "." + strconv.Itoa(i))
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("services" + "." + strconv.Itoa(i))
+			}
+			return err
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this domain studio source premium based on the context it is used
+func (m *DomainStudioSourcePremium) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateServices(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *DomainStudioSourcePremium) contextValidateServices(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Services); i++ {
+
+		if swag.IsZero(m.Services[i]) { // not required
+			return nil
+		}
+
+		if err := m.Services[i].ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("services" + "." + strconv.Itoa(i))
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("services" + "." + strconv.Itoa(i))
 			}
 			return err
 		}

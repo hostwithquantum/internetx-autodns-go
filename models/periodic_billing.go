@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -28,33 +29,59 @@ type PeriodicBilling struct {
 	// The businessCase of the subscription, e.g. create
 	BusinessCase string `json:"businessCase,omitempty"`
 
-	// The created date.
+	// The cancelation date of the subscription.
+	// Format: date-time
+	Cancelation strfmt.DateTime `json:"cancelation,omitempty"`
+
+	// cancelationTerm of the subscription..
+	CancelationTerm *TimePeriod `json:"cancelationTerm,omitempty"`
+
+	// The canceled date.
+	// Format: date-time
+	Canceled strfmt.DateTime `json:"canceled,omitempty"`
+
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
 	// The human readable name of the subscription, e.g. the name of a package
 	Description string `json:"description,omitempty"`
 
+	// The expiration date of the subscription.
+	// Format: date-time
+	Expire strfmt.DateTime `json:"expire,omitempty"`
+
+	// Additional information, such as rights and limits.
+	Extensions *BillingEventExtensions `json:"extensions,omitempty"`
+
+	// The unique identifier of the periodic
+	// Example: 1
+	ID int32 `json:"id,omitempty"`
+
 	// The items of the subscription
 	Item []*PeriodicBilling `json:"item"`
 
-	// The name of the subscription, e.g. the contract number
+	// Name of the subscription or the contract number.
 	Object string `json:"object,omitempty"`
 
-	// The owner of the object.
+	// The object owner.
 	Owner *BasicUser `json:"owner,omitempty"`
+
+	// The date then the event should be billed.
+	// Format: date-time
+	Payable strfmt.DateTime `json:"payable,omitempty"`
 
 	// The period used by the subscription, e.g. 1 month
 	Period *TimePeriod `json:"period,omitempty"`
 
-	// The actual status of the entry, active means ok.
+	// Billing status of the subscription.
 	Status BillingStatus `json:"status,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The updating user of the object.
+	// User who performed the last update.
 	Updater *BasicUser `json:"updater,omitempty"`
 }
 
@@ -62,7 +89,27 @@ type PeriodicBilling struct {
 func (m *PeriodicBilling) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateCancelation(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateCancelationTerm(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateCanceled(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateCreated(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateExpire(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateExtensions(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -71,6 +118,10 @@ func (m *PeriodicBilling) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateOwner(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePayable(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -96,8 +147,50 @@ func (m *PeriodicBilling) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *PeriodicBilling) validateCreated(formats strfmt.Registry) error {
+func (m *PeriodicBilling) validateCancelation(formats strfmt.Registry) error {
+	if swag.IsZero(m.Cancelation) { // not required
+		return nil
+	}
 
+	if err := validate.FormatOf("cancelation", "body", "date-time", m.Cancelation.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *PeriodicBilling) validateCancelationTerm(formats strfmt.Registry) error {
+	if swag.IsZero(m.CancelationTerm) { // not required
+		return nil
+	}
+
+	if m.CancelationTerm != nil {
+		if err := m.CancelationTerm.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("cancelationTerm")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("cancelationTerm")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *PeriodicBilling) validateCanceled(formats strfmt.Registry) error {
+	if swag.IsZero(m.Canceled) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("canceled", "body", "date-time", m.Canceled.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *PeriodicBilling) validateCreated(formats strfmt.Registry) error {
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -109,8 +202,38 @@ func (m *PeriodicBilling) validateCreated(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *PeriodicBilling) validateItem(formats strfmt.Registry) error {
+func (m *PeriodicBilling) validateExpire(formats strfmt.Registry) error {
+	if swag.IsZero(m.Expire) { // not required
+		return nil
+	}
 
+	if err := validate.FormatOf("expire", "body", "date-time", m.Expire.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *PeriodicBilling) validateExtensions(formats strfmt.Registry) error {
+	if swag.IsZero(m.Extensions) { // not required
+		return nil
+	}
+
+	if m.Extensions != nil {
+		if err := m.Extensions.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("extensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("extensions")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *PeriodicBilling) validateItem(formats strfmt.Registry) error {
 	if swag.IsZero(m.Item) { // not required
 		return nil
 	}
@@ -124,6 +247,8 @@ func (m *PeriodicBilling) validateItem(formats strfmt.Registry) error {
 			if err := m.Item[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("item" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("item" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -135,7 +260,6 @@ func (m *PeriodicBilling) validateItem(formats strfmt.Registry) error {
 }
 
 func (m *PeriodicBilling) validateOwner(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -144,6 +268,8 @@ func (m *PeriodicBilling) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -152,8 +278,19 @@ func (m *PeriodicBilling) validateOwner(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *PeriodicBilling) validatePeriod(formats strfmt.Registry) error {
+func (m *PeriodicBilling) validatePayable(formats strfmt.Registry) error {
+	if swag.IsZero(m.Payable) { // not required
+		return nil
+	}
 
+	if err := validate.FormatOf("payable", "body", "date-time", m.Payable.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *PeriodicBilling) validatePeriod(formats strfmt.Registry) error {
 	if swag.IsZero(m.Period) { // not required
 		return nil
 	}
@@ -162,6 +299,8 @@ func (m *PeriodicBilling) validatePeriod(formats strfmt.Registry) error {
 		if err := m.Period.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("period")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("period")
 			}
 			return err
 		}
@@ -171,7 +310,6 @@ func (m *PeriodicBilling) validatePeriod(formats strfmt.Registry) error {
 }
 
 func (m *PeriodicBilling) validateStatus(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Status) { // not required
 		return nil
 	}
@@ -179,6 +317,8 @@ func (m *PeriodicBilling) validateStatus(formats strfmt.Registry) error {
 	if err := m.Status.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
 		}
 		return err
 	}
@@ -187,7 +327,6 @@ func (m *PeriodicBilling) validateStatus(formats strfmt.Registry) error {
 }
 
 func (m *PeriodicBilling) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -200,7 +339,6 @@ func (m *PeriodicBilling) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *PeriodicBilling) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -209,6 +347,194 @@ func (m *PeriodicBilling) validateUpdater(formats strfmt.Registry) error {
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this periodic billing based on the context it is used
+func (m *PeriodicBilling) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateCancelationTerm(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateExtensions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateItem(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePeriod(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PeriodicBilling) contextValidateCancelationTerm(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.CancelationTerm != nil {
+
+		if swag.IsZero(m.CancelationTerm) { // not required
+			return nil
+		}
+
+		if err := m.CancelationTerm.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("cancelationTerm")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("cancelationTerm")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *PeriodicBilling) contextValidateExtensions(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Extensions != nil {
+
+		if swag.IsZero(m.Extensions) { // not required
+			return nil
+		}
+
+		if err := m.Extensions.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("extensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("extensions")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *PeriodicBilling) contextValidateItem(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Item); i++ {
+
+		if m.Item[i] != nil {
+
+			if swag.IsZero(m.Item[i]) { // not required
+				return nil
+			}
+
+			if err := m.Item[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("item" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("item" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *PeriodicBilling) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *PeriodicBilling) contextValidatePeriod(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Period != nil {
+
+		if swag.IsZero(m.Period) { // not required
+			return nil
+		}
+
+		if err := m.Period.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("period")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("period")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *PeriodicBilling) contextValidateStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	if err := m.Status.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *PeriodicBilling) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}

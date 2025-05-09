@@ -6,6 +6,7 @@ package user_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *UserBillingLimitInfoReader) ReadResponse(response runtime.ClientRespons
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[GET /user/billinglimit] userBillingLimitInfo", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewUserBillingLimitInfoOK() *UserBillingLimitInfoOK {
 	return &UserBillingLimitInfoOK{}
 }
 
-/*UserBillingLimitInfoOK handles this case with default header values.
+/*
+UserBillingLimitInfoOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type UserBillingLimitInfoOK struct {
 	Payload *models.JSONResponseDataBillingLimit
 }
 
+// IsSuccess returns true when this user billing limit info o k response has a 2xx status code
+func (o *UserBillingLimitInfoOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this user billing limit info o k response has a 3xx status code
+func (o *UserBillingLimitInfoOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this user billing limit info o k response has a 4xx status code
+func (o *UserBillingLimitInfoOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this user billing limit info o k response has a 5xx status code
+func (o *UserBillingLimitInfoOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this user billing limit info o k response a status code equal to that given
+func (o *UserBillingLimitInfoOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the user billing limit info o k response
+func (o *UserBillingLimitInfoOK) Code() int {
+	return 200
+}
+
 func (o *UserBillingLimitInfoOK) Error() string {
-	return fmt.Sprintf("[GET /user/billinglimit][%d] userBillingLimitInfoOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user/billinglimit][%d] userBillingLimitInfoOK %s", 200, payload)
+}
+
+func (o *UserBillingLimitInfoOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user/billinglimit][%d] userBillingLimitInfoOK %s", 200, payload)
 }
 
 func (o *UserBillingLimitInfoOK) GetPayload() *models.JSONResponseDataBillingLimit {

@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,23 +19,34 @@ import (
 // swagger:model PhysicalNameServerGroup
 type PhysicalNameServerGroup struct {
 
-	// The article label of the name server group, will be used for each created zone using these group
+	// The article name that will be used when creating zones for this group.
 	ArticleLabel string `json:"articleLabel,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// If the group supports dnssec
+	// Support for DNSSEC by the namserver group.
+	// Possible values:
+	// false = DNSSEC is not supported
+	// true = DNSSEC is supported
+	// Default value = false
 	Dnssec bool `json:"dnssec,omitempty"`
 
-	// The custom label for the group
+	// Custom name of the name server group.
 	Name string `json:"name,omitempty"`
 
-	// If the group contains statistical data for a zone
+	// Support of zone statistics by the namserver group.
+	// Possible values:
+	// false = Statistics are not supported
+	// true = Statistics are supported
+	// Default value = false
 	Statistic bool `json:"statistic,omitempty"`
 
-	// The updated date.
+	// If the group supported
+	Supported NameServerMode `json:"supported,omitempty"`
+
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 }
@@ -43,6 +56,10 @@ func (m *PhysicalNameServerGroup) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateCreated(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSupported(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -57,7 +74,6 @@ func (m *PhysicalNameServerGroup) Validate(formats strfmt.Registry) error {
 }
 
 func (m *PhysicalNameServerGroup) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -69,13 +85,61 @@ func (m *PhysicalNameServerGroup) validateCreated(formats strfmt.Registry) error
 	return nil
 }
 
-func (m *PhysicalNameServerGroup) validateUpdated(formats strfmt.Registry) error {
+func (m *PhysicalNameServerGroup) validateSupported(formats strfmt.Registry) error {
+	if swag.IsZero(m.Supported) { // not required
+		return nil
+	}
 
+	if err := m.Supported.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("supported")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("supported")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *PhysicalNameServerGroup) validateUpdated(formats strfmt.Registry) error {
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
 
 	if err := validate.FormatOf("updated", "body", "date-time", m.Updated.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this physical name server group based on the context it is used
+func (m *PhysicalNameServerGroup) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateSupported(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PhysicalNameServerGroup) contextValidateSupported(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Supported) { // not required
+		return nil
+	}
+
+	if err := m.Supported.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("supported")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("supported")
+		}
 		return err
 	}
 

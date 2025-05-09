@@ -9,12 +9,38 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime"
+	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new subscription tasks API client.
 func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new subscription tasks API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new subscription tasks API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -25,33 +51,119 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
 // ClientService is the interface for Client methods
 type ClientService interface {
-	SubscriptionCreate(params *SubscriptionCreateParams) (*SubscriptionCreateOK, error)
+	SubscriptionCancelationCreate(params *SubscriptionCancelationCreateParams, opts ...ClientOption) (*SubscriptionCancelationCreateOK, error)
 
-	SubscriptionDelte(params *SubscriptionDelteParams) (*SubscriptionDelteOK, error)
+	SubscriptionCancelationDelete(params *SubscriptionCancelationDeleteParams, opts ...ClientOption) (*SubscriptionCancelationDeleteOK, error)
 
-	SubscriptionList(params *SubscriptionListParams) (*SubscriptionListOK, error)
+	SubscriptionCreate(params *SubscriptionCreateParams, opts ...ClientOption) (*SubscriptionCreateOK, error)
 
-	SubscriptionUpdate(params *SubscriptionUpdateParams) (*SubscriptionUpdateOK, error)
+	SubscriptionDelete(params *SubscriptionDeleteParams, opts ...ClientOption) (*SubscriptionDeleteOK, error)
 
-	SubscriptionUpgrade(params *SubscriptionUpgradeParams) (*SubscriptionUpgradeOK, error)
+	SubscriptionList(params *SubscriptionListParams, opts ...ClientOption) (*SubscriptionListOK, error)
+
+	SubscriptionUpdate(params *SubscriptionUpdateParams, opts ...ClientOption) (*SubscriptionUpdateOK, error)
+
+	SubscriptionUpgrade(params *SubscriptionUpgradeParams, opts ...ClientOption) (*SubscriptionUpgradeOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
 
 /*
-  SubscriptionCreate subscriptions create
+SubscriptionCancelationCreate subscriptions create cancelation
 
-  Creating a new subscription contract.
+Adding a cancelation for the subscription.
 */
-func (a *Client) SubscriptionCreate(params *SubscriptionCreateParams) (*SubscriptionCreateOK, error) {
+func (a *Client) SubscriptionCancelationCreate(params *SubscriptionCancelationCreateParams, opts ...ClientOption) (*SubscriptionCancelationCreateOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewSubscriptionCancelationCreateParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "subscriptionCancelationCreate",
+		Method:             "POST",
+		PathPattern:        "/subscription/{contractId}/cancelation",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &SubscriptionCancelationCreateReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*SubscriptionCancelationCreateOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for subscriptionCancelationCreate: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+SubscriptionCancelationDelete subscriptions remove cancalation
+
+Removing an existing cancelation of a subscription.
+*/
+func (a *Client) SubscriptionCancelationDelete(params *SubscriptionCancelationDeleteParams, opts ...ClientOption) (*SubscriptionCancelationDeleteOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewSubscriptionCancelationDeleteParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "subscriptionCancelationDelete",
+		Method:             "DELETE",
+		PathPattern:        "/subscription/{contractId}/cancelation",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &SubscriptionCancelationDeleteReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*SubscriptionCancelationDeleteOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for subscriptionCancelationDelete: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+SubscriptionCreate subscriptions create 1701
+
+Creating a new subscription contract.
+*/
+func (a *Client) SubscriptionCreate(params *SubscriptionCreateParams, opts ...ClientOption) (*SubscriptionCreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSubscriptionCreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "subscriptionCreate",
 		Method:             "POST",
 		PathPattern:        "/subscription",
@@ -62,7 +174,12 @@ func (a *Client) SubscriptionCreate(params *SubscriptionCreateParams) (*Subscrip
 		Reader:             &SubscriptionCreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -77,53 +194,56 @@ func (a *Client) SubscriptionCreate(params *SubscriptionCreateParams) (*Subscrip
 }
 
 /*
-  SubscriptionDelte subscriptions delete
+SubscriptionDelete subscriptions delete 1703
 
-  Deleting a subscription contract.
+Deleting a subscription contract.
 */
-func (a *Client) SubscriptionDelte(params *SubscriptionDelteParams) (*SubscriptionDelteOK, error) {
+func (a *Client) SubscriptionDelete(params *SubscriptionDeleteParams, opts ...ClientOption) (*SubscriptionDeleteOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewSubscriptionDelteParams()
+		params = NewSubscriptionDeleteParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "subscriptionDelte",
+	op := &runtime.ClientOperation{
+		ID:                 "subscriptionDelete",
 		Method:             "DELETE",
 		PathPattern:        "/subscription/{contractId}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &SubscriptionDelteReader{formats: a.formats},
+		Reader:             &SubscriptionDeleteReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*SubscriptionDelteOK)
+	success, ok := result.(*SubscriptionDeleteOK)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for subscriptionDelte: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	msg := fmt.Sprintf("unexpected success response for subscriptionDelete: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
 /*
-  SubscriptionList subscriptions list
+SubscriptionList subscriptions list 1705
 
-  Inquiring a list of the subscription contracts
+Inquiring a list of the subscription contracts
 */
-func (a *Client) SubscriptionList(params *SubscriptionListParams) (*SubscriptionListOK, error) {
+func (a *Client) SubscriptionList(params *SubscriptionListParams, opts ...ClientOption) (*SubscriptionListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSubscriptionListParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "subscriptionList",
 		Method:             "POST",
 		PathPattern:        "/subscription/_search",
@@ -134,7 +254,12 @@ func (a *Client) SubscriptionList(params *SubscriptionListParams) (*Subscription
 		Reader:             &SubscriptionListReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -149,17 +274,16 @@ func (a *Client) SubscriptionList(params *SubscriptionListParams) (*Subscription
 }
 
 /*
-  SubscriptionUpdate subscriptions update
+SubscriptionUpdate subscriptions update 1702
 
-  Updating a subscription contract.
+Updating a subscription contract.
 */
-func (a *Client) SubscriptionUpdate(params *SubscriptionUpdateParams) (*SubscriptionUpdateOK, error) {
+func (a *Client) SubscriptionUpdate(params *SubscriptionUpdateParams, opts ...ClientOption) (*SubscriptionUpdateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSubscriptionUpdateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "subscriptionUpdate",
 		Method:             "PUT",
 		PathPattern:        "/subscription/{contractId}",
@@ -170,7 +294,12 @@ func (a *Client) SubscriptionUpdate(params *SubscriptionUpdateParams) (*Subscrip
 		Reader:             &SubscriptionUpdateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -185,17 +314,16 @@ func (a *Client) SubscriptionUpdate(params *SubscriptionUpdateParams) (*Subscrip
 }
 
 /*
-  SubscriptionUpgrade subscriptions upgrade
+SubscriptionUpgrade subscriptions upgrade 1706
 
-  Upgrading a subscription contract.
+Upgrading a subscription contract.
 */
-func (a *Client) SubscriptionUpgrade(params *SubscriptionUpgradeParams) (*SubscriptionUpgradeOK, error) {
+func (a *Client) SubscriptionUpgrade(params *SubscriptionUpgradeParams, opts ...ClientOption) (*SubscriptionUpgradeOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSubscriptionUpgradeParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "subscriptionUpgrade",
 		Method:             "PUT",
 		PathPattern:        "/subscription/{contractId}/_upgrade",
@@ -206,7 +334,12 @@ func (a *Client) SubscriptionUpgrade(params *SubscriptionUpgradeParams) (*Subscr
 		Reader:             &SubscriptionUpgradeReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}

@@ -6,6 +6,7 @@ package user_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *UserUpdateLockReader) ReadResponse(response runtime.ClientResponse, con
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[PUT /user/{name}/{context}/_lock] userUpdateLock", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewUserUpdateLockOK() *UserUpdateLockOK {
 	return &UserUpdateLockOK{}
 }
 
-/*UserUpdateLockOK handles this case with default header values.
+/*
+UserUpdateLockOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type UserUpdateLockOK struct {
 	Payload *models.JSONResponseDataBasicUser
 }
 
+// IsSuccess returns true when this user update lock o k response has a 2xx status code
+func (o *UserUpdateLockOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this user update lock o k response has a 3xx status code
+func (o *UserUpdateLockOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this user update lock o k response has a 4xx status code
+func (o *UserUpdateLockOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this user update lock o k response has a 5xx status code
+func (o *UserUpdateLockOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this user update lock o k response a status code equal to that given
+func (o *UserUpdateLockOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the user update lock o k response
+func (o *UserUpdateLockOK) Code() int {
+	return 200
+}
+
 func (o *UserUpdateLockOK) Error() string {
-	return fmt.Sprintf("[PUT /user/{name}/{context}/_lock][%d] userUpdateLockOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /user/{name}/{context}/_lock][%d] userUpdateLockOK %s", 200, payload)
+}
+
+func (o *UserUpdateLockOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /user/{name}/{context}/_lock][%d] userUpdateLockOK %s", 200, payload)
 }
 
 func (o *UserUpdateLockOK) GetPayload() *models.JSONResponseDataBasicUser {

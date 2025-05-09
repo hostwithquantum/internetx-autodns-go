@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model DomainActionConstants
 type DomainActionConstants string
+
+func NewDomainActionConstants(value DomainActionConstants) *DomainActionConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated DomainActionConstants.
+func (m DomainActionConstants) Pointer() *DomainActionConstants {
+	return &m
+}
 
 const (
 
@@ -92,6 +102,9 @@ const (
 	// DomainActionConstantsAUTOUPDATEDNS captures enum value "AUTOUPDATE_DNS"
 	DomainActionConstantsAUTOUPDATEDNS DomainActionConstants = "AUTOUPDATE_DNS"
 
+	// DomainActionConstantsAUTOUPDATEDNSSEC captures enum value "AUTOUPDATE_DNSSEC"
+	DomainActionConstantsAUTOUPDATEDNSSEC DomainActionConstants = "AUTOUPDATE_DNSSEC"
+
 	// DomainActionConstantsOWNERCHANGE captures enum value "OWNERCHANGE"
 	DomainActionConstantsOWNERCHANGE DomainActionConstants = "OWNERCHANGE"
 
@@ -130,6 +143,12 @@ const (
 
 	// DomainActionConstantsDOMAINBUY captures enum value "DOMAIN_BUY"
 	DomainActionConstantsDOMAINBUY DomainActionConstants = "DOMAIN_BUY"
+
+	// DomainActionConstantsCONTACTCREATE captures enum value "CONTACT_CREATE"
+	DomainActionConstantsCONTACTCREATE DomainActionConstants = "CONTACT_CREATE"
+
+	// DomainActionConstantsDELETEEXPIRE captures enum value "DELETE_EXPIRE"
+	DomainActionConstantsDELETEEXPIRE DomainActionConstants = "DELETE_EXPIRE"
 )
 
 // for schema
@@ -137,7 +156,7 @@ var domainActionConstantsEnum []interface{}
 
 func init() {
 	var res []DomainActionConstants
-	if err := json.Unmarshal([]byte(`["CREATE","UPDATE","UPDATE_OWNER_CHANGE","UPDATE_DNSSEC","UPDATE_NAMESERVER","DELETE","TRANSIT","TRANSFER","TRANSFER_INTERN","TRANSFER_INTERN_REGISTRAR_CHANGE","TRANSFER_INTERN_REGISTRAR_CHANGE_RUNTIME_TAKEOVER","IMPORT","MIGRATE","RESTORE","RESTORE_NE","RESTORE_RENEW","RESTORE_ARGP","RENEW","AUTHINFO","AUTHINFO_2","UPDATE_STATUS","REGISTRAR_UPDATE_STATUS","UPDATE_COMMENT","AUTOUPDATE_DNS","OWNERCHANGE","OWNERCHANGE_TRANSFER","OWNERCHANGE_TRANSFER_INTERN","OWNERCHANGE_TRANSFER_INTERN_REGISTRAR_CHANGE","PREACK","WHOIS_REGISTRY_STATUS","DOMAIN_AWAY","TRANSFER_OUT_AUTOACK","DROP","AUTHINFO_CREATE","AUTHINFO_DELETE","AUTOUPDATE_DEFERRED","DOMAIN_BUY"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["CREATE","UPDATE","UPDATE_OWNER_CHANGE","UPDATE_DNSSEC","UPDATE_NAMESERVER","DELETE","TRANSIT","TRANSFER","TRANSFER_INTERN","TRANSFER_INTERN_REGISTRAR_CHANGE","TRANSFER_INTERN_REGISTRAR_CHANGE_RUNTIME_TAKEOVER","IMPORT","MIGRATE","RESTORE","RESTORE_NE","RESTORE_RENEW","RESTORE_ARGP","RENEW","AUTHINFO","AUTHINFO_2","UPDATE_STATUS","REGISTRAR_UPDATE_STATUS","UPDATE_COMMENT","AUTOUPDATE_DNS","AUTOUPDATE_DNSSEC","OWNERCHANGE","OWNERCHANGE_TRANSFER","OWNERCHANGE_TRANSFER_INTERN","OWNERCHANGE_TRANSFER_INTERN_REGISTRAR_CHANGE","PREACK","WHOIS_REGISTRY_STATUS","DOMAIN_AWAY","TRANSFER_OUT_AUTOACK","DROP","AUTHINFO_CREATE","AUTHINFO_DELETE","AUTOUPDATE_DEFERRED","DOMAIN_BUY","CONTACT_CREATE","DELETE_EXPIRE"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -164,5 +183,10 @@ func (m DomainActionConstants) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this domain action constants based on context it is used
+func (m DomainActionConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -16,14 +18,20 @@ import (
 // swagger:model ExtendedValidationExtension
 type ExtendedValidationExtension struct {
 
-	// Additional validation data required for certain Comodo products.
+	// Type of business.
 	BusinessCategory BusinessCategory `json:"businessCategory,omitempty"`
 
-	// The company number
+	// The company number.
 	CompanyNumber string `json:"companyNumber,omitempty"`
 
-	// Country of judicial formation
+	// Country of judicial formation.
 	JoiCountryName string `json:"joiCountryName,omitempty"`
+
+	// Locality or city of judicial formation.
+	JoiLocality string `json:"joiLocality,omitempty"`
+
+	// State or province of judicial formation.
+	JoiStateOrProvince string `json:"joiStateOrProvince,omitempty"`
 }
 
 // Validate validates this extended validation extension
@@ -41,7 +49,6 @@ func (m *ExtendedValidationExtension) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ExtendedValidationExtension) validateBusinessCategory(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.BusinessCategory) { // not required
 		return nil
 	}
@@ -49,6 +56,40 @@ func (m *ExtendedValidationExtension) validateBusinessCategory(formats strfmt.Re
 	if err := m.BusinessCategory.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("businessCategory")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("businessCategory")
+		}
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this extended validation extension based on the context it is used
+func (m *ExtendedValidationExtension) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateBusinessCategory(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ExtendedValidationExtension) contextValidateBusinessCategory(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.BusinessCategory) { // not required
+		return nil
+	}
+
+	if err := m.BusinessCategory.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("businessCategory")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("businessCategory")
 		}
 		return err
 	}

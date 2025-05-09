@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -29,11 +31,12 @@ type SubjectProduct struct {
 	// Count
 	Count float32 `json:"count,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
 	// Used currency of the amount
+	// Example: EUR
 	Currency string `json:"currency,omitempty"`
 
 	// Customer
@@ -57,7 +60,7 @@ type SubjectProduct struct {
 	// The number of the product in the external booking system
 	Number string `json:"number,omitempty"`
 
-	// The owner of the object.
+	// The object owner.
 	Owner *BasicUser `json:"owner,omitempty"`
 
 	// Maturity of the position
@@ -71,24 +74,22 @@ type SubjectProduct struct {
 	Price *ExchangedPrice `json:"price,omitempty"`
 
 	// Name of the product
-	// Required: true
-	Product *Product `json:"product"`
+	Product *Product `json:"product,omitempty"`
 
 	// Internal status of provision
 	Provisioning GenericStatusConstants `json:"provisioning,omitempty"`
 
 	// Booking item
-	// Required: true
-	Subject *Subject `json:"subject"`
+	Subject *Subject `json:"subject,omitempty"`
 
 	// Type of posting item. Charge, credit, etc.
 	Type AccountingDocumentTypeConstants `json:"type,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The updater of the object.
+	// User who performed the last update.
 	Updater *BasicUser `json:"updater,omitempty"`
 
 	// Calculated vat amount
@@ -165,7 +166,6 @@ func (m *SubjectProduct) Validate(formats strfmt.Registry) error {
 }
 
 func (m *SubjectProduct) validateBilling(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Billing) { // not required
 		return nil
 	}
@@ -174,6 +174,8 @@ func (m *SubjectProduct) validateBilling(formats strfmt.Registry) error {
 		if err := m.Billing.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("billing")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("billing")
 			}
 			return err
 		}
@@ -183,7 +185,6 @@ func (m *SubjectProduct) validateBilling(formats strfmt.Registry) error {
 }
 
 func (m *SubjectProduct) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -196,7 +197,6 @@ func (m *SubjectProduct) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *SubjectProduct) validateCustomer(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Customer) { // not required
 		return nil
 	}
@@ -205,6 +205,8 @@ func (m *SubjectProduct) validateCustomer(formats strfmt.Registry) error {
 		if err := m.Customer.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("customer")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("customer")
 			}
 			return err
 		}
@@ -214,7 +216,6 @@ func (m *SubjectProduct) validateCustomer(formats strfmt.Registry) error {
 }
 
 func (m *SubjectProduct) validateOwner(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -223,6 +224,8 @@ func (m *SubjectProduct) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -232,7 +235,6 @@ func (m *SubjectProduct) validateOwner(formats strfmt.Registry) error {
 }
 
 func (m *SubjectProduct) validatePayable(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Payable) { // not required
 		return nil
 	}
@@ -245,7 +247,6 @@ func (m *SubjectProduct) validatePayable(formats strfmt.Registry) error {
 }
 
 func (m *SubjectProduct) validatePeriod(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Period) { // not required
 		return nil
 	}
@@ -254,6 +255,8 @@ func (m *SubjectProduct) validatePeriod(formats strfmt.Registry) error {
 		if err := m.Period.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("period")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("period")
 			}
 			return err
 		}
@@ -263,7 +266,6 @@ func (m *SubjectProduct) validatePeriod(formats strfmt.Registry) error {
 }
 
 func (m *SubjectProduct) validatePrice(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Price) { // not required
 		return nil
 	}
@@ -272,6 +274,8 @@ func (m *SubjectProduct) validatePrice(formats strfmt.Registry) error {
 		if err := m.Price.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("price")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("price")
 			}
 			return err
 		}
@@ -281,15 +285,16 @@ func (m *SubjectProduct) validatePrice(formats strfmt.Registry) error {
 }
 
 func (m *SubjectProduct) validateProduct(formats strfmt.Registry) error {
-
-	if err := validate.Required("product", "body", m.Product); err != nil {
-		return err
+	if swag.IsZero(m.Product) { // not required
+		return nil
 	}
 
 	if m.Product != nil {
 		if err := m.Product.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("product")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("product")
 			}
 			return err
 		}
@@ -299,7 +304,6 @@ func (m *SubjectProduct) validateProduct(formats strfmt.Registry) error {
 }
 
 func (m *SubjectProduct) validateProvisioning(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Provisioning) { // not required
 		return nil
 	}
@@ -307,6 +311,8 @@ func (m *SubjectProduct) validateProvisioning(formats strfmt.Registry) error {
 	if err := m.Provisioning.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("provisioning")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("provisioning")
 		}
 		return err
 	}
@@ -315,15 +321,16 @@ func (m *SubjectProduct) validateProvisioning(formats strfmt.Registry) error {
 }
 
 func (m *SubjectProduct) validateSubject(formats strfmt.Registry) error {
-
-	if err := validate.Required("subject", "body", m.Subject); err != nil {
-		return err
+	if swag.IsZero(m.Subject) { // not required
+		return nil
 	}
 
 	if m.Subject != nil {
 		if err := m.Subject.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("subject")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("subject")
 			}
 			return err
 		}
@@ -333,7 +340,6 @@ func (m *SubjectProduct) validateSubject(formats strfmt.Registry) error {
 }
 
 func (m *SubjectProduct) validateType(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Type) { // not required
 		return nil
 	}
@@ -341,6 +347,8 @@ func (m *SubjectProduct) validateType(formats strfmt.Registry) error {
 	if err := m.Type.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
 		}
 		return err
 	}
@@ -349,7 +357,6 @@ func (m *SubjectProduct) validateType(formats strfmt.Registry) error {
 }
 
 func (m *SubjectProduct) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -362,7 +369,6 @@ func (m *SubjectProduct) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *SubjectProduct) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -371,6 +377,8 @@ func (m *SubjectProduct) validateUpdater(formats strfmt.Registry) error {
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}
@@ -380,7 +388,6 @@ func (m *SubjectProduct) validateUpdater(formats strfmt.Registry) error {
 }
 
 func (m *SubjectProduct) validateView(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.View) { // not required
 		return nil
 	}
@@ -389,6 +396,287 @@ func (m *SubjectProduct) validateView(formats strfmt.Registry) error {
 		if err := m.View.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("view")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("view")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this subject product based on the context it is used
+func (m *SubjectProduct) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateBilling(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateCustomer(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePeriod(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePrice(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateProduct(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateProvisioning(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSubject(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateView(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *SubjectProduct) contextValidateBilling(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Billing != nil {
+
+		if swag.IsZero(m.Billing) { // not required
+			return nil
+		}
+
+		if err := m.Billing.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("billing")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("billing")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SubjectProduct) contextValidateCustomer(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Customer != nil {
+
+		if swag.IsZero(m.Customer) { // not required
+			return nil
+		}
+
+		if err := m.Customer.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("customer")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("customer")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SubjectProduct) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SubjectProduct) contextValidatePeriod(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Period != nil {
+
+		if swag.IsZero(m.Period) { // not required
+			return nil
+		}
+
+		if err := m.Period.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("period")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("period")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SubjectProduct) contextValidatePrice(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Price != nil {
+
+		if swag.IsZero(m.Price) { // not required
+			return nil
+		}
+
+		if err := m.Price.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("price")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("price")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SubjectProduct) contextValidateProduct(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Product != nil {
+
+		if swag.IsZero(m.Product) { // not required
+			return nil
+		}
+
+		if err := m.Product.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("product")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("product")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SubjectProduct) contextValidateProvisioning(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Provisioning) { // not required
+		return nil
+	}
+
+	if err := m.Provisioning.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("provisioning")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("provisioning")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *SubjectProduct) contextValidateSubject(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Subject != nil {
+
+		if swag.IsZero(m.Subject) { // not required
+			return nil
+		}
+
+		if err := m.Subject.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("subject")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("subject")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SubjectProduct) contextValidateType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	if err := m.Type.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *SubjectProduct) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SubjectProduct) contextValidateView(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.View != nil {
+
+		if swag.IsZero(m.View) { // not required
+			return nil
+		}
+
+		if err := m.View.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("view")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("view")
 			}
 			return err
 		}

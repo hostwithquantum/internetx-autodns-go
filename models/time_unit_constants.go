@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model TimeUnitConstants
 type TimeUnitConstants string
+
+func NewTimeUnitConstants(value TimeUnitConstants) *TimeUnitConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated TimeUnitConstants.
+func (m TimeUnitConstants) Pointer() *TimeUnitConstants {
+	return &m
+}
 
 const (
 
@@ -80,5 +90,10 @@ func (m TimeUnitConstants) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this time unit constants based on context it is used
+func (m TimeUnitConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

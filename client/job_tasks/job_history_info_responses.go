@@ -6,6 +6,7 @@ package job_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *JobHistoryInfoReader) ReadResponse(response runtime.ClientResponse, con
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[GET /job/history/{id}] jobHistoryInfo", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewJobHistoryInfoOK() *JobHistoryInfoOK {
 	return &JobHistoryInfoOK{}
 }
 
-/*JobHistoryInfoOK handles this case with default header values.
+/*
+JobHistoryInfoOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type JobHistoryInfoOK struct {
 	Payload *models.JSONResponseDataObjectJob
 }
 
+// IsSuccess returns true when this job history info o k response has a 2xx status code
+func (o *JobHistoryInfoOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this job history info o k response has a 3xx status code
+func (o *JobHistoryInfoOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this job history info o k response has a 4xx status code
+func (o *JobHistoryInfoOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this job history info o k response has a 5xx status code
+func (o *JobHistoryInfoOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this job history info o k response a status code equal to that given
+func (o *JobHistoryInfoOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the job history info o k response
+func (o *JobHistoryInfoOK) Code() int {
+	return 200
+}
+
 func (o *JobHistoryInfoOK) Error() string {
-	return fmt.Sprintf("[GET /job/history/{id}][%d] jobHistoryInfoOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /job/history/{id}][%d] jobHistoryInfoOK %s", 200, payload)
+}
+
+func (o *JobHistoryInfoOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /job/history/{id}][%d] jobHistoryInfoOK %s", 200, payload)
 }
 
 func (o *JobHistoryInfoOK) GetPayload() *models.JSONResponseDataObjectJob {

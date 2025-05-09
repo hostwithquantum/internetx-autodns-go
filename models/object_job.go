@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -29,6 +30,9 @@ type ObjectJob struct {
 
 	// The niccom logs.
 	NiccomLogs []*NiccomLog `json:"niccomLogs"`
+
+	// Additional notices of the order
+	Notices []string `json:"notices"`
 
 	// The object of the job or notify.
 	Object *ResponseObject `json:"object,omitempty"`
@@ -65,7 +69,6 @@ func (m *ObjectJob) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ObjectJob) validateAuthentication(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Authentication) { // not required
 		return nil
 	}
@@ -79,6 +82,8 @@ func (m *ObjectJob) validateAuthentication(formats strfmt.Registry) error {
 			if err := m.Authentication[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("authentication" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("authentication" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -90,7 +95,6 @@ func (m *ObjectJob) validateAuthentication(formats strfmt.Registry) error {
 }
 
 func (m *ObjectJob) validateDcvAuth(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.DcvAuth) { // not required
 		return nil
 	}
@@ -104,6 +108,8 @@ func (m *ObjectJob) validateDcvAuth(formats strfmt.Registry) error {
 			if err := m.DcvAuth[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("dcvAuth" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("dcvAuth" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -115,7 +121,6 @@ func (m *ObjectJob) validateDcvAuth(formats strfmt.Registry) error {
 }
 
 func (m *ObjectJob) validateJob(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Job) { // not required
 		return nil
 	}
@@ -124,6 +129,8 @@ func (m *ObjectJob) validateJob(formats strfmt.Registry) error {
 		if err := m.Job.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("job")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("job")
 			}
 			return err
 		}
@@ -133,7 +140,6 @@ func (m *ObjectJob) validateJob(formats strfmt.Registry) error {
 }
 
 func (m *ObjectJob) validateNiccomLogs(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.NiccomLogs) { // not required
 		return nil
 	}
@@ -147,6 +153,8 @@ func (m *ObjectJob) validateNiccomLogs(formats strfmt.Registry) error {
 			if err := m.NiccomLogs[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("niccomLogs" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("niccomLogs" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -158,7 +166,6 @@ func (m *ObjectJob) validateNiccomLogs(formats strfmt.Registry) error {
 }
 
 func (m *ObjectJob) validateObject(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Object) { // not required
 		return nil
 	}
@@ -167,6 +174,155 @@ func (m *ObjectJob) validateObject(formats strfmt.Registry) error {
 		if err := m.Object.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("object")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("object")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this object job based on the context it is used
+func (m *ObjectJob) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateAuthentication(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateDcvAuth(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateJob(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateNiccomLogs(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateObject(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ObjectJob) contextValidateAuthentication(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Authentication); i++ {
+
+		if m.Authentication[i] != nil {
+
+			if swag.IsZero(m.Authentication[i]) { // not required
+				return nil
+			}
+
+			if err := m.Authentication[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("authentication" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("authentication" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ObjectJob) contextValidateDcvAuth(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.DcvAuth); i++ {
+
+		if m.DcvAuth[i] != nil {
+
+			if swag.IsZero(m.DcvAuth[i]) { // not required
+				return nil
+			}
+
+			if err := m.DcvAuth[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("dcvAuth" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("dcvAuth" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ObjectJob) contextValidateJob(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Job != nil {
+
+		if swag.IsZero(m.Job) { // not required
+			return nil
+		}
+
+		if err := m.Job.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("job")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("job")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ObjectJob) contextValidateNiccomLogs(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.NiccomLogs); i++ {
+
+		if m.NiccomLogs[i] != nil {
+
+			if swag.IsZero(m.NiccomLogs[i]) { // not required
+				return nil
+			}
+
+			if err := m.NiccomLogs[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("niccomLogs" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("niccomLogs" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ObjectJob) contextValidateObject(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Object != nil {
+
+		if swag.IsZero(m.Object) { // not required
+			return nil
+		}
+
+		if err := m.Object.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("object")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("object")
 			}
 			return err
 		}

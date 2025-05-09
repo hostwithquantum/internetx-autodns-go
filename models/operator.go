@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model Operator
 type Operator string
+
+func NewOperator(value Operator) *Operator {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated Operator.
+func (m Operator) Pointer() *Operator {
+	return &m
+}
 
 const (
 
@@ -53,8 +63,23 @@ const (
 	// OperatorISNOTNULL captures enum value "IS_NOT_NULL"
 	OperatorISNOTNULL Operator = "IS_NOT_NULL"
 
+	// OperatorNOTLESS captures enum value "NOT_LESS"
+	OperatorNOTLESS Operator = "NOT_LESS"
+
+	// OperatorNOTGREATER captures enum value "NOT_GREATER"
+	OperatorNOTGREATER Operator = "NOT_GREATER"
+
+	// OperatorNOTLESSEQUAL captures enum value "NOT_LESS_EQUAL"
+	OperatorNOTLESSEQUAL Operator = "NOT_LESS_EQUAL"
+
+	// OperatorNOTGREATEREQUAL captures enum value "NOT_GREATER_EQUAL"
+	OperatorNOTGREATEREQUAL Operator = "NOT_GREATER_EQUAL"
+
 	// OperatorIN captures enum value "IN"
 	OperatorIN Operator = "IN"
+
+	// OperatorNOTIN captures enum value "NOT_IN"
+	OperatorNOTIN Operator = "NOT_IN"
 )
 
 // for schema
@@ -62,7 +87,7 @@ var operatorEnum []interface{}
 
 func init() {
 	var res []Operator
-	if err := json.Unmarshal([]byte(`["EQUAL","NOT_EQUAL","NOT_LIKE","LIKE","ILIKE","GREATER","GREATER_EQUAL","LESS","LESS_EQUAL","IS_NULL","IS_NOT_NULL","IN"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["EQUAL","NOT_EQUAL","NOT_LIKE","LIKE","ILIKE","GREATER","GREATER_EQUAL","LESS","LESS_EQUAL","IS_NULL","IS_NOT_NULL","NOT_LESS","NOT_GREATER","NOT_LESS_EQUAL","NOT_GREATER_EQUAL","IN","NOT_IN"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -89,5 +114,10 @@ func (m Operator) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this operator based on context it is used
+func (m Operator) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

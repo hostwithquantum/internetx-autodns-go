@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -15,12 +17,17 @@ import (
 // swagger:model ContactBankExtensions
 type ContactBankExtensions struct {
 
-	// The FTLD token.
+	// Registration token that you receive by email after successful verification by the registry.
 	FtldToken string `json:"ftldToken,omitempty"`
 }
 
 // Validate validates this contact bank extensions
 func (m *ContactBankExtensions) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this contact bank extensions based on context it is used
+func (m *ContactBankExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

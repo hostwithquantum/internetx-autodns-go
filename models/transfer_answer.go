@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model TransferAnswer
 type TransferAnswer string
+
+func NewTransferAnswer(value TransferAnswer) *TransferAnswer {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated TransferAnswer.
+func (m TransferAnswer) Pointer() *TransferAnswer {
+	return &m
+}
 
 const (
 
@@ -59,5 +69,10 @@ func (m TransferAnswer) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this transfer answer based on context it is used
+func (m TransferAnswer) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

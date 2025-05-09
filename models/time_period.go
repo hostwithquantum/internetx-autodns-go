@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -16,10 +18,12 @@ import (
 // swagger:model TimePeriod
 type TimePeriod struct {
 
-	// The period value
+	// Number of time units
+	// Example: 1
 	Period int64 `json:"period,omitempty"`
 
-	// The unit of the period
+	// Time unit
+	// Example: YEAR
 	Unit TimeUnitConstants `json:"unit,omitempty"`
 }
 
@@ -38,7 +42,6 @@ func (m *TimePeriod) Validate(formats strfmt.Registry) error {
 }
 
 func (m *TimePeriod) validateUnit(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Unit) { // not required
 		return nil
 	}
@@ -46,6 +49,40 @@ func (m *TimePeriod) validateUnit(formats strfmt.Registry) error {
 	if err := m.Unit.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("unit")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("unit")
+		}
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this time period based on the context it is used
+func (m *TimePeriod) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateUnit(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *TimePeriod) contextValidateUnit(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Unit) { // not required
+		return nil
+	}
+
+	if err := m.Unit.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("unit")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("unit")
 		}
 		return err
 	}

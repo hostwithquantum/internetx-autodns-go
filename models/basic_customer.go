@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -22,10 +23,13 @@ type BasicCustomer struct {
 	// The account of the customer in case of prepayment or if the customer has a credit limit
 	Account *Account `json:"account,omitempty"`
 
+	// Flag indication if the customer is active
+	Active bool `json:"active,omitempty"`
+
+	// Used by the update to task to attache new price lists
+	AddPriceListEntities []*CustomerPriceList `json:"addPriceListEntities"`
+
 	// The address of the customer
-	// Required: true
-	// Max Items: 2147483647
-	// Min Items: 1
 	AddressLines []string `json:"addressLines"`
 
 	// Flag indication if the customer is autodelete
@@ -46,71 +50,78 @@ type BasicCustomer struct {
 	// The period after the post payment account will be cleared to zero
 	ClearAccount ClearAccountPeriod `json:"clearAccount,omitempty"`
 
-	// client
-	// Required: true
-	// Max Length: 2147483647
-	// Min Length: 1
-	Client *string `json:"client"`
+	// Account Label.
+	Client string `json:"client,omitempty"`
+
+	// The comments of the customer
+	Comments []*Comment `json:"comments"`
+
+	// The contacts of the customer
+	Contacts []*BasicCustomerContact `json:"contacts"`
 
 	// The customers contracts.
 	Contracts []*CustomerContract `json:"contracts"`
 
 	// The country of the customer.
-	// Required: true
-	Country *string `json:"country"`
+	Country string `json:"country,omitempty"`
+
+	// The discount of the customer.
+	Discount int32 `json:"discount,omitempty"`
+
+	// The discount of the certificate.
+	DiscountCertificate int32 `json:"discountCertificate,omitempty"`
+
+	// The discount of the ngtld.
+	DiscountNgtld int32 `json:"discountNgtld,omitempty"`
 
 	// The end of a promo discount.
 	// Format: date-time
 	DiscountValid strfmt.DateTime `json:"discountValid,omitempty"`
 
 	// The email addresses.
-	// Max Items: 2147483647
-	// Min Items: 1
 	Emails []string `json:"emails"`
 
-	// The fax number.
-	Fax Phone `json:"fax,omitempty"`
+	// The fax number of the customer
+	// Example: +49-123-12345
+	Fax string `json:"fax,omitempty"`
 
 	// The first name.
-	// Max Length: 35
-	// Min Length: 0
-	Fname *string `json:"fname,omitempty"`
+	Fname string `json:"fname,omitempty"`
 
 	// The gender of the person.
 	Gender GenderConstants `json:"gender,omitempty"`
 
-	// group
+	// Customer group, first 5 numbers of the account number. e.g.
+	// Example: 13516
 	Group int64 `json:"group,omitempty"`
 
 	// The language to use for the invoice.
 	InvoiceLanguage string `json:"invoiceLanguage,omitempty"`
 
 	// The last name.
-	// Max Length: 35
-	// Min Length: 0
-	Lname *string `json:"lname,omitempty"`
+	Lname string `json:"lname,omitempty"`
 
 	// The name of the customer.
-	// Required: true
-	// Max Length: 255
-	// Min Length: 0
-	Name *string `json:"name"`
+	Name string `json:"name,omitempty"`
 
-	// number
-	// Required: true
-	Number *int64 `json:"number"`
+	// Customer number
+	Number int64 `json:"number,omitempty"`
 
 	// The name of the organization.
-	// Max Length: 70
-	// Min Length: 0
-	Organization *string `json:"organization,omitempty"`
+	Organization string `json:"organization,omitempty"`
+
+	// The second line for the name of the organization.
+	Organization2 string `json:"organization2,omitempty"`
 
 	// The payment typ of the customer.
-	// Required: true
-	Payment PaymentConstants `json:"payment"`
+	Payment PaymentConstants `json:"payment,omitempty"`
 
 	// The payment currency of the customer.
-	PaymentCurrency Currency `json:"paymentCurrency,omitempty"`
+	// Example: EUR
+	PaymentCurrency string `json:"paymentCurrency,omitempty"`
+
+	// The payment currency exchange fee of the customer.
+	PaymentCurrencyExchangeFee float32 `json:"paymentCurrencyExchangeFee,omitempty"`
 
 	// The payment mode of the customer.
 	PaymentMode string `json:"paymentMode,omitempty"`
@@ -118,8 +129,24 @@ type BasicCustomer struct {
 	// The postal code of the city.
 	Pcode string `json:"pcode,omitempty"`
 
+	// Flag indication if the customer data are pending
+	Pending bool `json:"pending,omitempty"`
+
+	// the current customer
+	Persistent *BasicCustomer `json:"persistent,omitempty"`
+
 	// The phone number of the customer
+	// Example: +49-123-12345
 	Phone string `json:"phone,omitempty"`
+
+	// The pin number.
+	Pin string `json:"pin,omitempty"`
+
+	// The attached price lists
+	PriceListEntities []*CustomerPriceList `json:"priceListEntities"`
+
+	// Used by the update to task to detache price lists
+	RemPriceListEntities []*CustomerPriceList `json:"remPriceListEntities"`
 
 	// The customers sepa mandate if payament was post with sepa.
 	Sepa *SEPAMandate `json:"sepa,omitempty"`
@@ -127,14 +154,26 @@ type BasicCustomer struct {
 	// The state of the customer.
 	State string `json:"state,omitempty"`
 
+	// The customers tags.
+	Tags []*CustomerTag `json:"tags"`
+
 	// The taxable flag of the customer.
 	Taxable bool `json:"taxable,omitempty"`
+
+	// technical Customer.
+	Technical *TechnicalCustomer `json:"technical,omitempty"`
 
 	// The title of the customer
 	Title string `json:"title,omitempty"`
 
+	// The type of the customer.
+	Type CustomerType `json:"type,omitempty"`
+
 	// The value added tax number.
 	VatNumber string `json:"vatNumber,omitempty"`
+
+	// Shows the pending email verifications
+	Verifications []*BasicCustomerSpoolVerification `json:"verifications"`
 }
 
 // Validate validates this basic customer
@@ -145,7 +184,7 @@ func (m *BasicCustomer) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateAddressLines(formats); err != nil {
+	if err := m.validateAddPriceListEntities(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -161,7 +200,11 @@ func (m *BasicCustomer) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateClient(formats); err != nil {
+	if err := m.validateComments(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateContacts(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -169,19 +212,7 @@ func (m *BasicCustomer) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateCountry(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateDiscountValid(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateEmails(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateFname(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -189,27 +220,39 @@ func (m *BasicCustomer) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateLname(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateName(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateNumber(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateOrganization(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validatePayment(formats); err != nil {
 		res = append(res, err)
 	}
 
+	if err := m.validatePersistent(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePriceListEntities(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRemPriceListEntities(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateSepa(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTags(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTechnical(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateVerifications(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -220,7 +263,6 @@ func (m *BasicCustomer) Validate(formats strfmt.Registry) error {
 }
 
 func (m *BasicCustomer) validateAccount(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Account) { // not required
 		return nil
 	}
@@ -229,6 +271,8 @@ func (m *BasicCustomer) validateAccount(formats strfmt.Registry) error {
 		if err := m.Account.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("account")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("account")
 			}
 			return err
 		}
@@ -237,27 +281,33 @@ func (m *BasicCustomer) validateAccount(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *BasicCustomer) validateAddressLines(formats strfmt.Registry) error {
-
-	if err := validate.Required("addressLines", "body", m.AddressLines); err != nil {
-		return err
+func (m *BasicCustomer) validateAddPriceListEntities(formats strfmt.Registry) error {
+	if swag.IsZero(m.AddPriceListEntities) { // not required
+		return nil
 	}
 
-	iAddressLinesSize := int64(len(m.AddressLines))
+	for i := 0; i < len(m.AddPriceListEntities); i++ {
+		if swag.IsZero(m.AddPriceListEntities[i]) { // not required
+			continue
+		}
 
-	if err := validate.MinItems("addressLines", "body", iAddressLinesSize, 1); err != nil {
-		return err
-	}
+		if m.AddPriceListEntities[i] != nil {
+			if err := m.AddPriceListEntities[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("addPriceListEntities" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("addPriceListEntities" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
 
-	if err := validate.MaxItems("addressLines", "body", iAddressLinesSize, 2147483647); err != nil {
-		return err
 	}
 
 	return nil
 }
 
 func (m *BasicCustomer) validateBillingUsers(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.BillingUsers) { // not required
 		return nil
 	}
@@ -271,6 +321,8 @@ func (m *BasicCustomer) validateBillingUsers(formats strfmt.Registry) error {
 			if err := m.BillingUsers[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("billingUsers" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("billingUsers" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -282,7 +334,6 @@ func (m *BasicCustomer) validateBillingUsers(formats strfmt.Registry) error {
 }
 
 func (m *BasicCustomer) validateCard(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Card) { // not required
 		return nil
 	}
@@ -291,6 +342,8 @@ func (m *BasicCustomer) validateCard(formats strfmt.Registry) error {
 		if err := m.Card.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("card")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("card")
 			}
 			return err
 		}
@@ -300,7 +353,6 @@ func (m *BasicCustomer) validateCard(formats strfmt.Registry) error {
 }
 
 func (m *BasicCustomer) validateClearAccount(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ClearAccount) { // not required
 		return nil
 	}
@@ -308,6 +360,8 @@ func (m *BasicCustomer) validateClearAccount(formats strfmt.Registry) error {
 	if err := m.ClearAccount.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("clearAccount")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("clearAccount")
 		}
 		return err
 	}
@@ -315,25 +369,59 @@ func (m *BasicCustomer) validateClearAccount(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *BasicCustomer) validateClient(formats strfmt.Registry) error {
-
-	if err := validate.Required("client", "body", m.Client); err != nil {
-		return err
+func (m *BasicCustomer) validateComments(formats strfmt.Registry) error {
+	if swag.IsZero(m.Comments) { // not required
+		return nil
 	}
 
-	if err := validate.MinLength("client", "body", string(*m.Client), 1); err != nil {
-		return err
+	for i := 0; i < len(m.Comments); i++ {
+		if swag.IsZero(m.Comments[i]) { // not required
+			continue
+		}
+
+		if m.Comments[i] != nil {
+			if err := m.Comments[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("comments" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("comments" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
-	if err := validate.MaxLength("client", "body", string(*m.Client), 2147483647); err != nil {
-		return err
+	return nil
+}
+
+func (m *BasicCustomer) validateContacts(formats strfmt.Registry) error {
+	if swag.IsZero(m.Contacts) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Contacts); i++ {
+		if swag.IsZero(m.Contacts[i]) { // not required
+			continue
+		}
+
+		if m.Contacts[i] != nil {
+			if err := m.Contacts[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("contacts" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("contacts" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil
 }
 
 func (m *BasicCustomer) validateContracts(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Contracts) { // not required
 		return nil
 	}
@@ -347,6 +435,8 @@ func (m *BasicCustomer) validateContracts(formats strfmt.Registry) error {
 			if err := m.Contracts[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("contracts" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("contracts" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -357,17 +447,7 @@ func (m *BasicCustomer) validateContracts(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *BasicCustomer) validateCountry(formats strfmt.Registry) error {
-
-	if err := validate.Required("country", "body", m.Country); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *BasicCustomer) validateDiscountValid(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.DiscountValid) { // not required
 		return nil
 	}
@@ -379,44 +459,7 @@ func (m *BasicCustomer) validateDiscountValid(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *BasicCustomer) validateEmails(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Emails) { // not required
-		return nil
-	}
-
-	iEmailsSize := int64(len(m.Emails))
-
-	if err := validate.MinItems("emails", "body", iEmailsSize, 1); err != nil {
-		return err
-	}
-
-	if err := validate.MaxItems("emails", "body", iEmailsSize, 2147483647); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *BasicCustomer) validateFname(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Fname) { // not required
-		return nil
-	}
-
-	if err := validate.MinLength("fname", "body", string(*m.Fname), 0); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("fname", "body", string(*m.Fname), 35); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *BasicCustomer) validateGender(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Gender) { // not required
 		return nil
 	}
@@ -424,67 +467,9 @@ func (m *BasicCustomer) validateGender(formats strfmt.Registry) error {
 	if err := m.Gender.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("gender")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("gender")
 		}
-		return err
-	}
-
-	return nil
-}
-
-func (m *BasicCustomer) validateLname(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Lname) { // not required
-		return nil
-	}
-
-	if err := validate.MinLength("lname", "body", string(*m.Lname), 0); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("lname", "body", string(*m.Lname), 35); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *BasicCustomer) validateName(formats strfmt.Registry) error {
-
-	if err := validate.Required("name", "body", m.Name); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("name", "body", string(*m.Name), 0); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("name", "body", string(*m.Name), 255); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *BasicCustomer) validateNumber(formats strfmt.Registry) error {
-
-	if err := validate.Required("number", "body", m.Number); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *BasicCustomer) validateOrganization(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Organization) { // not required
-		return nil
-	}
-
-	if err := validate.MinLength("organization", "body", string(*m.Organization), 0); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("organization", "body", string(*m.Organization), 70); err != nil {
 		return err
 	}
 
@@ -492,10 +477,15 @@ func (m *BasicCustomer) validateOrganization(formats strfmt.Registry) error {
 }
 
 func (m *BasicCustomer) validatePayment(formats strfmt.Registry) error {
+	if swag.IsZero(m.Payment) { // not required
+		return nil
+	}
 
 	if err := m.Payment.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("payment")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("payment")
 		}
 		return err
 	}
@@ -503,8 +493,78 @@ func (m *BasicCustomer) validatePayment(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *BasicCustomer) validateSepa(formats strfmt.Registry) error {
+func (m *BasicCustomer) validatePersistent(formats strfmt.Registry) error {
+	if swag.IsZero(m.Persistent) { // not required
+		return nil
+	}
 
+	if m.Persistent != nil {
+		if err := m.Persistent.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("persistent")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("persistent")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) validatePriceListEntities(formats strfmt.Registry) error {
+	if swag.IsZero(m.PriceListEntities) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.PriceListEntities); i++ {
+		if swag.IsZero(m.PriceListEntities[i]) { // not required
+			continue
+		}
+
+		if m.PriceListEntities[i] != nil {
+			if err := m.PriceListEntities[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("priceListEntities" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("priceListEntities" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) validateRemPriceListEntities(formats strfmt.Registry) error {
+	if swag.IsZero(m.RemPriceListEntities) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.RemPriceListEntities); i++ {
+		if swag.IsZero(m.RemPriceListEntities[i]) { // not required
+			continue
+		}
+
+		if m.RemPriceListEntities[i] != nil {
+			if err := m.RemPriceListEntities[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("remPriceListEntities" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("remPriceListEntities" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) validateSepa(formats strfmt.Registry) error {
 	if swag.IsZero(m.Sepa) { // not required
 		return nil
 	}
@@ -513,9 +573,583 @@ func (m *BasicCustomer) validateSepa(formats strfmt.Registry) error {
 		if err := m.Sepa.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("sepa")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("sepa")
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) validateTags(formats strfmt.Registry) error {
+	if swag.IsZero(m.Tags) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Tags); i++ {
+		if swag.IsZero(m.Tags[i]) { // not required
+			continue
+		}
+
+		if m.Tags[i] != nil {
+			if err := m.Tags[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("tags" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) validateTechnical(formats strfmt.Registry) error {
+	if swag.IsZero(m.Technical) { // not required
+		return nil
+	}
+
+	if m.Technical != nil {
+		if err := m.Technical.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("technical")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("technical")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) validateType(formats strfmt.Registry) error {
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	if err := m.Type.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) validateVerifications(formats strfmt.Registry) error {
+	if swag.IsZero(m.Verifications) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Verifications); i++ {
+		if swag.IsZero(m.Verifications[i]) { // not required
+			continue
+		}
+
+		if m.Verifications[i] != nil {
+			if err := m.Verifications[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("verifications" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("verifications" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this basic customer based on the context it is used
+func (m *BasicCustomer) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateAccount(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateAddPriceListEntities(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateBillingUsers(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateCard(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateClearAccount(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateComments(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateContacts(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateContracts(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateGender(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePayment(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePersistent(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePriceListEntities(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRemPriceListEntities(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSepa(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTags(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTechnical(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateVerifications(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *BasicCustomer) contextValidateAccount(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Account != nil {
+
+		if swag.IsZero(m.Account) { // not required
+			return nil
+		}
+
+		if err := m.Account.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("account")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("account")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) contextValidateAddPriceListEntities(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.AddPriceListEntities); i++ {
+
+		if m.AddPriceListEntities[i] != nil {
+
+			if swag.IsZero(m.AddPriceListEntities[i]) { // not required
+				return nil
+			}
+
+			if err := m.AddPriceListEntities[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("addPriceListEntities" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("addPriceListEntities" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) contextValidateBillingUsers(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.BillingUsers); i++ {
+
+		if m.BillingUsers[i] != nil {
+
+			if swag.IsZero(m.BillingUsers[i]) { // not required
+				return nil
+			}
+
+			if err := m.BillingUsers[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("billingUsers" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("billingUsers" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) contextValidateCard(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Card != nil {
+
+		if swag.IsZero(m.Card) { // not required
+			return nil
+		}
+
+		if err := m.Card.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("card")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("card")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) contextValidateClearAccount(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ClearAccount) { // not required
+		return nil
+	}
+
+	if err := m.ClearAccount.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("clearAccount")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("clearAccount")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) contextValidateComments(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Comments); i++ {
+
+		if m.Comments[i] != nil {
+
+			if swag.IsZero(m.Comments[i]) { // not required
+				return nil
+			}
+
+			if err := m.Comments[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("comments" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("comments" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) contextValidateContacts(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Contacts); i++ {
+
+		if m.Contacts[i] != nil {
+
+			if swag.IsZero(m.Contacts[i]) { // not required
+				return nil
+			}
+
+			if err := m.Contacts[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("contacts" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("contacts" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) contextValidateContracts(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Contracts); i++ {
+
+		if m.Contracts[i] != nil {
+
+			if swag.IsZero(m.Contracts[i]) { // not required
+				return nil
+			}
+
+			if err := m.Contracts[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("contracts" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("contracts" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) contextValidateGender(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Gender) { // not required
+		return nil
+	}
+
+	if err := m.Gender.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("gender")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("gender")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) contextValidatePayment(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Payment) { // not required
+		return nil
+	}
+
+	if err := m.Payment.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("payment")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("payment")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) contextValidatePersistent(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Persistent != nil {
+
+		if swag.IsZero(m.Persistent) { // not required
+			return nil
+		}
+
+		if err := m.Persistent.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("persistent")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("persistent")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) contextValidatePriceListEntities(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.PriceListEntities); i++ {
+
+		if m.PriceListEntities[i] != nil {
+
+			if swag.IsZero(m.PriceListEntities[i]) { // not required
+				return nil
+			}
+
+			if err := m.PriceListEntities[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("priceListEntities" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("priceListEntities" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) contextValidateRemPriceListEntities(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.RemPriceListEntities); i++ {
+
+		if m.RemPriceListEntities[i] != nil {
+
+			if swag.IsZero(m.RemPriceListEntities[i]) { // not required
+				return nil
+			}
+
+			if err := m.RemPriceListEntities[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("remPriceListEntities" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("remPriceListEntities" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) contextValidateSepa(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Sepa != nil {
+
+		if swag.IsZero(m.Sepa) { // not required
+			return nil
+		}
+
+		if err := m.Sepa.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("sepa")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("sepa")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) contextValidateTags(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Tags); i++ {
+
+		if m.Tags[i] != nil {
+
+			if swag.IsZero(m.Tags[i]) { // not required
+				return nil
+			}
+
+			if err := m.Tags[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("tags" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) contextValidateTechnical(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Technical != nil {
+
+		if swag.IsZero(m.Technical) { // not required
+			return nil
+		}
+
+		if err := m.Technical.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("technical")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("technical")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) contextValidateType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	if err := m.Type.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *BasicCustomer) contextValidateVerifications(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Verifications); i++ {
+
+		if m.Verifications[i] != nil {
+
+			if swag.IsZero(m.Verifications[i]) { // not required
+				return nil
+			}
+
+			if err := m.Verifications[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("verifications" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("verifications" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil

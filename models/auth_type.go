@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -18,6 +19,15 @@ import (
 // swagger:model AuthType
 type AuthType string
 
+func NewAuthType(value AuthType) *AuthType {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated AuthType.
+func (m AuthType) Pointer() *AuthType {
+	return &m
+}
+
 const (
 
 	// AuthTypePASSWORD captures enum value "PASSWORD"
@@ -28,6 +38,9 @@ const (
 
 	// AuthTypeALIAS captures enum value "ALIAS"
 	AuthTypeALIAS AuthType = "ALIAS"
+
+	// AuthTypeINVITE captures enum value "INVITE"
+	AuthTypeINVITE AuthType = "INVITE"
 )
 
 // for schema
@@ -35,7 +48,7 @@ var authTypeEnum []interface{}
 
 func init() {
 	var res []AuthType
-	if err := json.Unmarshal([]byte(`["PASSWORD","PASSWORD_TOKEN","ALIAS"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["PASSWORD","PASSWORD_TOKEN","ALIAS","INVITE"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -62,5 +75,10 @@ func (m AuthType) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this auth type based on context it is used
+func (m AuthType) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

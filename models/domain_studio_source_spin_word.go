@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,9 @@ import (
 //
 // swagger:model DomainStudioSourceSpinWord
 type DomainStudioSourceSpinWord struct {
+
+	// The generated domains of this source
+	Domains []string `json:"domains"`
 
 	// Maximum fetched suggested domains
 	Max int32 `json:"max,omitempty"`
@@ -58,7 +62,6 @@ func (m *DomainStudioSourceSpinWord) Validate(formats strfmt.Registry) error {
 }
 
 func (m *DomainStudioSourceSpinWord) validateServices(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Services) { // not required
 		return nil
 	}
@@ -68,6 +71,44 @@ func (m *DomainStudioSourceSpinWord) validateServices(formats strfmt.Registry) e
 		if err := m.Services[i].Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("services" + "." + strconv.Itoa(i))
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("services" + "." + strconv.Itoa(i))
+			}
+			return err
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this domain studio source spin word based on the context it is used
+func (m *DomainStudioSourceSpinWord) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateServices(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *DomainStudioSourceSpinWord) contextValidateServices(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Services); i++ {
+
+		if swag.IsZero(m.Services[i]) { // not required
+			return nil
+		}
+
+		if err := m.Services[i].ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("services" + "." + strconv.Itoa(i))
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("services" + "." + strconv.Itoa(i))
 			}
 			return err
 		}

@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model GenericStatusConstants
 type GenericStatusConstants string
+
+func NewGenericStatusConstants(value GenericStatusConstants) *GenericStatusConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated GenericStatusConstants.
+func (m GenericStatusConstants) Pointer() *GenericStatusConstants {
+	return &m
+}
 
 const (
 
@@ -65,5 +75,10 @@ func (m GenericStatusConstants) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this generic status constants based on context it is used
+func (m GenericStatusConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

@@ -9,12 +9,38 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime"
+	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new mail proxy tasks API client.
 func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new mail proxy tasks API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new mail proxy tasks API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -25,33 +51,41 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
 // ClientService is the interface for Client methods
 type ClientService interface {
-	MailProxyCreate(params *MailProxyCreateParams) (*MailProxyCreateOK, error)
+	MailProxyCreate(params *MailProxyCreateParams, opts ...ClientOption) (*MailProxyCreateOK, error)
 
-	MailProxyDelete(params *MailProxyDeleteParams) (*MailProxyDeleteOK, error)
+	MailProxyCreates(params *MailProxyCreatesParams, opts ...ClientOption) (*MailProxyCreatesOK, error)
 
-	MailProxyInfo(params *MailProxyInfoParams) (*MailProxyInfoOK, error)
+	MailProxyDelete(params *MailProxyDeleteParams, opts ...ClientOption) (*MailProxyDeleteOK, error)
 
-	MailProxyList(params *MailProxyListParams) (*MailProxyListOK, error)
+	MailProxyDeletes(params *MailProxyDeletesParams, opts ...ClientOption) (*MailProxyDeletesOK, error)
 
-	MailProxyUpdate(params *MailProxyUpdateParams) (*MailProxyUpdateOK, error)
+	MailProxyInfo(params *MailProxyInfoParams, opts ...ClientOption) (*MailProxyInfoOK, error)
+
+	MailProxyList(params *MailProxyListParams, opts ...ClientOption) (*MailProxyListOK, error)
+
+	MailProxyPatches(params *MailProxyPatchesParams, opts ...ClientOption) (*MailProxyPatchesOK, error)
+
+	MailProxyUpdate(params *MailProxyUpdateParams, opts ...ClientOption) (*MailProxyUpdateOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
 
 /*
-  MailProxyCreate mails proxy create
+MailProxyCreate mails proxy create 0511
 
-  Creating a new mail proxy.
+Creating a new mailproxy.
 */
-func (a *Client) MailProxyCreate(params *MailProxyCreateParams) (*MailProxyCreateOK, error) {
+func (a *Client) MailProxyCreate(params *MailProxyCreateParams, opts ...ClientOption) (*MailProxyCreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewMailProxyCreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "mailProxyCreate",
 		Method:             "POST",
 		PathPattern:        "/mailProxy",
@@ -62,7 +96,12 @@ func (a *Client) MailProxyCreate(params *MailProxyCreateParams) (*MailProxyCreat
 		Reader:             &MailProxyCreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -77,17 +116,56 @@ func (a *Client) MailProxyCreate(params *MailProxyCreateParams) (*MailProxyCreat
 }
 
 /*
-  MailProxyDelete mails proxy delete
+MailProxyCreates mails proxy create bulk 0511
 
-  Deleting an existing mail proxy.
+Creating several new MailProxys with one request.
 */
-func (a *Client) MailProxyDelete(params *MailProxyDeleteParams) (*MailProxyDeleteOK, error) {
+func (a *Client) MailProxyCreates(params *MailProxyCreatesParams, opts ...ClientOption) (*MailProxyCreatesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewMailProxyCreatesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "mailProxyCreates",
+		Method:             "POST",
+		PathPattern:        "/bulk/mailProxy",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &MailProxyCreatesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*MailProxyCreatesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for mailProxyCreates: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+MailProxyDelete mails proxy delete 0513
+
+Deleting an existing mail proxy.
+*/
+func (a *Client) MailProxyDelete(params *MailProxyDeleteParams, opts ...ClientOption) (*MailProxyDeleteOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewMailProxyDeleteParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "mailProxyDelete",
 		Method:             "DELETE",
 		PathPattern:        "/mailProxy/{domain}",
@@ -98,7 +176,12 @@ func (a *Client) MailProxyDelete(params *MailProxyDeleteParams) (*MailProxyDelet
 		Reader:             &MailProxyDeleteReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -113,17 +196,56 @@ func (a *Client) MailProxyDelete(params *MailProxyDeleteParams) (*MailProxyDelet
 }
 
 /*
-  MailProxyInfo mails proxy info
+MailProxyDeletes mails proxy delete bulk 0513
 
-  Inquiring the data for the specified mail proxy.
+Deleting several new MailProxys with one request.
 */
-func (a *Client) MailProxyInfo(params *MailProxyInfoParams) (*MailProxyInfoOK, error) {
+func (a *Client) MailProxyDeletes(params *MailProxyDeletesParams, opts ...ClientOption) (*MailProxyDeletesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewMailProxyDeletesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "mailProxyDeletes",
+		Method:             "DELETE",
+		PathPattern:        "/bulk/mailProxy",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &MailProxyDeletesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*MailProxyDeletesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for mailProxyDeletes: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+MailProxyInfo mails proxy info 0514
+
+Inquiring the data for the specified mail proxy.
+*/
+func (a *Client) MailProxyInfo(params *MailProxyInfoParams, opts ...ClientOption) (*MailProxyInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewMailProxyInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "mailProxyInfo",
 		Method:             "GET",
 		PathPattern:        "/mailProxy/{domain}",
@@ -134,7 +256,12 @@ func (a *Client) MailProxyInfo(params *MailProxyInfoParams) (*MailProxyInfoOK, e
 		Reader:             &MailProxyInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -149,17 +276,16 @@ func (a *Client) MailProxyInfo(params *MailProxyInfoParams) (*MailProxyInfoOK, e
 }
 
 /*
-  MailProxyList mails proxy list
+MailProxyList mails proxy list 0514
 
-  Inquiring a list of mail proxies with certain details. The following keys can be used for filtering, ordering and inquiring additional data via query parameter: target, admin, protection, created, updated.
+Inquiring a list of MailProxies with certain details. The following keys can be used for filtering, ordering and inquiring additional data via query parameter: target, admin, protection, created, updated.
 */
-func (a *Client) MailProxyList(params *MailProxyListParams) (*MailProxyListOK, error) {
+func (a *Client) MailProxyList(params *MailProxyListParams, opts ...ClientOption) (*MailProxyListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewMailProxyListParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "mailProxyList",
 		Method:             "POST",
 		PathPattern:        "/mailProxy/_search",
@@ -170,7 +296,12 @@ func (a *Client) MailProxyList(params *MailProxyListParams) (*MailProxyListOK, e
 		Reader:             &MailProxyListReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -185,17 +316,56 @@ func (a *Client) MailProxyList(params *MailProxyListParams) (*MailProxyListOK, e
 }
 
 /*
-  MailProxyUpdate mails proxy update
+MailProxyPatches mails proxy update bulk 0512
 
-  Updating an existing mail proxy.
+Updating several new MailProxys with one request.
 */
-func (a *Client) MailProxyUpdate(params *MailProxyUpdateParams) (*MailProxyUpdateOK, error) {
+func (a *Client) MailProxyPatches(params *MailProxyPatchesParams, opts ...ClientOption) (*MailProxyPatchesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewMailProxyPatchesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "mailProxyPatches",
+		Method:             "PATCH",
+		PathPattern:        "/bulk/mailProxy",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &MailProxyPatchesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*MailProxyPatchesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for mailProxyPatches: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+MailProxyUpdate mails proxy update 0512
+
+Updating an existing mailproxy.
+*/
+func (a *Client) MailProxyUpdate(params *MailProxyUpdateParams, opts ...ClientOption) (*MailProxyUpdateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewMailProxyUpdateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "mailProxyUpdate",
 		Method:             "PUT",
 		PathPattern:        "/mailProxy/{domain}",
@@ -206,7 +376,12 @@ func (a *Client) MailProxyUpdate(params *MailProxyUpdateParams) (*MailProxyUpdat
 		Reader:             &MailProxyUpdateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}

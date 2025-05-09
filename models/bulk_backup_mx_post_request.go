@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -44,7 +45,6 @@ func (m *BulkBackupMxPostRequest) Validate(formats strfmt.Registry) error {
 }
 
 func (m *BulkBackupMxPostRequest) validateObjects(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Objects) { // not required
 		return nil
 	}
@@ -58,6 +58,8 @@ func (m *BulkBackupMxPostRequest) validateObjects(formats strfmt.Registry) error
 			if err := m.Objects[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("objects" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("objects" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -69,7 +71,6 @@ func (m *BulkBackupMxPostRequest) validateObjects(formats strfmt.Registry) error
 }
 
 func (m *BulkBackupMxPostRequest) validateTemplate(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Template) { // not required
 		return nil
 	}
@@ -78,6 +79,72 @@ func (m *BulkBackupMxPostRequest) validateTemplate(formats strfmt.Registry) erro
 		if err := m.Template.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("template")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("template")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this bulk backup mx post request based on the context it is used
+func (m *BulkBackupMxPostRequest) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateObjects(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTemplate(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *BulkBackupMxPostRequest) contextValidateObjects(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Objects); i++ {
+
+		if m.Objects[i] != nil {
+
+			if swag.IsZero(m.Objects[i]) { // not required
+				return nil
+			}
+
+			if err := m.Objects[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("objects" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("objects" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *BulkBackupMxPostRequest) contextValidateTemplate(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Template != nil {
+
+		if swag.IsZero(m.Template) { // not required
+			return nil
+		}
+
+		if err := m.Template.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("template")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("template")
 			}
 			return err
 		}

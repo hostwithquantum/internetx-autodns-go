@@ -6,6 +6,7 @@ package zone_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *ZoneCopyReader) ReadResponse(response runtime.ClientResponse, consumer 
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[PUT /zone/{name}/{systemNameServer}/_copy] zoneCopy", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewZoneCopyOK() *ZoneCopyOK {
 	return &ZoneCopyOK{}
 }
 
-/*ZoneCopyOK handles this case with default header values.
+/*
+ZoneCopyOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type ZoneCopyOK struct {
 	Payload *models.JSONResponseDataZone
 }
 
+// IsSuccess returns true when this zone copy o k response has a 2xx status code
+func (o *ZoneCopyOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this zone copy o k response has a 3xx status code
+func (o *ZoneCopyOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this zone copy o k response has a 4xx status code
+func (o *ZoneCopyOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this zone copy o k response has a 5xx status code
+func (o *ZoneCopyOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this zone copy o k response a status code equal to that given
+func (o *ZoneCopyOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the zone copy o k response
+func (o *ZoneCopyOK) Code() int {
+	return 200
+}
+
 func (o *ZoneCopyOK) Error() string {
-	return fmt.Sprintf("[PUT /zone/{name}/{systemNameServer}/_copy][%d] zoneCopyOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /zone/{name}/{systemNameServer}/_copy][%d] zoneCopyOK %s", 200, payload)
+}
+
+func (o *ZoneCopyOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /zone/{name}/{systemNameServer}/_copy][%d] zoneCopyOK %s", 200, payload)
 }
 
 func (o *ZoneCopyOK) GetPayload() *models.JSONResponseDataZone {

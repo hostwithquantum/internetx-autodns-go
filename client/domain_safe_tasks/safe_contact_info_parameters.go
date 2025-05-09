@@ -17,56 +17,74 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// NewSafeContactInfoParams creates a new SafeContactInfoParams object
-// with the default values initialized.
+// NewSafeContactInfoParams creates a new SafeContactInfoParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewSafeContactInfoParams() *SafeContactInfoParams {
-	var ()
 	return &SafeContactInfoParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewSafeContactInfoParamsWithTimeout creates a new SafeContactInfoParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewSafeContactInfoParamsWithTimeout(timeout time.Duration) *SafeContactInfoParams {
-	var ()
 	return &SafeContactInfoParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewSafeContactInfoParamsWithContext creates a new SafeContactInfoParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewSafeContactInfoParamsWithContext(ctx context.Context) *SafeContactInfoParams {
-	var ()
 	return &SafeContactInfoParams{
-
 		Context: ctx,
 	}
 }
 
 // NewSafeContactInfoParamsWithHTTPClient creates a new SafeContactInfoParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewSafeContactInfoParamsWithHTTPClient(client *http.Client) *SafeContactInfoParams {
-	var ()
 	return &SafeContactInfoParams{
 		HTTPClient: client,
 	}
 }
 
-/*SafeContactInfoParams contains all the parameters to send to the API endpoint
-for the safe contact info operation typically these are written to a http.Request
+/*
+SafeContactInfoParams contains all the parameters to send to the API endpoint
+
+	for the safe contact info operation.
+
+	Typically these are written to a http.Request.
 */
 type SafeContactInfoParams struct {
 
-	/*ID*/
+	// ID.
+	//
+	// Format: int32
 	ID int32
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the safe contact info params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *SafeContactInfoParams) WithDefaults() *SafeContactInfoParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the safe contact info params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *SafeContactInfoParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the safe contact info params

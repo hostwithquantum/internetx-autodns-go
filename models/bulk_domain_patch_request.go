@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -58,7 +59,6 @@ func (m *BulkDomainPatchRequest) Validate(formats strfmt.Registry) error {
 }
 
 func (m *BulkDomainPatchRequest) validateModifiers(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Modifiers) { // not required
 		return nil
 	}
@@ -72,6 +72,8 @@ func (m *BulkDomainPatchRequest) validateModifiers(formats strfmt.Registry) erro
 			if err := m.Modifiers[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("modifiers" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("modifiers" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -83,7 +85,6 @@ func (m *BulkDomainPatchRequest) validateModifiers(formats strfmt.Registry) erro
 }
 
 func (m *BulkDomainPatchRequest) validateObjects(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Objects) { // not required
 		return nil
 	}
@@ -97,6 +98,8 @@ func (m *BulkDomainPatchRequest) validateObjects(formats strfmt.Registry) error 
 			if err := m.Objects[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("objects" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("objects" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -108,7 +111,6 @@ func (m *BulkDomainPatchRequest) validateObjects(formats strfmt.Registry) error 
 }
 
 func (m *BulkDomainPatchRequest) validateQuery(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Query) { // not required
 		return nil
 	}
@@ -117,6 +119,8 @@ func (m *BulkDomainPatchRequest) validateQuery(formats strfmt.Registry) error {
 		if err := m.Query.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("query")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("query")
 			}
 			return err
 		}
@@ -126,7 +130,6 @@ func (m *BulkDomainPatchRequest) validateQuery(formats strfmt.Registry) error {
 }
 
 func (m *BulkDomainPatchRequest) validateTemplate(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Template) { // not required
 		return nil
 	}
@@ -135,6 +138,126 @@ func (m *BulkDomainPatchRequest) validateTemplate(formats strfmt.Registry) error
 		if err := m.Template.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("template")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("template")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this bulk domain patch request based on the context it is used
+func (m *BulkDomainPatchRequest) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateModifiers(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateObjects(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateQuery(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTemplate(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *BulkDomainPatchRequest) contextValidateModifiers(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Modifiers); i++ {
+
+		if m.Modifiers[i] != nil {
+
+			if swag.IsZero(m.Modifiers[i]) { // not required
+				return nil
+			}
+
+			if err := m.Modifiers[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("modifiers" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("modifiers" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *BulkDomainPatchRequest) contextValidateObjects(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Objects); i++ {
+
+		if m.Objects[i] != nil {
+
+			if swag.IsZero(m.Objects[i]) { // not required
+				return nil
+			}
+
+			if err := m.Objects[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("objects" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("objects" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *BulkDomainPatchRequest) contextValidateQuery(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Query != nil {
+
+		if swag.IsZero(m.Query) { // not required
+			return nil
+		}
+
+		if err := m.Query.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("query")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("query")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *BulkDomainPatchRequest) contextValidateTemplate(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Template != nil {
+
+		if swag.IsZero(m.Template) { // not required
+			return nil
+		}
+
+		if err := m.Template.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("template")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("template")
 			}
 			return err
 		}

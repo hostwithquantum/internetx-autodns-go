@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,46 +19,53 @@ import (
 // swagger:model PreregConfig
 type PreregConfig struct {
 
-	// autoupdate Dns
+	// Domain status update after registration.
+	// false = Domain will not be updated after registration
+	// true = Domain will be updated after registration
+	// Default value = false
 	AutoupdateDNS bool `json:"autoupdateDns,omitempty"`
 
-	// category
+	// TLD category
+	// example:
+	//
+	// Business
+	// Travel
+	// Generic
 	Category string `json:"category,omitempty"`
 
-	// confirmation end
+	// Date on which preregistrations for the specified TLD can no longer be confirmed.
 	// Format: date-time
 	ConfirmationEnd strfmt.DateTime `json:"confirmationEnd,omitempty"`
 
-	// confirmation start
+	// Date on which preregistrations for the specified TLD can be confirmed.
 	// Format: date-time
 	ConfirmationStart strfmt.DateTime `json:"confirmationStart,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// message type
+	// Type of notification in the course of the preregistration process.
 	MessageType MessageTypeConstants `json:"messageType,omitempty"`
 
-	// min period
+	// Default minimum registration term for a domain.
 	MinPeriod *TimePeriod `json:"minPeriod,omitempty"`
 
-	// name
-	// Required: true
-	Name *string `json:"name"`
+	// Name of the TLD and/or SubTLD.
+	Name string `json:"name,omitempty"`
 
-	// nic member label
+	// Registrar identifier at the registries.
 	NicMemberLabel string `json:"nicMemberLabel,omitempty"`
 
-	// niccom end
+	// Date on which preregistrations for the specified TLD will no longer be processed.
 	// Format: date-time
 	NiccomEnd strfmt.DateTime `json:"niccomEnd,omitempty"`
 
-	// niccom start
+	// Date on which the preregistrations for the specified TLD are processed.
 	// Format: date-time
 	NiccomStart strfmt.DateTime `json:"niccomStart,omitempty"`
 
-	// period end
+	// Date on which the preregistration period begins
 	// Format: date-time
 	PeriodEnd strfmt.DateTime `json:"periodEnd,omitempty"`
 
@@ -64,16 +73,16 @@ type PreregConfig struct {
 	// Format: date-time
 	PeriodStart strfmt.DateTime `json:"periodStart,omitempty"`
 
-	// phase
+	// Name of the phase
 	Phase string `json:"phase,omitempty"`
 
-	// registration type
+	// Which type of registration has been used, FCFS, APPLICATION or OTHER.
 	RegistrationType RegistrationTypeConstants `json:"registrationType,omitempty"`
 
-	// ui fields
+	// Comma-separated list for fields to be displayed in the frontend UI.
 	UIFields string `json:"uiFields,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 }
@@ -99,10 +108,6 @@ func (m *PreregConfig) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateMinPeriod(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -137,7 +142,6 @@ func (m *PreregConfig) Validate(formats strfmt.Registry) error {
 }
 
 func (m *PreregConfig) validateConfirmationEnd(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ConfirmationEnd) { // not required
 		return nil
 	}
@@ -150,7 +154,6 @@ func (m *PreregConfig) validateConfirmationEnd(formats strfmt.Registry) error {
 }
 
 func (m *PreregConfig) validateConfirmationStart(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ConfirmationStart) { // not required
 		return nil
 	}
@@ -163,7 +166,6 @@ func (m *PreregConfig) validateConfirmationStart(formats strfmt.Registry) error 
 }
 
 func (m *PreregConfig) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -176,7 +178,6 @@ func (m *PreregConfig) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *PreregConfig) validateMessageType(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.MessageType) { // not required
 		return nil
 	}
@@ -184,6 +185,8 @@ func (m *PreregConfig) validateMessageType(formats strfmt.Registry) error {
 	if err := m.MessageType.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("messageType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("messageType")
 		}
 		return err
 	}
@@ -192,7 +195,6 @@ func (m *PreregConfig) validateMessageType(formats strfmt.Registry) error {
 }
 
 func (m *PreregConfig) validateMinPeriod(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.MinPeriod) { // not required
 		return nil
 	}
@@ -201,6 +203,8 @@ func (m *PreregConfig) validateMinPeriod(formats strfmt.Registry) error {
 		if err := m.MinPeriod.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("minPeriod")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("minPeriod")
 			}
 			return err
 		}
@@ -209,17 +213,7 @@ func (m *PreregConfig) validateMinPeriod(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *PreregConfig) validateName(formats strfmt.Registry) error {
-
-	if err := validate.Required("name", "body", m.Name); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *PreregConfig) validateNiccomEnd(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.NiccomEnd) { // not required
 		return nil
 	}
@@ -232,7 +226,6 @@ func (m *PreregConfig) validateNiccomEnd(formats strfmt.Registry) error {
 }
 
 func (m *PreregConfig) validateNiccomStart(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.NiccomStart) { // not required
 		return nil
 	}
@@ -245,7 +238,6 @@ func (m *PreregConfig) validateNiccomStart(formats strfmt.Registry) error {
 }
 
 func (m *PreregConfig) validatePeriodEnd(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.PeriodEnd) { // not required
 		return nil
 	}
@@ -258,7 +250,6 @@ func (m *PreregConfig) validatePeriodEnd(formats strfmt.Registry) error {
 }
 
 func (m *PreregConfig) validatePeriodStart(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.PeriodStart) { // not required
 		return nil
 	}
@@ -271,7 +262,6 @@ func (m *PreregConfig) validatePeriodStart(formats strfmt.Registry) error {
 }
 
 func (m *PreregConfig) validateRegistrationType(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.RegistrationType) { // not required
 		return nil
 	}
@@ -279,6 +269,8 @@ func (m *PreregConfig) validateRegistrationType(formats strfmt.Registry) error {
 	if err := m.RegistrationType.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("registrationType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("registrationType")
 		}
 		return err
 	}
@@ -287,12 +279,90 @@ func (m *PreregConfig) validateRegistrationType(formats strfmt.Registry) error {
 }
 
 func (m *PreregConfig) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
 
 	if err := validate.FormatOf("updated", "body", "date-time", m.Updated.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this prereg config based on the context it is used
+func (m *PreregConfig) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateMessageType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateMinPeriod(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRegistrationType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PreregConfig) contextValidateMessageType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.MessageType) { // not required
+		return nil
+	}
+
+	if err := m.MessageType.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("messageType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("messageType")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *PreregConfig) contextValidateMinPeriod(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.MinPeriod != nil {
+
+		if swag.IsZero(m.MinPeriod) { // not required
+			return nil
+		}
+
+		if err := m.MinPeriod.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("minPeriod")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("minPeriod")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *PreregConfig) contextValidateRegistrationType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.RegistrationType) { // not required
+		return nil
+	}
+
+	if err := m.RegistrationType.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("registrationType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("registrationType")
+		}
 		return err
 	}
 

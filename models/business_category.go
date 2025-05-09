@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model BusinessCategory
 type BusinessCategory string
+
+func NewBusinessCategory(value BusinessCategory) *BusinessCategory {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated BusinessCategory.
+func (m BusinessCategory) Pointer() *BusinessCategory {
+	return &m
+}
 
 const (
 
@@ -62,5 +72,10 @@ func (m BusinessCategory) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this business category based on context it is used
+func (m BusinessCategory) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

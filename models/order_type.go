@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model OrderType
 type OrderType string
+
+func NewOrderType(value OrderType) *OrderType {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated OrderType.
+func (m OrderType) Pointer() *OrderType {
+	return &m
+}
 
 const (
 
@@ -59,5 +69,10 @@ func (m OrderType) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this order type based on context it is used
+func (m OrderType) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

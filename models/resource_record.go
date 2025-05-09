@@ -6,10 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"github.com/go-openapi/errors"
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // ResourceRecord resource record
@@ -17,64 +17,35 @@ import (
 // swagger:model ResourceRecord
 type ResourceRecord struct {
 
-	// The name of the record.
-	// Required: true
-	Name *string `json:"name"`
+	// The name of the resource record.
+	Name string `json:"name,omitempty"`
 
-	// Preference of the record, need for some record types e.g. MX
-	// Maximum: 65535
+	// The resource record priority which may be needed by certain record types such as MX.
 	Pref int32 `json:"pref,omitempty"`
 
 	// The bind notation of the record. Only used by the zone stream task!
 	Raw string `json:"raw,omitempty"`
 
-	// TTL of the record (Optionally if not set then Default SOA TTL is used)
+	// Time-to-live value in seconds. Will be set to the default SOA value if not explicitly set.
 	TTL int64 `json:"ttl,omitempty"`
 
-	// The type of the record, e.g. A
+	// Resource record type
+	// Further information about resource records:
+	// https://de.wikipedia.org/wiki/Resource_Record
+	// Example: A, MX, CNAME, TXT, SRV, PTR, AAAA, NS, CAA, PROCEED_MUC, TLSA, NAPTR, SSHFP, LOC, RP, HINFO, PROCEED, ALIAS, DNSKEY, NSEC, DS, HTTPS, SVCB
 	Type string `json:"type,omitempty"`
 
-	// The value of the record.
+	// The value of the resource record.
 	Value string `json:"value,omitempty"`
 }
 
 // Validate validates this resource record
 func (m *ResourceRecord) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateName(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validatePref(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 
-func (m *ResourceRecord) validateName(formats strfmt.Registry) error {
-
-	if err := validate.Required("name", "body", m.Name); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *ResourceRecord) validatePref(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Pref) { // not required
-		return nil
-	}
-
-	if err := validate.MaximumInt("pref", "body", int64(m.Pref), 65535, false); err != nil {
-		return err
-	}
-
+// ContextValidate validates this resource record based on context it is used
+func (m *ResourceRecord) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

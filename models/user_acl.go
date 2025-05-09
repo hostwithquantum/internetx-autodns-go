@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -26,22 +27,28 @@ type UserACL struct {
 	// Children to add to the exception list
 	ChildrenAdd []*BasicUser `json:"childrenAdd"`
 
-	// The children lock
+	// Should all the subordinate users be locked.
+	// false = Locked for all sub users
+	// true = Release for all sub users
+	// Default value = true
+	// For XML, 0 (false) and 1 (true) can also be used.
 	ChildrenLocked bool `json:"childrenLocked,omitempty"`
 
 	// Children to remove from the exception list
 	ChildrenRem []*BasicUser `json:"childrenRem"`
 
-	// The current active lock for the user
+	// The current effective rights.
 	Effective bool `json:"effective,omitempty"`
 
-	// The function code to restrict
+	// The function code to be restricted
 	FunctionCode string `json:"functionCode,omitempty"`
 
-	// The human readable restriction mode
+	// Describes the restriction as a result of the authorisation check. The object defines the different types of restrictions.
 	Restriction ACLRestriction `json:"restriction,omitempty"`
 
-	// The user lock
+	// Should the ACL be locked or unlocked for this user. Valid values are: false, true
+	// For XML, 0 (false) and 1 (true) may also be used.
+	// Default value is true
 	UserLocked bool `json:"userLocked,omitempty"`
 }
 
@@ -72,7 +79,6 @@ func (m *UserACL) Validate(formats strfmt.Registry) error {
 }
 
 func (m *UserACL) validateChildren(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Children) { // not required
 		return nil
 	}
@@ -90,6 +96,8 @@ func (m *UserACL) validateChildren(formats strfmt.Registry) error {
 			if err := m.Children[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("children" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("children" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -101,7 +109,6 @@ func (m *UserACL) validateChildren(formats strfmt.Registry) error {
 }
 
 func (m *UserACL) validateChildrenAdd(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ChildrenAdd) { // not required
 		return nil
 	}
@@ -115,6 +122,8 @@ func (m *UserACL) validateChildrenAdd(formats strfmt.Registry) error {
 			if err := m.ChildrenAdd[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("childrenAdd" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("childrenAdd" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -126,7 +135,6 @@ func (m *UserACL) validateChildrenAdd(formats strfmt.Registry) error {
 }
 
 func (m *UserACL) validateChildrenRem(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ChildrenRem) { // not required
 		return nil
 	}
@@ -140,6 +148,8 @@ func (m *UserACL) validateChildrenRem(formats strfmt.Registry) error {
 			if err := m.ChildrenRem[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("childrenRem" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("childrenRem" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -151,7 +161,6 @@ func (m *UserACL) validateChildrenRem(formats strfmt.Registry) error {
 }
 
 func (m *UserACL) validateRestriction(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Restriction) { // not required
 		return nil
 	}
@@ -159,6 +168,127 @@ func (m *UserACL) validateRestriction(formats strfmt.Registry) error {
 	if err := m.Restriction.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("restriction")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("restriction")
+		}
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this user Acl based on the context it is used
+func (m *UserACL) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateChildren(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateChildrenAdd(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateChildrenRem(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRestriction(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *UserACL) contextValidateChildren(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Children); i++ {
+
+		if m.Children[i] != nil {
+
+			if swag.IsZero(m.Children[i]) { // not required
+				return nil
+			}
+
+			if err := m.Children[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("children" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("children" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *UserACL) contextValidateChildrenAdd(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.ChildrenAdd); i++ {
+
+		if m.ChildrenAdd[i] != nil {
+
+			if swag.IsZero(m.ChildrenAdd[i]) { // not required
+				return nil
+			}
+
+			if err := m.ChildrenAdd[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("childrenAdd" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("childrenAdd" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *UserACL) contextValidateChildrenRem(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.ChildrenRem); i++ {
+
+		if m.ChildrenRem[i] != nil {
+
+			if swag.IsZero(m.ChildrenRem[i]) { // not required
+				return nil
+			}
+
+			if err := m.ChildrenRem[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("childrenRem" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("childrenRem" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *UserACL) contextValidateRestriction(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Restriction) { // not required
+		return nil
+	}
+
+	if err := m.Restriction.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("restriction")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("restriction")
 		}
 		return err
 	}

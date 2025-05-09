@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,37 +19,41 @@ import (
 // swagger:model Account
 type Account struct {
 
-	// The date of the acccount creation
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
 	// The credit limit of the account.
 	CreditLimit float64 `json:"creditLimit,omitempty"`
 
-	// The currency of the account
+	// Currency in which the account is held.
+	// Example: EUR
 	Currency string `json:"currency,omitempty"`
 
-	// The real account balance
+	// The current account balance
 	CurrentAccountBalance float64 `json:"currentAccountBalance,omitempty"`
 
-	// The customer itself
-	// Required: true
-	Customer *GenericCustomer `json:"customer"`
+	// The customer object.
+	Customer *GenericCustomer `json:"customer,omitempty"`
 
-	// The minimum running total amount if a notification should be send
+	// The minimum account balance at which a notification should be sent.
 	MinRunningTotalNotification float64 `json:"minRunningTotalNotification,omitempty"`
 
-	// The recipient of the notification limit email
+	// Email address for notification. A notification is sent when the minimum account balance has been reached (minRunningTotalNotification).
 	MinRunningTotalNotificationEmail string `json:"minRunningTotalNotificationEmail,omitempty"`
 
-	// The current total, the amount of all finished and unfinished transactions
+	// Flag indication if the reserved
+	// Read Only: true
+	Reserved float64 `json:"reserved,omitempty"`
+
+	// The current total, the amount of all finished and unfinished transactions.
 	RunningTotal float64 `json:"runningTotal,omitempty"`
 
-	// The date of the las update.
+	// The date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The selected exchange for the account
+	// The selected exchange for the account.
 	View *CurrencyRate `json:"view,omitempty"`
 }
 
@@ -78,7 +84,6 @@ func (m *Account) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Account) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -91,15 +96,16 @@ func (m *Account) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *Account) validateCustomer(formats strfmt.Registry) error {
-
-	if err := validate.Required("customer", "body", m.Customer); err != nil {
-		return err
+	if swag.IsZero(m.Customer) { // not required
+		return nil
 	}
 
 	if m.Customer != nil {
 		if err := m.Customer.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("customer")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("customer")
 			}
 			return err
 		}
@@ -109,7 +115,6 @@ func (m *Account) validateCustomer(formats strfmt.Registry) error {
 }
 
 func (m *Account) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -122,7 +127,6 @@ func (m *Account) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *Account) validateView(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.View) { // not required
 		return nil
 	}
@@ -131,6 +135,81 @@ func (m *Account) validateView(formats strfmt.Registry) error {
 		if err := m.View.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("view")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("view")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this account based on the context it is used
+func (m *Account) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateCustomer(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateReserved(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateView(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Account) contextValidateCustomer(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Customer != nil {
+
+		if swag.IsZero(m.Customer) { // not required
+			return nil
+		}
+
+		if err := m.Customer.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("customer")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("customer")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Account) contextValidateReserved(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := validate.ReadOnly(ctx, "reserved", "body", float64(m.Reserved)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Account) contextValidateView(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.View != nil {
+
+		if swag.IsZero(m.View) { // not required
+			return nil
+		}
+
+		if err := m.View.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("view")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("view")
 			}
 			return err
 		}

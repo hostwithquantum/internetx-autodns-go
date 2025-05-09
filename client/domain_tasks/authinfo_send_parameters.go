@@ -19,83 +19,124 @@ import (
 	"github.com/hostwithquantum/internetx-autodns-go/models"
 )
 
-// NewAuthinfoSendParams creates a new AuthinfoSendParams object
-// with the default values initialized.
+// NewAuthinfoSendParams creates a new AuthinfoSendParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewAuthinfoSendParams() *AuthinfoSendParams {
-	var ()
 	return &AuthinfoSendParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewAuthinfoSendParamsWithTimeout creates a new AuthinfoSendParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewAuthinfoSendParamsWithTimeout(timeout time.Duration) *AuthinfoSendParams {
-	var ()
 	return &AuthinfoSendParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewAuthinfoSendParamsWithContext creates a new AuthinfoSendParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewAuthinfoSendParamsWithContext(ctx context.Context) *AuthinfoSendParams {
-	var ()
 	return &AuthinfoSendParams{
-
 		Context: ctx,
 	}
 }
 
 // NewAuthinfoSendParamsWithHTTPClient creates a new AuthinfoSendParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewAuthinfoSendParamsWithHTTPClient(client *http.Client) *AuthinfoSendParams {
-	var ()
 	return &AuthinfoSendParams{
 		HTTPClient: client,
 	}
 }
 
-/*AuthinfoSendParams contains all the parameters to send to the API endpoint
-for the authinfo send operation typically these are written to a http.Request
+/*
+AuthinfoSendParams contains all the parameters to send to the API endpoint
+
+	for the authinfo send operation.
+
+	Typically these are written to a http.Request.
 */
 type AuthinfoSendParams struct {
 
-	/*XDomainrobotBulkLimit*/
-	XDomainrobotBulkLimit *int32
-	/*XDomainrobotContext*/
-	XDomainrobotContext *int32
-	/*XDomainrobotDemo*/
-	XDomainrobotDemo *bool
-	/*XDomainrobotDomainSafePin*/
-	XDomainrobotDomainSafePin *string
-	/*XDomainrobotDomainSafeTan*/
-	XDomainrobotDomainSafeTan *string
-	/*XDomainrobotDomainSafeTransaction*/
-	XDomainrobotDomainSafeTransaction *string
-	/*XDomainrobotDomainSafeTransactionExpire*/
-	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
-	/*XDomainrobotOwnerContext*/
-	XDomainrobotOwnerContext *int32
-	/*XDomainrobotOwnerUser*/
-	XDomainrobotOwnerUser *string
-	/*XDomainrobotSessionID*/
-	XDomainrobotSessionID *string
-	/*XDomainrobotWS*/
-	XDomainrobotWS *string
-	/*Body
-	  domain
+	// XDomainrobot2FAToken.
+	//
+	// Format: int32
+	XDomainrobot2FAToken *int32
 
+	// XDomainrobotBulkLimit.
+	//
+	// Format: int32
+	XDomainrobotBulkLimit *int32
+
+	// XDomainrobotContext.
+	//
+	// Format: int32
+	XDomainrobotContext *int32
+
+	// XDomainrobotDemo.
+	XDomainrobotDemo *bool
+
+	// XDomainrobotDomainSafePin.
+	XDomainrobotDomainSafePin *string
+
+	// XDomainrobotDomainSafeTan.
+	XDomainrobotDomainSafeTan *string
+
+	// XDomainrobotDomainSafeTransaction.
+	XDomainrobotDomainSafeTransaction *string
+
+	// XDomainrobotDomainSafeTransactionExpire.
+	//
+	// Format: date-time
+	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
+
+	// XDomainrobotOwnerContext.
+	//
+	// Format: int32
+	XDomainrobotOwnerContext *int32
+
+	// XDomainrobotOwnerUser.
+	XDomainrobotOwnerUser *string
+
+	// XDomainrobotSessionID.
+	XDomainrobotSessionID *string
+
+	// XDomainrobotWS.
+	XDomainrobotWS *string
+
+	/* Body.
+
+	   domain
 	*/
 	Body *models.Domain
-	/*Name*/
+
+	// Name.
 	Name string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the authinfo send params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *AuthinfoSendParams) WithDefaults() *AuthinfoSendParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the authinfo send params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *AuthinfoSendParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the authinfo send params
@@ -129,6 +170,17 @@ func (o *AuthinfoSendParams) WithHTTPClient(client *http.Client) *AuthinfoSendPa
 // SetHTTPClient adds the HTTPClient to the authinfo send params
 func (o *AuthinfoSendParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithXDomainrobot2FAToken adds the xDomainrobot2FAToken to the authinfo send params
+func (o *AuthinfoSendParams) WithXDomainrobot2FAToken(xDomainrobot2FAToken *int32) *AuthinfoSendParams {
+	o.SetXDomainrobot2FAToken(xDomainrobot2FAToken)
+	return o
+}
+
+// SetXDomainrobot2FAToken adds the xDomainrobot2FAToken to the authinfo send params
+func (o *AuthinfoSendParams) SetXDomainrobot2FAToken(xDomainrobot2FAToken *int32) {
+	o.XDomainrobot2FAToken = xDomainrobot2FAToken
 }
 
 // WithXDomainrobotBulkLimit adds the xDomainrobotBulkLimit to the authinfo send params
@@ -282,13 +334,20 @@ func (o *AuthinfoSendParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 	}
 	var res []error
 
+	if o.XDomainrobot2FAToken != nil {
+
+		// header param X-Domainrobot-2FA-Token
+		if err := r.SetHeaderParam("X-Domainrobot-2FA-Token", swag.FormatInt32(*o.XDomainrobot2FAToken)); err != nil {
+			return err
+		}
+	}
+
 	if o.XDomainrobotBulkLimit != nil {
 
 		// header param X-Domainrobot-Bulk-Limit
 		if err := r.SetHeaderParam("X-Domainrobot-Bulk-Limit", swag.FormatInt32(*o.XDomainrobotBulkLimit)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotContext != nil {
@@ -297,7 +356,6 @@ func (o *AuthinfoSendParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if err := r.SetHeaderParam("X-Domainrobot-Context", swag.FormatInt32(*o.XDomainrobotContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDemo != nil {
@@ -306,7 +364,6 @@ func (o *AuthinfoSendParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if err := r.SetHeaderParam("X-Domainrobot-Demo", swag.FormatBool(*o.XDomainrobotDemo)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafePin != nil {
@@ -315,7 +372,6 @@ func (o *AuthinfoSendParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Pin", *o.XDomainrobotDomainSafePin); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTan != nil {
@@ -324,7 +380,6 @@ func (o *AuthinfoSendParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Tan", *o.XDomainrobotDomainSafeTan); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransaction != nil {
@@ -333,7 +388,6 @@ func (o *AuthinfoSendParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction", *o.XDomainrobotDomainSafeTransaction); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransactionExpire != nil {
@@ -342,7 +396,6 @@ func (o *AuthinfoSendParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction-Expire", o.XDomainrobotDomainSafeTransactionExpire.String()); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerContext != nil {
@@ -351,7 +404,6 @@ func (o *AuthinfoSendParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-Context", swag.FormatInt32(*o.XDomainrobotOwnerContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerUser != nil {
@@ -360,7 +412,6 @@ func (o *AuthinfoSendParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-User", *o.XDomainrobotOwnerUser); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotSessionID != nil {
@@ -369,7 +420,6 @@ func (o *AuthinfoSendParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if err := r.SetHeaderParam("X-Domainrobot-SessionId", *o.XDomainrobotSessionID); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotWS != nil {
@@ -378,9 +428,7 @@ func (o *AuthinfoSendParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if err := r.SetHeaderParam("X-Domainrobot-WS", *o.XDomainrobotWS); err != nil {
 			return err
 		}
-
 	}
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

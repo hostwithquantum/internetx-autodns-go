@@ -6,6 +6,7 @@ package customer_account_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *ContextHostCreateReader) ReadResponse(response runtime.ClientResponse, 
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[POST /account] contextHostCreate", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewContextHostCreateOK() *ContextHostCreateOK {
 	return &ContextHostCreateOK{}
 }
 
-/*ContextHostCreateOK handles this case with default header values.
+/*
+ContextHostCreateOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type ContextHostCreateOK struct {
 	Payload *models.JSONResponseDataContextHost
 }
 
+// IsSuccess returns true when this context host create o k response has a 2xx status code
+func (o *ContextHostCreateOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this context host create o k response has a 3xx status code
+func (o *ContextHostCreateOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this context host create o k response has a 4xx status code
+func (o *ContextHostCreateOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this context host create o k response has a 5xx status code
+func (o *ContextHostCreateOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this context host create o k response a status code equal to that given
+func (o *ContextHostCreateOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the context host create o k response
+func (o *ContextHostCreateOK) Code() int {
+	return 200
+}
+
 func (o *ContextHostCreateOK) Error() string {
-	return fmt.Sprintf("[POST /account][%d] contextHostCreateOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /account][%d] contextHostCreateOK %s", 200, payload)
+}
+
+func (o *ContextHostCreateOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /account][%d] contextHostCreateOK %s", 200, payload)
 }
 
 func (o *ContextHostCreateOK) GetPayload() *models.JSONResponseDataContextHost {

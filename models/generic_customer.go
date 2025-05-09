@@ -6,10 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"github.com/go-openapi/errors"
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // GenericCustomer generic customer
@@ -17,61 +17,24 @@ import (
 // swagger:model GenericCustomer
 type GenericCustomer struct {
 
-	// client
-	// Required: true
-	// Max Length: 2147483647
-	// Min Length: 1
-	Client *string `json:"client"`
+	// Account Label.
+	Client string `json:"client,omitempty"`
 
-	// group
+	// Customer group, first 5 numbers of the account number. e.g.
+	// Example: 13516
 	Group int64 `json:"group,omitempty"`
 
-	// number
-	// Required: true
-	Number *int64 `json:"number"`
+	// Customer number
+	Number int64 `json:"number,omitempty"`
 }
 
 // Validate validates this generic customer
 func (m *GenericCustomer) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateClient(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateNumber(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 
-func (m *GenericCustomer) validateClient(formats strfmt.Registry) error {
-
-	if err := validate.Required("client", "body", m.Client); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("client", "body", string(*m.Client), 1); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("client", "body", string(*m.Client), 2147483647); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *GenericCustomer) validateNumber(formats strfmt.Registry) error {
-
-	if err := validate.Required("number", "body", m.Number); err != nil {
-		return err
-	}
-
+// ContextValidate validates this generic customer based on context it is used
+func (m *GenericCustomer) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

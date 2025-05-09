@@ -19,78 +19,124 @@ import (
 	"github.com/hostwithquantum/internetx-autodns-go/models"
 )
 
-// NewContactCreateParams creates a new ContactCreateParams object
-// with the default values initialized.
+// NewContactCreateParams creates a new ContactCreateParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewContactCreateParams() *ContactCreateParams {
-	var ()
 	return &ContactCreateParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewContactCreateParamsWithTimeout creates a new ContactCreateParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewContactCreateParamsWithTimeout(timeout time.Duration) *ContactCreateParams {
-	var ()
 	return &ContactCreateParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewContactCreateParamsWithContext creates a new ContactCreateParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewContactCreateParamsWithContext(ctx context.Context) *ContactCreateParams {
-	var ()
 	return &ContactCreateParams{
-
 		Context: ctx,
 	}
 }
 
 // NewContactCreateParamsWithHTTPClient creates a new ContactCreateParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewContactCreateParamsWithHTTPClient(client *http.Client) *ContactCreateParams {
-	var ()
 	return &ContactCreateParams{
 		HTTPClient: client,
 	}
 }
 
-/*ContactCreateParams contains all the parameters to send to the API endpoint
-for the contact create operation typically these are written to a http.Request
+/*
+ContactCreateParams contains all the parameters to send to the API endpoint
+
+	for the contact create operation.
+
+	Typically these are written to a http.Request.
 */
 type ContactCreateParams struct {
 
-	/*XDomainrobotBulkLimit*/
+	// XDomainrobot2FAToken.
+	//
+	// Format: int32
+	XDomainrobot2FAToken *int32
+
+	// XDomainrobotBulkLimit.
+	//
+	// Format: int32
 	XDomainrobotBulkLimit *int32
-	/*XDomainrobotContext*/
+
+	// XDomainrobotContext.
+	//
+	// Format: int32
 	XDomainrobotContext *int32
-	/*XDomainrobotDemo*/
+
+	// XDomainrobotDemo.
 	XDomainrobotDemo *bool
-	/*XDomainrobotDomainSafePin*/
+
+	// XDomainrobotDomainSafePin.
 	XDomainrobotDomainSafePin *string
-	/*XDomainrobotDomainSafeTan*/
+
+	// XDomainrobotDomainSafeTan.
 	XDomainrobotDomainSafeTan *string
-	/*XDomainrobotDomainSafeTransaction*/
+
+	// XDomainrobotDomainSafeTransaction.
 	XDomainrobotDomainSafeTransaction *string
-	/*XDomainrobotDomainSafeTransactionExpire*/
+
+	// XDomainrobotDomainSafeTransactionExpire.
+	//
+	// Format: date-time
 	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
-	/*XDomainrobotOwnerContext*/
+
+	// XDomainrobotOwnerContext.
+	//
+	// Format: int32
 	XDomainrobotOwnerContext *int32
-	/*XDomainrobotOwnerUser*/
+
+	// XDomainrobotOwnerUser.
 	XDomainrobotOwnerUser *string
-	/*XDomainrobotSessionID*/
+
+	// XDomainrobotSessionID.
 	XDomainrobotSessionID *string
-	/*XDomainrobotWS*/
+
+	// XDomainrobotWS.
 	XDomainrobotWS *string
-	/*Contact*/
+
+	// Contact.
 	Contact *models.Contact
+
+	/* Keys.
+
+	   The query parameter wich enables the force mode if the key is set.
+	*/
+	Keys []string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the contact create params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *ContactCreateParams) WithDefaults() *ContactCreateParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the contact create params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *ContactCreateParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the contact create params
@@ -124,6 +170,17 @@ func (o *ContactCreateParams) WithHTTPClient(client *http.Client) *ContactCreate
 // SetHTTPClient adds the HTTPClient to the contact create params
 func (o *ContactCreateParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithXDomainrobot2FAToken adds the xDomainrobot2FAToken to the contact create params
+func (o *ContactCreateParams) WithXDomainrobot2FAToken(xDomainrobot2FAToken *int32) *ContactCreateParams {
+	o.SetXDomainrobot2FAToken(xDomainrobot2FAToken)
+	return o
+}
+
+// SetXDomainrobot2FAToken adds the xDomainrobot2FAToken to the contact create params
+func (o *ContactCreateParams) SetXDomainrobot2FAToken(xDomainrobot2FAToken *int32) {
+	o.XDomainrobot2FAToken = xDomainrobot2FAToken
 }
 
 // WithXDomainrobotBulkLimit adds the xDomainrobotBulkLimit to the contact create params
@@ -258,6 +315,17 @@ func (o *ContactCreateParams) SetContact(contact *models.Contact) {
 	o.Contact = contact
 }
 
+// WithKeys adds the keys to the contact create params
+func (o *ContactCreateParams) WithKeys(keys []string) *ContactCreateParams {
+	o.SetKeys(keys)
+	return o
+}
+
+// SetKeys adds the keys to the contact create params
+func (o *ContactCreateParams) SetKeys(keys []string) {
+	o.Keys = keys
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *ContactCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -266,13 +334,20 @@ func (o *ContactCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 	}
 	var res []error
 
+	if o.XDomainrobot2FAToken != nil {
+
+		// header param X-Domainrobot-2FA-Token
+		if err := r.SetHeaderParam("X-Domainrobot-2FA-Token", swag.FormatInt32(*o.XDomainrobot2FAToken)); err != nil {
+			return err
+		}
+	}
+
 	if o.XDomainrobotBulkLimit != nil {
 
 		// header param X-Domainrobot-Bulk-Limit
 		if err := r.SetHeaderParam("X-Domainrobot-Bulk-Limit", swag.FormatInt32(*o.XDomainrobotBulkLimit)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotContext != nil {
@@ -281,7 +356,6 @@ func (o *ContactCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		if err := r.SetHeaderParam("X-Domainrobot-Context", swag.FormatInt32(*o.XDomainrobotContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDemo != nil {
@@ -290,7 +364,6 @@ func (o *ContactCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		if err := r.SetHeaderParam("X-Domainrobot-Demo", swag.FormatBool(*o.XDomainrobotDemo)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafePin != nil {
@@ -299,7 +372,6 @@ func (o *ContactCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Pin", *o.XDomainrobotDomainSafePin); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTan != nil {
@@ -308,7 +380,6 @@ func (o *ContactCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Tan", *o.XDomainrobotDomainSafeTan); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransaction != nil {
@@ -317,7 +388,6 @@ func (o *ContactCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction", *o.XDomainrobotDomainSafeTransaction); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransactionExpire != nil {
@@ -326,7 +396,6 @@ func (o *ContactCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction-Expire", o.XDomainrobotDomainSafeTransactionExpire.String()); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerContext != nil {
@@ -335,7 +404,6 @@ func (o *ContactCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-Context", swag.FormatInt32(*o.XDomainrobotOwnerContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerUser != nil {
@@ -344,7 +412,6 @@ func (o *ContactCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-User", *o.XDomainrobotOwnerUser); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotSessionID != nil {
@@ -353,7 +420,6 @@ func (o *ContactCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		if err := r.SetHeaderParam("X-Domainrobot-SessionId", *o.XDomainrobotSessionID); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotWS != nil {
@@ -362,11 +428,20 @@ func (o *ContactCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		if err := r.SetHeaderParam("X-Domainrobot-WS", *o.XDomainrobotWS); err != nil {
 			return err
 		}
-
 	}
-
 	if o.Contact != nil {
 		if err := r.SetBodyParam(o.Contact); err != nil {
+			return err
+		}
+	}
+
+	if o.Keys != nil {
+
+		// binding items for keys
+		joinedKeys := o.bindParamKeys(reg)
+
+		// query array param keys
+		if err := r.SetQueryParam("keys", joinedKeys...); err != nil {
 			return err
 		}
 	}
@@ -375,4 +450,21 @@ func (o *ContactCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
+}
+
+// bindParamContactCreate binds the parameter keys
+func (o *ContactCreateParams) bindParamKeys(formats strfmt.Registry) []string {
+	keysIR := o.Keys
+
+	var keysIC []string
+	for _, keysIIR := range keysIR { // explode []string
+
+		keysIIV := keysIIR // string as string
+		keysIC = append(keysIC, keysIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	keysIS := swag.JoinByFormat(keysIC, "multi")
+
+	return keysIS
 }

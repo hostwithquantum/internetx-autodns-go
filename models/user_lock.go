@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model UserLock
 type UserLock string
+
+func NewUserLock(value UserLock) *UserLock {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated UserLock.
+func (m UserLock) Pointer() *UserLock {
+	return &m
+}
 
 const (
 
@@ -31,6 +41,9 @@ const (
 
 	// UserLockUSER captures enum value "USER"
 	UserLockUSER UserLock = "USER"
+
+	// UserLockINVITE captures enum value "INVITE"
+	UserLockINVITE UserLock = "INVITE"
 )
 
 // for schema
@@ -38,7 +51,7 @@ var userLockEnum []interface{}
 
 func init() {
 	var res []UserLock
-	if err := json.Unmarshal([]byte(`["NONE","CUSTOMER","EXPIRED","USER"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["NONE","CUSTOMER","EXPIRED","USER","INVITE"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -65,5 +78,10 @@ func (m UserLock) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this user lock based on context it is used
+func (m UserLock) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

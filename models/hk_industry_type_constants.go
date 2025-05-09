@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -18,118 +19,127 @@ import (
 // swagger:model HkIndustryTypeConstants
 type HkIndustryTypeConstants string
 
+func NewHkIndustryTypeConstants(value HkIndustryTypeConstants) *HkIndustryTypeConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated HkIndustryTypeConstants.
+func (m HkIndustryTypeConstants) Pointer() *HkIndustryTypeConstants {
+	return &m
+}
+
 const (
 
 	// HkIndustryTypeConstantsNr0 captures enum value "_0"
 	HkIndustryTypeConstantsNr0 HkIndustryTypeConstants = "_0"
 
-	// HkIndustryTypeConstantsNr4160 captures enum value "_4160"
-	HkIndustryTypeConstantsNr4160 HkIndustryTypeConstants = "_4160"
+	// HkIndustryTypeConstantsNr010100 captures enum value "_010100"
+	HkIndustryTypeConstantsNr010100 HkIndustryTypeConstants = "_010100"
 
-	// HkIndustryTypeConstantsNr4224 captures enum value "_4224"
-	HkIndustryTypeConstantsNr4224 HkIndustryTypeConstants = "_4224"
+	// HkIndustryTypeConstantsNr010200 captures enum value "_010200"
+	HkIndustryTypeConstantsNr010200 HkIndustryTypeConstants = "_010200"
 
-	// HkIndustryTypeConstantsNr4288 captures enum value "_4288"
-	HkIndustryTypeConstantsNr4288 HkIndustryTypeConstants = "_4288"
+	// HkIndustryTypeConstantsNr010300 captures enum value "_010300"
+	HkIndustryTypeConstantsNr010300 HkIndustryTypeConstants = "_010300"
 
-	// HkIndustryTypeConstantsNr4352 captures enum value "_4352"
-	HkIndustryTypeConstantsNr4352 HkIndustryTypeConstants = "_4352"
+	// HkIndustryTypeConstantsNr010400 captures enum value "_010400"
+	HkIndustryTypeConstantsNr010400 HkIndustryTypeConstants = "_010400"
 
-	// HkIndustryTypeConstantsNr4416 captures enum value "_4416"
-	HkIndustryTypeConstantsNr4416 HkIndustryTypeConstants = "_4416"
+	// HkIndustryTypeConstantsNr010500 captures enum value "_010500"
+	HkIndustryTypeConstantsNr010500 HkIndustryTypeConstants = "_010500"
 
-	// HkIndustryTypeConstantsNr8256 captures enum value "_8256"
-	HkIndustryTypeConstantsNr8256 HkIndustryTypeConstants = "_8256"
+	// HkIndustryTypeConstantsNr020100 captures enum value "_020100"
+	HkIndustryTypeConstantsNr020100 HkIndustryTypeConstants = "_020100"
 
-	// HkIndustryTypeConstantsNr8320 captures enum value "_8320"
-	HkIndustryTypeConstantsNr8320 HkIndustryTypeConstants = "_8320"
+	// HkIndustryTypeConstantsNr020200 captures enum value "_020200"
+	HkIndustryTypeConstantsNr020200 HkIndustryTypeConstants = "_020200"
 
-	// HkIndustryTypeConstantsNr8384 captures enum value "_8384"
-	HkIndustryTypeConstantsNr8384 HkIndustryTypeConstants = "_8384"
+	// HkIndustryTypeConstantsNr020300 captures enum value "_020300"
+	HkIndustryTypeConstantsNr020300 HkIndustryTypeConstants = "_020300"
 
-	// HkIndustryTypeConstantsNr8448 captures enum value "_8448"
-	HkIndustryTypeConstantsNr8448 HkIndustryTypeConstants = "_8448"
+	// HkIndustryTypeConstantsNr020400 captures enum value "_020400"
+	HkIndustryTypeConstantsNr020400 HkIndustryTypeConstants = "_020400"
 
-	// HkIndustryTypeConstantsNr8512 captures enum value "_8512"
-	HkIndustryTypeConstantsNr8512 HkIndustryTypeConstants = "_8512"
+	// HkIndustryTypeConstantsNr020500 captures enum value "_020500"
+	HkIndustryTypeConstantsNr020500 HkIndustryTypeConstants = "_020500"
 
-	// HkIndustryTypeConstantsNr12352 captures enum value "_12352"
-	HkIndustryTypeConstantsNr12352 HkIndustryTypeConstants = "_12352"
+	// HkIndustryTypeConstantsNr030100 captures enum value "_030100"
+	HkIndustryTypeConstantsNr030100 HkIndustryTypeConstants = "_030100"
 
-	// HkIndustryTypeConstantsNr12416 captures enum value "_12416"
-	HkIndustryTypeConstantsNr12416 HkIndustryTypeConstants = "_12416"
+	// HkIndustryTypeConstantsNr030200 captures enum value "_030200"
+	HkIndustryTypeConstantsNr030200 HkIndustryTypeConstants = "_030200"
 
-	// HkIndustryTypeConstantsNr16448 captures enum value "_16448"
-	HkIndustryTypeConstantsNr16448 HkIndustryTypeConstants = "_16448"
+	// HkIndustryTypeConstantsNr040100 captures enum value "_040100"
+	HkIndustryTypeConstantsNr040100 HkIndustryTypeConstants = "_040100"
 
-	// HkIndustryTypeConstantsNr16512 captures enum value "_16512"
-	HkIndustryTypeConstantsNr16512 HkIndustryTypeConstants = "_16512"
+	// HkIndustryTypeConstantsNr040200 captures enum value "_040200"
+	HkIndustryTypeConstantsNr040200 HkIndustryTypeConstants = "_040200"
 
-	// HkIndustryTypeConstantsNr16576 captures enum value "_16576"
-	HkIndustryTypeConstantsNr16576 HkIndustryTypeConstants = "_16576"
+	// HkIndustryTypeConstantsNr040300 captures enum value "_040300"
+	HkIndustryTypeConstantsNr040300 HkIndustryTypeConstants = "_040300"
 
-	// HkIndustryTypeConstantsNr16640 captures enum value "_16640"
-	HkIndustryTypeConstantsNr16640 HkIndustryTypeConstants = "_16640"
+	// HkIndustryTypeConstantsNr040400 captures enum value "_040400"
+	HkIndustryTypeConstantsNr040400 HkIndustryTypeConstants = "_040400"
 
-	// HkIndustryTypeConstantsNr16704 captures enum value "_16704"
-	HkIndustryTypeConstantsNr16704 HkIndustryTypeConstants = "_16704"
+	// HkIndustryTypeConstantsNr040500 captures enum value "_040500"
+	HkIndustryTypeConstantsNr040500 HkIndustryTypeConstants = "_040500"
 
-	// HkIndustryTypeConstantsNr16768 captures enum value "_16768"
-	HkIndustryTypeConstantsNr16768 HkIndustryTypeConstants = "_16768"
+	// HkIndustryTypeConstantsNr040600 captures enum value "_040600"
+	HkIndustryTypeConstantsNr040600 HkIndustryTypeConstants = "_040600"
 
-	// HkIndustryTypeConstantsNr16832 captures enum value "_16832"
-	HkIndustryTypeConstantsNr16832 HkIndustryTypeConstants = "_16832"
+	// HkIndustryTypeConstantsNr040700 captures enum value "_040700"
+	HkIndustryTypeConstantsNr040700 HkIndustryTypeConstants = "_040700"
 
-	// HkIndustryTypeConstantsNr20544 captures enum value "_20544"
-	HkIndustryTypeConstantsNr20544 HkIndustryTypeConstants = "_20544"
+	// HkIndustryTypeConstantsNr050100 captures enum value "_050100"
+	HkIndustryTypeConstantsNr050100 HkIndustryTypeConstants = "_050100"
 
-	// HkIndustryTypeConstantsNr20608 captures enum value "_20608"
-	HkIndustryTypeConstantsNr20608 HkIndustryTypeConstants = "_20608"
+	// HkIndustryTypeConstantsNr050200 captures enum value "_050200"
+	HkIndustryTypeConstantsNr050200 HkIndustryTypeConstants = "_050200"
 
-	// HkIndustryTypeConstantsNr20672 captures enum value "_20672"
-	HkIndustryTypeConstantsNr20672 HkIndustryTypeConstants = "_20672"
+	// HkIndustryTypeConstantsNr050300 captures enum value "_050300"
+	HkIndustryTypeConstantsNr050300 HkIndustryTypeConstants = "_050300"
 
-	// HkIndustryTypeConstantsNr20736 captures enum value "_20736"
-	HkIndustryTypeConstantsNr20736 HkIndustryTypeConstants = "_20736"
+	// HkIndustryTypeConstantsNr050400 captures enum value "_050400"
+	HkIndustryTypeConstantsNr050400 HkIndustryTypeConstants = "_050400"
 
-	// HkIndustryTypeConstantsNr20800 captures enum value "_20800"
-	HkIndustryTypeConstantsNr20800 HkIndustryTypeConstants = "_20800"
+	// HkIndustryTypeConstantsNr050500 captures enum value "_050500"
+	HkIndustryTypeConstantsNr050500 HkIndustryTypeConstants = "_050500"
 
-	// HkIndustryTypeConstantsNr20864 captures enum value "_20864"
-	HkIndustryTypeConstantsNr20864 HkIndustryTypeConstants = "_20864"
+	// HkIndustryTypeConstantsNr050600 captures enum value "_050600"
+	HkIndustryTypeConstantsNr050600 HkIndustryTypeConstants = "_050600"
 
-	// HkIndustryTypeConstantsNr20928 captures enum value "_20928"
-	HkIndustryTypeConstantsNr20928 HkIndustryTypeConstants = "_20928"
+	// HkIndustryTypeConstantsNr050700 captures enum value "_050700"
+	HkIndustryTypeConstantsNr050700 HkIndustryTypeConstants = "_050700"
 
-	// HkIndustryTypeConstantsNr24640 captures enum value "_24640"
-	HkIndustryTypeConstantsNr24640 HkIndustryTypeConstants = "_24640"
+	// HkIndustryTypeConstantsNr060100 captures enum value "_060100"
+	HkIndustryTypeConstantsNr060100 HkIndustryTypeConstants = "_060100"
 
-	// HkIndustryTypeConstantsNr24704 captures enum value "_24704"
-	HkIndustryTypeConstantsNr24704 HkIndustryTypeConstants = "_24704"
+	// HkIndustryTypeConstantsNr060200 captures enum value "_060200"
+	HkIndustryTypeConstantsNr060200 HkIndustryTypeConstants = "_060200"
 
-	// HkIndustryTypeConstantsNr24768 captures enum value "_24768"
-	HkIndustryTypeConstantsNr24768 HkIndustryTypeConstants = "_24768"
+	// HkIndustryTypeConstantsNr060300 captures enum value "_060300"
+	HkIndustryTypeConstantsNr060300 HkIndustryTypeConstants = "_060300"
 
-	// HkIndustryTypeConstantsNr28736 captures enum value "_28736"
-	HkIndustryTypeConstantsNr28736 HkIndustryTypeConstants = "_28736"
+	// HkIndustryTypeConstantsNr070100 captures enum value "_070100"
+	HkIndustryTypeConstantsNr070100 HkIndustryTypeConstants = "_070100"
 
-	// HkIndustryTypeConstantsNr28800 captures enum value "_28800"
-	HkIndustryTypeConstantsNr28800 HkIndustryTypeConstants = "_28800"
+	// HkIndustryTypeConstantsNr070200 captures enum value "_070200"
+	HkIndustryTypeConstantsNr070200 HkIndustryTypeConstants = "_070200"
 
-	// HkIndustryTypeConstantsNr28864 captures enum value "_28864"
-	HkIndustryTypeConstantsNr28864 HkIndustryTypeConstants = "_28864"
+	// HkIndustryTypeConstantsNr070300 captures enum value "_070300"
+	HkIndustryTypeConstantsNr070300 HkIndustryTypeConstants = "_070300"
 
-	// HkIndustryTypeConstantsNr28928 captures enum value "_28928"
-	HkIndustryTypeConstantsNr28928 HkIndustryTypeConstants = "_28928"
+	// HkIndustryTypeConstantsNr070400 captures enum value "_070400"
+	HkIndustryTypeConstantsNr070400 HkIndustryTypeConstants = "_070400"
 
-	// HkIndustryTypeConstantsNr28992 captures enum value "_28992"
-	HkIndustryTypeConstantsNr28992 HkIndustryTypeConstants = "_28992"
+	// HkIndustryTypeConstantsNr070500 captures enum value "_070500"
+	HkIndustryTypeConstantsNr070500 HkIndustryTypeConstants = "_070500"
 
-	// HkIndustryTypeConstantsNr29056 captures enum value "_29056"
-	HkIndustryTypeConstantsNr29056 HkIndustryTypeConstants = "_29056"
+	// HkIndustryTypeConstantsNr070600 captures enum value "_070600"
+	HkIndustryTypeConstantsNr070600 HkIndustryTypeConstants = "_070600"
 
-	// HkIndustryTypeConstantsNr29120 captures enum value "_29120"
-	HkIndustryTypeConstantsNr29120 HkIndustryTypeConstants = "_29120"
+	// HkIndustryTypeConstantsNr070700 captures enum value "_070700"
+	HkIndustryTypeConstantsNr070700 HkIndustryTypeConstants = "_070700"
 
 	// HkIndustryTypeConstantsNr070800 captures enum value "_070800"
 	HkIndustryTypeConstantsNr070800 HkIndustryTypeConstants = "_070800"
@@ -302,7 +312,7 @@ var hkIndustryTypeConstantsEnum []interface{}
 
 func init() {
 	var res []HkIndustryTypeConstants
-	if err := json.Unmarshal([]byte(`["_0","_4160","_4224","_4288","_4352","_4416","_8256","_8320","_8384","_8448","_8512","_12352","_12416","_16448","_16512","_16576","_16640","_16704","_16768","_16832","_20544","_20608","_20672","_20736","_20800","_20864","_20928","_24640","_24704","_24768","_28736","_28800","_28864","_28928","_28992","_29056","_29120","_070800","_070900","_080100","_080200","_080300","_080400","_080500","_080600","_080700","_080800","_080900","_081000","_081100","_090100","_090200","_090300","_090400","_090500","_100100","_100200","_100300","_100400","_100500","_110100","_110200","_110300","_110400","_110500","_110600","_120100","_120200","_120300","_120400","_120500","_120600","_120700","_120800","_120900","_130100","_130200","_130300","_130400","_130500","_130600","_130700","_130800","_140101","_140102","_140103","_140200","_140300","_140400","_140500","_140600","_140700"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["_0","_010100","_010200","_010300","_010400","_010500","_020100","_020200","_020300","_020400","_020500","_030100","_030200","_040100","_040200","_040300","_040400","_040500","_040600","_040700","_050100","_050200","_050300","_050400","_050500","_050600","_050700","_060100","_060200","_060300","_070100","_070200","_070300","_070400","_070500","_070600","_070700","_070800","_070900","_080100","_080200","_080300","_080400","_080500","_080600","_080700","_080800","_080900","_081000","_081100","_090100","_090200","_090300","_090400","_090500","_100100","_100200","_100300","_100400","_100500","_110100","_110200","_110300","_110400","_110500","_110600","_120100","_120200","_120300","_120400","_120500","_120600","_120700","_120800","_120900","_130100","_130200","_130300","_130400","_130500","_130600","_130700","_130800","_140101","_140102","_140103","_140200","_140300","_140400","_140500","_140600","_140700"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -329,5 +339,10 @@ func (m HkIndustryTypeConstants) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this hk industry type constants based on context it is used
+func (m HkIndustryTypeConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

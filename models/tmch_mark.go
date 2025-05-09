@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -20,8 +21,7 @@ import (
 type TmchMark struct {
 
 	// claims notify
-	// Required: true
-	ClaimsNotify *bool `json:"claimsNotify"`
+	ClaimsNotify bool `json:"claimsNotify,omitempty"`
 
 	// claims notify extended
 	ClaimsNotifyExtended bool `json:"claimsNotifyExtended,omitempty"`
@@ -29,13 +29,12 @@ type TmchMark struct {
 	// comments
 	Comments []*TmchMarkComment `json:"comments"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
 	// description
-	// Required: true
-	Description *string `json:"description"`
+	Description string `json:"description,omitempty"`
 
 	// documents
 	Documents []*TmchMarkDocument `json:"documents"`
@@ -53,27 +52,23 @@ type TmchMark struct {
 	Labels []string `json:"labels"`
 
 	// name
-	// Required: true
-	Name *string `json:"name"`
+	Name string `json:"name,omitempty"`
 
 	// order complete
 	OrderComplete bool `json:"orderComplete,omitempty"`
 
-	// The owner of the object.
+	// The object owner.
 	Owner *BasicUser `json:"owner,omitempty"`
 
 	// payable
-	// Required: true
 	// Format: date-time
-	Payable *strfmt.DateTime `json:"payable"`
+	Payable strfmt.DateTime `json:"payable,omitempty"`
 
 	// period
-	// Required: true
-	Period *TimePeriod `json:"period"`
+	Period *TimePeriod `json:"period,omitempty"`
 
 	// reference
-	// Required: true
-	Reference *string `json:"reference"`
+	Reference string `json:"reference,omitempty"`
 
 	// renew
 	Renew RenewStatusConstants `json:"renew,omitempty"`
@@ -85,21 +80,19 @@ type TmchMark struct {
 	SmdFile string `json:"smdFile,omitempty"`
 
 	// smd inclusion
-	// Required: true
-	SmdInclusion *bool `json:"smdInclusion"`
+	SmdInclusion bool `json:"smdInclusion,omitempty"`
 
 	// status
 	Status TmchMarkStatusConstants `json:"status,omitempty"`
 
 	// type
-	// Required: true
-	Type TmchMarkTypeConstants `json:"type"`
+	Type TmchMarkTypeConstants `json:"type,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The updater of the object.
+	// User who performed the last update.
 	Updater *BasicUser `json:"updater,omitempty"`
 }
 
@@ -107,19 +100,11 @@ type TmchMark struct {
 func (m *TmchMark) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateClaimsNotify(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateComments(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if err := m.validateCreated(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateDescription(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -135,10 +120,6 @@ func (m *TmchMark) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateName(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateOwner(formats); err != nil {
 		res = append(res, err)
 	}
@@ -151,15 +132,7 @@ func (m *TmchMark) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateReference(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateRenew(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateSmdInclusion(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -185,17 +158,7 @@ func (m *TmchMark) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *TmchMark) validateClaimsNotify(formats strfmt.Registry) error {
-
-	if err := validate.Required("claimsNotify", "body", m.ClaimsNotify); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *TmchMark) validateComments(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Comments) { // not required
 		return nil
 	}
@@ -209,6 +172,8 @@ func (m *TmchMark) validateComments(formats strfmt.Registry) error {
 			if err := m.Comments[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("comments" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("comments" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -220,7 +185,6 @@ func (m *TmchMark) validateComments(formats strfmt.Registry) error {
 }
 
 func (m *TmchMark) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -232,17 +196,7 @@ func (m *TmchMark) validateCreated(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *TmchMark) validateDescription(formats strfmt.Registry) error {
-
-	if err := validate.Required("description", "body", m.Description); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *TmchMark) validateDocuments(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Documents) { // not required
 		return nil
 	}
@@ -256,6 +210,8 @@ func (m *TmchMark) validateDocuments(formats strfmt.Registry) error {
 			if err := m.Documents[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("documents" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("documents" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -267,7 +223,6 @@ func (m *TmchMark) validateDocuments(formats strfmt.Registry) error {
 }
 
 func (m *TmchMark) validateExtension(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Extension) { // not required
 		return nil
 	}
@@ -276,6 +231,8 @@ func (m *TmchMark) validateExtension(formats strfmt.Registry) error {
 		if err := m.Extension.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("extension")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("extension")
 			}
 			return err
 		}
@@ -285,7 +242,6 @@ func (m *TmchMark) validateExtension(formats strfmt.Registry) error {
 }
 
 func (m *TmchMark) validateHolder(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Holder) { // not required
 		return nil
 	}
@@ -294,6 +250,8 @@ func (m *TmchMark) validateHolder(formats strfmt.Registry) error {
 		if err := m.Holder.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("holder")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("holder")
 			}
 			return err
 		}
@@ -302,17 +260,7 @@ func (m *TmchMark) validateHolder(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *TmchMark) validateName(formats strfmt.Registry) error {
-
-	if err := validate.Required("name", "body", m.Name); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *TmchMark) validateOwner(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -321,6 +269,8 @@ func (m *TmchMark) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -330,9 +280,8 @@ func (m *TmchMark) validateOwner(formats strfmt.Registry) error {
 }
 
 func (m *TmchMark) validatePayable(formats strfmt.Registry) error {
-
-	if err := validate.Required("payable", "body", m.Payable); err != nil {
-		return err
+	if swag.IsZero(m.Payable) { // not required
+		return nil
 	}
 
 	if err := validate.FormatOf("payable", "body", "date-time", m.Payable.String(), formats); err != nil {
@@ -343,15 +292,16 @@ func (m *TmchMark) validatePayable(formats strfmt.Registry) error {
 }
 
 func (m *TmchMark) validatePeriod(formats strfmt.Registry) error {
-
-	if err := validate.Required("period", "body", m.Period); err != nil {
-		return err
+	if swag.IsZero(m.Period) { // not required
+		return nil
 	}
 
 	if m.Period != nil {
 		if err := m.Period.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("period")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("period")
 			}
 			return err
 		}
@@ -360,17 +310,7 @@ func (m *TmchMark) validatePeriod(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *TmchMark) validateReference(formats strfmt.Registry) error {
-
-	if err := validate.Required("reference", "body", m.Reference); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *TmchMark) validateRenew(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Renew) { // not required
 		return nil
 	}
@@ -378,6 +318,8 @@ func (m *TmchMark) validateRenew(formats strfmt.Registry) error {
 	if err := m.Renew.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("renew")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("renew")
 		}
 		return err
 	}
@@ -385,17 +327,7 @@ func (m *TmchMark) validateRenew(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *TmchMark) validateSmdInclusion(formats strfmt.Registry) error {
-
-	if err := validate.Required("smdInclusion", "body", m.SmdInclusion); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *TmchMark) validateStatus(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Status) { // not required
 		return nil
 	}
@@ -403,6 +335,8 @@ func (m *TmchMark) validateStatus(formats strfmt.Registry) error {
 	if err := m.Status.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
 		}
 		return err
 	}
@@ -411,10 +345,15 @@ func (m *TmchMark) validateStatus(formats strfmt.Registry) error {
 }
 
 func (m *TmchMark) validateType(formats strfmt.Registry) error {
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
 
 	if err := m.Type.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
 		}
 		return err
 	}
@@ -423,7 +362,6 @@ func (m *TmchMark) validateType(formats strfmt.Registry) error {
 }
 
 func (m *TmchMark) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -436,7 +374,6 @@ func (m *TmchMark) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *TmchMark) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -445,6 +382,267 @@ func (m *TmchMark) validateUpdater(formats strfmt.Registry) error {
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this tmch mark based on the context it is used
+func (m *TmchMark) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateComments(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateDocuments(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateExtension(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateHolder(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePeriod(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRenew(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *TmchMark) contextValidateComments(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Comments); i++ {
+
+		if m.Comments[i] != nil {
+
+			if swag.IsZero(m.Comments[i]) { // not required
+				return nil
+			}
+
+			if err := m.Comments[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("comments" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("comments" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *TmchMark) contextValidateDocuments(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Documents); i++ {
+
+		if m.Documents[i] != nil {
+
+			if swag.IsZero(m.Documents[i]) { // not required
+				return nil
+			}
+
+			if err := m.Documents[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("documents" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("documents" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *TmchMark) contextValidateExtension(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Extension != nil {
+
+		if swag.IsZero(m.Extension) { // not required
+			return nil
+		}
+
+		if err := m.Extension.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("extension")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("extension")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *TmchMark) contextValidateHolder(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Holder != nil {
+
+		if swag.IsZero(m.Holder) { // not required
+			return nil
+		}
+
+		if err := m.Holder.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("holder")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("holder")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *TmchMark) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *TmchMark) contextValidatePeriod(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Period != nil {
+
+		if swag.IsZero(m.Period) { // not required
+			return nil
+		}
+
+		if err := m.Period.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("period")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("period")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *TmchMark) contextValidateRenew(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Renew) { // not required
+		return nil
+	}
+
+	if err := m.Renew.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("renew")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("renew")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *TmchMark) contextValidateStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	if err := m.Status.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *TmchMark) contextValidateType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	if err := m.Type.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *TmchMark) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}

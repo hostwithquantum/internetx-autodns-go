@@ -6,6 +6,7 @@ package transfer_request_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *TransferOutAnswerReader) ReadResponse(response runtime.ClientResponse, 
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[POST /transferout/{domain}/{_type}] transferOutAnswer", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewTransferOutAnswerOK() *TransferOutAnswerOK {
 	return &TransferOutAnswerOK{}
 }
 
-/*TransferOutAnswerOK handles this case with default header values.
+/*
+TransferOutAnswerOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type TransferOutAnswerOK struct {
 	Payload *models.JSONResponseDataTransferOut
 }
 
+// IsSuccess returns true when this transfer out answer o k response has a 2xx status code
+func (o *TransferOutAnswerOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this transfer out answer o k response has a 3xx status code
+func (o *TransferOutAnswerOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this transfer out answer o k response has a 4xx status code
+func (o *TransferOutAnswerOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this transfer out answer o k response has a 5xx status code
+func (o *TransferOutAnswerOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this transfer out answer o k response a status code equal to that given
+func (o *TransferOutAnswerOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the transfer out answer o k response
+func (o *TransferOutAnswerOK) Code() int {
+	return 200
+}
+
 func (o *TransferOutAnswerOK) Error() string {
-	return fmt.Sprintf("[POST /transferout/{domain}/{_type}][%d] transferOutAnswerOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /transferout/{domain}/{_type}][%d] transferOutAnswerOK %s", 200, payload)
+}
+
+func (o *TransferOutAnswerOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /transferout/{domain}/{_type}][%d] transferOutAnswerOK %s", 200, payload)
 }
 
 func (o *TransferOutAnswerOK) GetPayload() *models.JSONResponseDataTransferOut {

@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -19,9 +20,12 @@ import (
 // swagger:model MailServiceMessage
 type MailServiceMessage struct {
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
+
+	// The external reference of the email
+	ExternalReference string `json:"externalReference,omitempty"`
 
 	// The mail from header
 	From string `json:"from,omitempty"`
@@ -41,7 +45,7 @@ type MailServiceMessage struct {
 	// the subject of the email
 	Subject string `json:"subject,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 }
@@ -73,7 +77,6 @@ func (m *MailServiceMessage) Validate(formats strfmt.Registry) error {
 }
 
 func (m *MailServiceMessage) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -86,7 +89,6 @@ func (m *MailServiceMessage) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *MailServiceMessage) validateRecipients(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Recipients) { // not required
 		return nil
 	}
@@ -100,6 +102,8 @@ func (m *MailServiceMessage) validateRecipients(formats strfmt.Registry) error {
 			if err := m.Recipients[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("recipients" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("recipients" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -111,7 +115,6 @@ func (m *MailServiceMessage) validateRecipients(formats strfmt.Registry) error {
 }
 
 func (m *MailServiceMessage) validateStatus(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Status) { // not required
 		return nil
 	}
@@ -119,6 +122,8 @@ func (m *MailServiceMessage) validateStatus(formats strfmt.Registry) error {
 	if err := m.Status.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
 		}
 		return err
 	}
@@ -127,12 +132,72 @@ func (m *MailServiceMessage) validateStatus(formats strfmt.Registry) error {
 }
 
 func (m *MailServiceMessage) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
 
 	if err := validate.FormatOf("updated", "body", "date-time", m.Updated.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this mail service message based on the context it is used
+func (m *MailServiceMessage) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateRecipients(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MailServiceMessage) contextValidateRecipients(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Recipients); i++ {
+
+		if m.Recipients[i] != nil {
+
+			if swag.IsZero(m.Recipients[i]) { // not required
+				return nil
+			}
+
+			if err := m.Recipients[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("recipients" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("recipients" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *MailServiceMessage) contextValidateStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	if err := m.Status.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
+		}
 		return err
 	}
 

@@ -6,9 +6,12 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // CertAuthenticationStatus cert authentication status
@@ -21,6 +24,10 @@ type CertAuthenticationStatus struct {
 
 	// The authentication step.
 	Step AuthenticationStep `json:"step,omitempty"`
+
+	// The date of the last modification
+	// Format: date-time
+	Updated strfmt.DateTime `json:"updated,omitempty"`
 }
 
 // Validate validates this cert authentication status
@@ -35,6 +42,10 @@ func (m *CertAuthenticationStatus) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateUpdated(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -42,7 +53,6 @@ func (m *CertAuthenticationStatus) Validate(formats strfmt.Registry) error {
 }
 
 func (m *CertAuthenticationStatus) validateStatus(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Status) { // not required
 		return nil
 	}
@@ -50,6 +60,8 @@ func (m *CertAuthenticationStatus) validateStatus(formats strfmt.Registry) error
 	if err := m.Status.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
 		}
 		return err
 	}
@@ -58,7 +70,6 @@ func (m *CertAuthenticationStatus) validateStatus(formats strfmt.Registry) error
 }
 
 func (m *CertAuthenticationStatus) validateStep(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Step) { // not required
 		return nil
 	}
@@ -66,6 +77,74 @@ func (m *CertAuthenticationStatus) validateStep(formats strfmt.Registry) error {
 	if err := m.Step.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("step")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("step")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *CertAuthenticationStatus) validateUpdated(formats strfmt.Registry) error {
+	if swag.IsZero(m.Updated) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("updated", "body", "date-time", m.Updated.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this cert authentication status based on the context it is used
+func (m *CertAuthenticationStatus) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateStep(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *CertAuthenticationStatus) contextValidateStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	if err := m.Status.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *CertAuthenticationStatus) contextValidateStep(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Step) { // not required
+		return nil
+	}
+
+	if err := m.Step.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("step")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("step")
 		}
 		return err
 	}

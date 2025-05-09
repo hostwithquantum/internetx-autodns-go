@@ -6,6 +6,7 @@ package domain_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *DomainAuthinfo2CreateReader) ReadResponse(response runtime.ClientRespon
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[POST /domain/{name}/_authinfo2] domainAuthinfo2Create", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewDomainAuthinfo2CreateOK() *DomainAuthinfo2CreateOK {
 	return &DomainAuthinfo2CreateOK{}
 }
 
-/*DomainAuthinfo2CreateOK handles this case with default header values.
+/*
+DomainAuthinfo2CreateOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type DomainAuthinfo2CreateOK struct {
 	Payload *models.JSONResponseDataJSONNoData
 }
 
+// IsSuccess returns true when this domain authinfo2 create o k response has a 2xx status code
+func (o *DomainAuthinfo2CreateOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this domain authinfo2 create o k response has a 3xx status code
+func (o *DomainAuthinfo2CreateOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this domain authinfo2 create o k response has a 4xx status code
+func (o *DomainAuthinfo2CreateOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this domain authinfo2 create o k response has a 5xx status code
+func (o *DomainAuthinfo2CreateOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this domain authinfo2 create o k response a status code equal to that given
+func (o *DomainAuthinfo2CreateOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the domain authinfo2 create o k response
+func (o *DomainAuthinfo2CreateOK) Code() int {
+	return 200
+}
+
 func (o *DomainAuthinfo2CreateOK) Error() string {
-	return fmt.Sprintf("[POST /domain/{name}/_authinfo2][%d] domainAuthinfo2CreateOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /domain/{name}/_authinfo2][%d] domainAuthinfo2CreateOK %s", 200, payload)
+}
+
+func (o *DomainAuthinfo2CreateOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /domain/{name}/_authinfo2][%d] domainAuthinfo2CreateOK %s", 200, payload)
 }
 
 func (o *DomainAuthinfo2CreateOK) GetPayload() *models.JSONResponseDataJSONNoData {

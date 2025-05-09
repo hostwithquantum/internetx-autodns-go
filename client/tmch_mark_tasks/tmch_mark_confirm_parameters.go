@@ -16,59 +16,72 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-// NewTmchMarkConfirmParams creates a new TmchMarkConfirmParams object
-// with the default values initialized.
+// NewTmchMarkConfirmParams creates a new TmchMarkConfirmParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewTmchMarkConfirmParams() *TmchMarkConfirmParams {
-	var ()
 	return &TmchMarkConfirmParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewTmchMarkConfirmParamsWithTimeout creates a new TmchMarkConfirmParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewTmchMarkConfirmParamsWithTimeout(timeout time.Duration) *TmchMarkConfirmParams {
-	var ()
 	return &TmchMarkConfirmParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewTmchMarkConfirmParamsWithContext creates a new TmchMarkConfirmParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewTmchMarkConfirmParamsWithContext(ctx context.Context) *TmchMarkConfirmParams {
-	var ()
 	return &TmchMarkConfirmParams{
-
 		Context: ctx,
 	}
 }
 
 // NewTmchMarkConfirmParamsWithHTTPClient creates a new TmchMarkConfirmParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewTmchMarkConfirmParamsWithHTTPClient(client *http.Client) *TmchMarkConfirmParams {
-	var ()
 	return &TmchMarkConfirmParams{
 		HTTPClient: client,
 	}
 }
 
-/*TmchMarkConfirmParams contains all the parameters to send to the API endpoint
-for the tmch mark confirm operation typically these are written to a http.Request
+/*
+TmchMarkConfirmParams contains all the parameters to send to the API endpoint
+
+	for the tmch mark confirm operation.
+
+	Typically these are written to a http.Request.
 */
 type TmchMarkConfirmParams struct {
 
-	/*Body
-	  reference
-
-	*/
-	Body string
+	// Reference.
+	Reference string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the tmch mark confirm params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *TmchMarkConfirmParams) WithDefaults() *TmchMarkConfirmParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the tmch mark confirm params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *TmchMarkConfirmParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the tmch mark confirm params
@@ -104,15 +117,15 @@ func (o *TmchMarkConfirmParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithBody adds the body to the tmch mark confirm params
-func (o *TmchMarkConfirmParams) WithBody(body string) *TmchMarkConfirmParams {
-	o.SetBody(body)
+// WithReference adds the reference to the tmch mark confirm params
+func (o *TmchMarkConfirmParams) WithReference(reference string) *TmchMarkConfirmParams {
+	o.SetReference(reference)
 	return o
 }
 
-// SetBody adds the body to the tmch mark confirm params
-func (o *TmchMarkConfirmParams) SetBody(body string) {
-	o.Body = body
+// SetReference adds the reference to the tmch mark confirm params
+func (o *TmchMarkConfirmParams) SetReference(reference string) {
+	o.Reference = reference
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -123,7 +136,8 @@ func (o *TmchMarkConfirmParams) WriteToRequest(r runtime.ClientRequest, reg strf
 	}
 	var res []error
 
-	if err := r.SetBodyParam(o.Body); err != nil {
+	// path param reference
+	if err := r.SetPathParam("reference", o.Reference); err != nil {
 		return err
 	}
 

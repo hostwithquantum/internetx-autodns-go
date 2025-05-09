@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -31,6 +32,10 @@ type DomainRestore struct {
 	// The authinfo.
 	Authinfo string `json:"authinfo,omitempty"`
 
+	// The expire date of the authinfo.
+	// Format: date-time
+	AuthinfoExpire strfmt.DateTime `json:"authinfoExpire,omitempty"`
+
 	// Enables or disables automatic DNSSEC for certain name servers (e.g. NodeSecure).
 	AutoDnssec bool `json:"autoDnssec,omitempty"`
 
@@ -52,7 +57,7 @@ type DomainRestore struct {
 	// Confirms the consent of the domainowner for the changes. Required for gTLDs and new gTLDs when changing the name, the email address or the organization of the domain owner.
 	ConfirmOwnerConsent bool `json:"confirmOwnerConsent,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
@@ -84,6 +89,7 @@ type DomainRestore struct {
 	GeneralRequestEmail string `json:"generalRequestEmail,omitempty"`
 
 	// The unicode domain name
+	// Example: müller.org
 	Idn string `json:"idn,omitempty"`
 
 	// Ignore whois.
@@ -93,8 +99,8 @@ type DomainRestore struct {
 	LogID int64 `json:"logId,omitempty"`
 
 	// The name of the domain.
-	// Required: true
-	Name *string `json:"name"`
+	// Example: domain.de
+	Name string `json:"name,omitempty"`
 
 	// NSentry is only be provided for .DE. If NSentry is used, nameServers is not allowed.
 	NameServerEntries []string `json:"nameServerEntries"`
@@ -108,7 +114,7 @@ type DomainRestore struct {
 	// The nic member label.
 	NicMemberLabel string `json:"nicMemberLabel,omitempty"`
 
-	// The owner of the object.
+	// The object owner.
 	Owner *BasicUser `json:"owner,omitempty"`
 
 	// The owner contact.
@@ -118,9 +124,8 @@ type DomainRestore struct {
 	Parking ParkingProviderConstants `json:"parking,omitempty"`
 
 	// The payable date of the domain.
-	// Required: true
 	// Format: date-time
-	Payable *strfmt.DateTime `json:"payable"`
+	Payable strfmt.DateTime `json:"payable,omitempty"`
 
 	// The period in years, depends on the requested action
 	Period *TimePeriod `json:"period,omitempty"`
@@ -153,8 +158,7 @@ type DomainRestore struct {
 	RegistryStatus RegistryStatusConstants `json:"registryStatus,omitempty"`
 
 	// Remove cancelation.
-	// Required: true
-	RemoveCancelation *bool `json:"removeCancelation"`
+	RemoveCancelation bool `json:"removeCancelation,omitempty"`
 
 	// The end of current restore phase
 	// Format: date-time
@@ -172,11 +176,11 @@ type DomainRestore struct {
 	// Enable trustee service for the domain.
 	Trustee bool `json:"trustee,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The updater of the object.
+	// User who performed the last update.
 	Updater *BasicUser `json:"updater,omitempty"`
 
 	// Domain has an matching certificate.
@@ -198,6 +202,10 @@ func (m *DomainRestore) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateAdminc(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateAuthinfoExpire(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -230,10 +238,6 @@ func (m *DomainRestore) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateExtensions(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -270,10 +274,6 @@ func (m *DomainRestore) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateRegistryStatus(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateRemoveCancelation(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -316,7 +316,6 @@ func (m *DomainRestore) Validate(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validateAction(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Action) { // not required
 		return nil
 	}
@@ -324,6 +323,8 @@ func (m *DomainRestore) validateAction(formats strfmt.Registry) error {
 	if err := m.Action.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("action")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("action")
 		}
 		return err
 	}
@@ -332,7 +333,6 @@ func (m *DomainRestore) validateAction(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validateAdminc(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Adminc) { // not required
 		return nil
 	}
@@ -341,6 +341,8 @@ func (m *DomainRestore) validateAdminc(formats strfmt.Registry) error {
 		if err := m.Adminc.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("adminc")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("adminc")
 			}
 			return err
 		}
@@ -349,8 +351,19 @@ func (m *DomainRestore) validateAdminc(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *DomainRestore) validateAutoRenewStatus(formats strfmt.Registry) error {
+func (m *DomainRestore) validateAuthinfoExpire(formats strfmt.Registry) error {
+	if swag.IsZero(m.AuthinfoExpire) { // not required
+		return nil
+	}
 
+	if err := validate.FormatOf("authinfoExpire", "body", "date-time", m.AuthinfoExpire.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *DomainRestore) validateAutoRenewStatus(formats strfmt.Registry) error {
 	if swag.IsZero(m.AutoRenewStatus) { // not required
 		return nil
 	}
@@ -358,6 +371,8 @@ func (m *DomainRestore) validateAutoRenewStatus(formats strfmt.Registry) error {
 	if err := m.AutoRenewStatus.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("autoRenewStatus")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("autoRenewStatus")
 		}
 		return err
 	}
@@ -366,7 +381,6 @@ func (m *DomainRestore) validateAutoRenewStatus(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validateCancelationStatus(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.CancelationStatus) { // not required
 		return nil
 	}
@@ -374,6 +388,8 @@ func (m *DomainRestore) validateCancelationStatus(formats strfmt.Registry) error
 	if err := m.CancelationStatus.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("cancelationStatus")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("cancelationStatus")
 		}
 		return err
 	}
@@ -382,7 +398,6 @@ func (m *DomainRestore) validateCancelationStatus(formats strfmt.Registry) error
 }
 
 func (m *DomainRestore) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -395,7 +410,6 @@ func (m *DomainRestore) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validateDeleted(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Deleted) { // not required
 		return nil
 	}
@@ -408,7 +422,6 @@ func (m *DomainRestore) validateDeleted(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validateDnssecData(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.DnssecData) { // not required
 		return nil
 	}
@@ -422,6 +435,8 @@ func (m *DomainRestore) validateDnssecData(formats strfmt.Registry) error {
 			if err := m.DnssecData[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("dnssecData" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("dnssecData" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -433,7 +448,6 @@ func (m *DomainRestore) validateDnssecData(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validateDomainCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.DomainCreated) { // not required
 		return nil
 	}
@@ -446,7 +460,6 @@ func (m *DomainRestore) validateDomainCreated(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validateExpire(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Expire) { // not required
 		return nil
 	}
@@ -459,7 +472,6 @@ func (m *DomainRestore) validateExpire(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validateExtensions(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Extensions) { // not required
 		return nil
 	}
@@ -468,6 +480,8 @@ func (m *DomainRestore) validateExtensions(formats strfmt.Registry) error {
 		if err := m.Extensions.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("extensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("extensions")
 			}
 			return err
 		}
@@ -476,17 +490,7 @@ func (m *DomainRestore) validateExtensions(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *DomainRestore) validateName(formats strfmt.Registry) error {
-
-	if err := validate.Required("name", "body", m.Name); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *DomainRestore) validateNameServers(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.NameServers) { // not required
 		return nil
 	}
@@ -500,6 +504,8 @@ func (m *DomainRestore) validateNameServers(formats strfmt.Registry) error {
 			if err := m.NameServers[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("nameServers" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nameServers" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -511,7 +517,6 @@ func (m *DomainRestore) validateNameServers(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validateOwner(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -520,6 +525,8 @@ func (m *DomainRestore) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -529,7 +536,6 @@ func (m *DomainRestore) validateOwner(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validateOwnerc(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Ownerc) { // not required
 		return nil
 	}
@@ -538,6 +544,8 @@ func (m *DomainRestore) validateOwnerc(formats strfmt.Registry) error {
 		if err := m.Ownerc.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("ownerc")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("ownerc")
 			}
 			return err
 		}
@@ -547,7 +555,6 @@ func (m *DomainRestore) validateOwnerc(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validateParking(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Parking) { // not required
 		return nil
 	}
@@ -555,6 +562,8 @@ func (m *DomainRestore) validateParking(formats strfmt.Registry) error {
 	if err := m.Parking.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("parking")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("parking")
 		}
 		return err
 	}
@@ -563,9 +572,8 @@ func (m *DomainRestore) validateParking(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validatePayable(formats strfmt.Registry) error {
-
-	if err := validate.Required("payable", "body", m.Payable); err != nil {
-		return err
+	if swag.IsZero(m.Payable) { // not required
+		return nil
 	}
 
 	if err := validate.FormatOf("payable", "body", "date-time", m.Payable.String(), formats); err != nil {
@@ -576,7 +584,6 @@ func (m *DomainRestore) validatePayable(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validatePeriod(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Period) { // not required
 		return nil
 	}
@@ -585,6 +592,8 @@ func (m *DomainRestore) validatePeriod(formats strfmt.Registry) error {
 		if err := m.Period.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("period")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("period")
 			}
 			return err
 		}
@@ -594,7 +603,6 @@ func (m *DomainRestore) validatePeriod(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validateRddsOptIn(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.RddsOptIn) { // not required
 		return nil
 	}
@@ -602,6 +610,8 @@ func (m *DomainRestore) validateRddsOptIn(formats strfmt.Registry) error {
 	if err := m.RddsOptIn.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("rddsOptIn")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("rddsOptIn")
 		}
 		return err
 	}
@@ -610,7 +620,6 @@ func (m *DomainRestore) validateRddsOptIn(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validateRegistrarStatus(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.RegistrarStatus) { // not required
 		return nil
 	}
@@ -618,6 +627,8 @@ func (m *DomainRestore) validateRegistrarStatus(formats strfmt.Registry) error {
 	if err := m.RegistrarStatus.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("registrarStatus")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("registrarStatus")
 		}
 		return err
 	}
@@ -626,7 +637,6 @@ func (m *DomainRestore) validateRegistrarStatus(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validateRegistryStatus(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.RegistryStatus) { // not required
 		return nil
 	}
@@ -634,6 +644,8 @@ func (m *DomainRestore) validateRegistryStatus(formats strfmt.Registry) error {
 	if err := m.RegistryStatus.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("registryStatus")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("registryStatus")
 		}
 		return err
 	}
@@ -641,17 +653,7 @@ func (m *DomainRestore) validateRegistryStatus(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *DomainRestore) validateRemoveCancelation(formats strfmt.Registry) error {
-
-	if err := validate.Required("removeCancelation", "body", m.RemoveCancelation); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *DomainRestore) validateRestorePhaseEnd(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.RestorePhaseEnd) { // not required
 		return nil
 	}
@@ -664,7 +666,6 @@ func (m *DomainRestore) validateRestorePhaseEnd(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validateServicesAdd(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ServicesAdd) { // not required
 		return nil
 	}
@@ -673,6 +674,8 @@ func (m *DomainRestore) validateServicesAdd(formats strfmt.Registry) error {
 		if err := m.ServicesAdd.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("servicesAdd")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("servicesAdd")
 			}
 			return err
 		}
@@ -682,7 +685,6 @@ func (m *DomainRestore) validateServicesAdd(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validateServicesRem(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ServicesRem) { // not required
 		return nil
 	}
@@ -691,6 +693,8 @@ func (m *DomainRestore) validateServicesRem(formats strfmt.Registry) error {
 		if err := m.ServicesRem.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("servicesRem")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("servicesRem")
 			}
 			return err
 		}
@@ -700,7 +704,6 @@ func (m *DomainRestore) validateServicesRem(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validateTechc(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Techc) { // not required
 		return nil
 	}
@@ -709,6 +712,8 @@ func (m *DomainRestore) validateTechc(formats strfmt.Registry) error {
 		if err := m.Techc.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("techc")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("techc")
 			}
 			return err
 		}
@@ -718,7 +723,6 @@ func (m *DomainRestore) validateTechc(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -731,7 +735,6 @@ func (m *DomainRestore) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -740,6 +743,8 @@ func (m *DomainRestore) validateUpdater(formats strfmt.Registry) error {
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}
@@ -749,7 +754,6 @@ func (m *DomainRestore) validateUpdater(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validateZone(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Zone) { // not required
 		return nil
 	}
@@ -758,6 +762,8 @@ func (m *DomainRestore) validateZone(formats strfmt.Registry) error {
 		if err := m.Zone.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("zone")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("zone")
 			}
 			return err
 		}
@@ -767,7 +773,6 @@ func (m *DomainRestore) validateZone(formats strfmt.Registry) error {
 }
 
 func (m *DomainRestore) validateZonec(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Zonec) { // not required
 		return nil
 	}
@@ -776,6 +781,505 @@ func (m *DomainRestore) validateZonec(formats strfmt.Registry) error {
 		if err := m.Zonec.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("zonec")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("zonec")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this domain restore based on the context it is used
+func (m *DomainRestore) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateAction(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateAdminc(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateAutoRenewStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateCancelationStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateDnssecData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateExtensions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateNameServers(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwnerc(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateParking(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePeriod(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRddsOptIn(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRegistrarStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRegistryStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateServicesAdd(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateServicesRem(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTechc(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateZone(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateZonec(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *DomainRestore) contextValidateAction(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Action) { // not required
+		return nil
+	}
+
+	if err := m.Action.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("action")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("action")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *DomainRestore) contextValidateAdminc(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Adminc != nil {
+
+		if swag.IsZero(m.Adminc) { // not required
+			return nil
+		}
+
+		if err := m.Adminc.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("adminc")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("adminc")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainRestore) contextValidateAutoRenewStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.AutoRenewStatus) { // not required
+		return nil
+	}
+
+	if err := m.AutoRenewStatus.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("autoRenewStatus")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("autoRenewStatus")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *DomainRestore) contextValidateCancelationStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.CancelationStatus) { // not required
+		return nil
+	}
+
+	if err := m.CancelationStatus.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("cancelationStatus")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("cancelationStatus")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *DomainRestore) contextValidateDnssecData(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.DnssecData); i++ {
+
+		if m.DnssecData[i] != nil {
+
+			if swag.IsZero(m.DnssecData[i]) { // not required
+				return nil
+			}
+
+			if err := m.DnssecData[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("dnssecData" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("dnssecData" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *DomainRestore) contextValidateExtensions(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Extensions != nil {
+
+		if swag.IsZero(m.Extensions) { // not required
+			return nil
+		}
+
+		if err := m.Extensions.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("extensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("extensions")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainRestore) contextValidateNameServers(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.NameServers); i++ {
+
+		if m.NameServers[i] != nil {
+
+			if swag.IsZero(m.NameServers[i]) { // not required
+				return nil
+			}
+
+			if err := m.NameServers[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("nameServers" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nameServers" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *DomainRestore) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainRestore) contextValidateOwnerc(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Ownerc != nil {
+
+		if swag.IsZero(m.Ownerc) { // not required
+			return nil
+		}
+
+		if err := m.Ownerc.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("ownerc")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("ownerc")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainRestore) contextValidateParking(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Parking) { // not required
+		return nil
+	}
+
+	if err := m.Parking.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("parking")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("parking")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *DomainRestore) contextValidatePeriod(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Period != nil {
+
+		if swag.IsZero(m.Period) { // not required
+			return nil
+		}
+
+		if err := m.Period.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("period")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("period")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainRestore) contextValidateRddsOptIn(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.RddsOptIn) { // not required
+		return nil
+	}
+
+	if err := m.RddsOptIn.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("rddsOptIn")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("rddsOptIn")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *DomainRestore) contextValidateRegistrarStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.RegistrarStatus) { // not required
+		return nil
+	}
+
+	if err := m.RegistrarStatus.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("registrarStatus")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("registrarStatus")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *DomainRestore) contextValidateRegistryStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.RegistryStatus) { // not required
+		return nil
+	}
+
+	if err := m.RegistryStatus.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("registryStatus")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("registryStatus")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *DomainRestore) contextValidateServicesAdd(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.ServicesAdd != nil {
+
+		if swag.IsZero(m.ServicesAdd) { // not required
+			return nil
+		}
+
+		if err := m.ServicesAdd.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("servicesAdd")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("servicesAdd")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainRestore) contextValidateServicesRem(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.ServicesRem != nil {
+
+		if swag.IsZero(m.ServicesRem) { // not required
+			return nil
+		}
+
+		if err := m.ServicesRem.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("servicesRem")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("servicesRem")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainRestore) contextValidateTechc(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Techc != nil {
+
+		if swag.IsZero(m.Techc) { // not required
+			return nil
+		}
+
+		if err := m.Techc.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("techc")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("techc")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainRestore) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainRestore) contextValidateZone(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Zone != nil {
+
+		if swag.IsZero(m.Zone) { // not required
+			return nil
+		}
+
+		if err := m.Zone.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("zone")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("zone")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainRestore) contextValidateZonec(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Zonec != nil {
+
+		if swag.IsZero(m.Zonec) { // not required
+			return nil
+		}
+
+		if err := m.Zonec.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("zonec")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("zonec")
 			}
 			return err
 		}

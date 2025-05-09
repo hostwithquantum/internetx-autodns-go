@@ -9,12 +9,38 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime"
+	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new domain safe tasks API client.
 func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new domain safe tasks API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new domain safe tasks API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -25,41 +51,45 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
 // ClientService is the interface for Client methods
 type ClientService interface {
-	SafeContactCreate(params *SafeContactCreateParams) (*SafeContactCreateOK, error)
+	SafeContactCreate(params *SafeContactCreateParams, opts ...ClientOption) (*SafeContactCreateOK, error)
 
-	SafeContactInfo(params *SafeContactInfoParams) (*SafeContactInfoOK, error)
+	SafeContactInfo(params *SafeContactInfoParams, opts ...ClientOption) (*SafeContactInfoOK, error)
 
-	SafeContactList(params *SafeContactListParams) (*SafeContactListOK, error)
+	SafeContactList(params *SafeContactListParams, opts ...ClientOption) (*SafeContactListOK, error)
 
-	SafeContactUpdate(params *SafeContactUpdateParams) (*SafeContactUpdateOK, error)
+	SafeContactUpdate(params *SafeContactUpdateParams, opts ...ClientOption) (*SafeContactUpdateOK, error)
 
-	SafeObjectCreate(params *SafeObjectCreateParams) (*SafeObjectCreateOK, error)
+	SafeObjectCreate(params *SafeObjectCreateParams, opts ...ClientOption) (*SafeObjectCreateOK, error)
 
-	SafeObjectDelete(params *SafeObjectDeleteParams) (*SafeObjectDeleteOK, error)
+	SafeObjectDelete(params *SafeObjectDeleteParams, opts ...ClientOption) (*SafeObjectDeleteOK, error)
 
-	SafeObjectList(params *SafeObjectListParams) (*SafeObjectListOK, error)
+	SafeObjectList(params *SafeObjectListParams, opts ...ClientOption) (*SafeObjectListOK, error)
 
-	SafeUserCreate(params *SafeUserCreateParams) (*SafeUserCreateOK, error)
+	SafeUserCreate(params *SafeUserCreateParams, opts ...ClientOption) (*SafeUserCreateOK, error)
 
-	SafeUserDelete(params *SafeUserDeleteParams) (*SafeUserDeleteOK, error)
+	SafeUserDelete(params *SafeUserDeleteParams, opts ...ClientOption) (*SafeUserDeleteOK, error)
+
+	SafeUserUpdate(params *SafeUserUpdateParams, opts ...ClientOption) (*SafeUserUpdateOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
 
 /*
-  SafeContactCreate saves contact create
+SafeContactCreate saves contact create 0621
 
-  Creating a new DomainSafe Contact.
+Creating a new DomainSafe Contact.
 */
-func (a *Client) SafeContactCreate(params *SafeContactCreateParams) (*SafeContactCreateOK, error) {
+func (a *Client) SafeContactCreate(params *SafeContactCreateParams, opts ...ClientOption) (*SafeContactCreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSafeContactCreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "safeContactCreate",
 		Method:             "POST",
 		PathPattern:        "/domainSafeContact",
@@ -70,7 +100,12 @@ func (a *Client) SafeContactCreate(params *SafeContactCreateParams) (*SafeContac
 		Reader:             &SafeContactCreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -85,17 +120,16 @@ func (a *Client) SafeContactCreate(params *SafeContactCreateParams) (*SafeContac
 }
 
 /*
-  SafeContactInfo saves contact info
+SafeContactInfo saves contact info 0624
 
-  Inquiring the data for the specified safeContact.
+Inquiring the data for the specified safeContact.
 */
-func (a *Client) SafeContactInfo(params *SafeContactInfoParams) (*SafeContactInfoOK, error) {
+func (a *Client) SafeContactInfo(params *SafeContactInfoParams, opts ...ClientOption) (*SafeContactInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSafeContactInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "safeContactInfo",
 		Method:             "GET",
 		PathPattern:        "/domainSafeContact/{id}",
@@ -106,7 +140,12 @@ func (a *Client) SafeContactInfo(params *SafeContactInfoParams) (*SafeContactInf
 		Reader:             &SafeContactInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -121,17 +160,16 @@ func (a *Client) SafeContactInfo(params *SafeContactInfoParams) (*SafeContactInf
 }
 
 /*
-  SafeContactList saves contact list
+SafeContactList saves contact list 0624
 
-  Inquiring a list of Domain Safe contacts with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: name, created, updated.
+Inquiring a list of Domain Safe contacts with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: name, created, updated.
 */
-func (a *Client) SafeContactList(params *SafeContactListParams) (*SafeContactListOK, error) {
+func (a *Client) SafeContactList(params *SafeContactListParams, opts ...ClientOption) (*SafeContactListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSafeContactListParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "safeContactList",
 		Method:             "POST",
 		PathPattern:        "/domainSafeContact/_search",
@@ -142,7 +180,12 @@ func (a *Client) SafeContactList(params *SafeContactListParams) (*SafeContactLis
 		Reader:             &SafeContactListReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -157,20 +200,19 @@ func (a *Client) SafeContactList(params *SafeContactListParams) (*SafeContactLis
 }
 
 /*
-  SafeContactUpdate saves user update
+SafeContactUpdate saves contact update 0622
 
-  Updating an existing DomainSafe user.
+Updating an existing DomainSafe contact.
 */
-func (a *Client) SafeContactUpdate(params *SafeContactUpdateParams) (*SafeContactUpdateOK, error) {
+func (a *Client) SafeContactUpdate(params *SafeContactUpdateParams, opts ...ClientOption) (*SafeContactUpdateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSafeContactUpdateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "safeContactUpdate",
 		Method:             "PUT",
-		PathPattern:        "/domainSafeContact/user",
+		PathPattern:        "/domainSafeContact/{id}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"https"},
@@ -178,7 +220,12 @@ func (a *Client) SafeContactUpdate(params *SafeContactUpdateParams) (*SafeContac
 		Reader:             &SafeContactUpdateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -193,17 +240,16 @@ func (a *Client) SafeContactUpdate(params *SafeContactUpdateParams) (*SafeContac
 }
 
 /*
-  SafeObjectCreate saves object create
+SafeObjectCreate saves object create 0601
 
-  Creating a new SafeObject.
+Creating a new SafeObject.
 */
-func (a *Client) SafeObjectCreate(params *SafeObjectCreateParams) (*SafeObjectCreateOK, error) {
+func (a *Client) SafeObjectCreate(params *SafeObjectCreateParams, opts ...ClientOption) (*SafeObjectCreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSafeObjectCreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "safeObjectCreate",
 		Method:             "POST",
 		PathPattern:        "/domainSafeObject",
@@ -214,7 +260,12 @@ func (a *Client) SafeObjectCreate(params *SafeObjectCreateParams) (*SafeObjectCr
 		Reader:             &SafeObjectCreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -229,20 +280,19 @@ func (a *Client) SafeObjectCreate(params *SafeObjectCreateParams) (*SafeObjectCr
 }
 
 /*
-  SafeObjectDelete saves object delete
+SafeObjectDelete saves object delete 0603
 
-  Deleting an existing safeObject.
+Deleting an existing safeObject.
 */
-func (a *Client) SafeObjectDelete(params *SafeObjectDeleteParams) (*SafeObjectDeleteOK, error) {
+func (a *Client) SafeObjectDelete(params *SafeObjectDeleteParams, opts ...ClientOption) (*SafeObjectDeleteOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSafeObjectDeleteParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "safeObjectDelete",
 		Method:             "DELETE",
-		PathPattern:        "/domainSafeObject/{object}/{type}",
+		PathPattern:        "/domainSafeObject/{safeObject}/{type}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"https"},
@@ -250,7 +300,12 @@ func (a *Client) SafeObjectDelete(params *SafeObjectDeleteParams) (*SafeObjectDe
 		Reader:             &SafeObjectDeleteReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -265,17 +320,16 @@ func (a *Client) SafeObjectDelete(params *SafeObjectDeleteParams) (*SafeObjectDe
 }
 
 /*
-  SafeObjectList saves object list
+SafeObjectList saves object list 0604
 
-  Inquiring a list of DomanSafe objects with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: created, updated.
+Inquiring a list of DomanSafe objects with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: created, updated.
 */
-func (a *Client) SafeObjectList(params *SafeObjectListParams) (*SafeObjectListOK, error) {
+func (a *Client) SafeObjectList(params *SafeObjectListParams, opts ...ClientOption) (*SafeObjectListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSafeObjectListParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "safeObjectList",
 		Method:             "POST",
 		PathPattern:        "/domainSafeObject/_search",
@@ -286,7 +340,12 @@ func (a *Client) SafeObjectList(params *SafeObjectListParams) (*SafeObjectListOK
 		Reader:             &SafeObjectListReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -301,17 +360,16 @@ func (a *Client) SafeObjectList(params *SafeObjectListParams) (*SafeObjectListOK
 }
 
 /*
-  SafeUserCreate saves user create
+SafeUserCreate saves user create 0622001
 
-  Creating a new DomainSafe user.
+Creating a new DomainSafe user.
 */
-func (a *Client) SafeUserCreate(params *SafeUserCreateParams) (*SafeUserCreateOK, error) {
+func (a *Client) SafeUserCreate(params *SafeUserCreateParams, opts ...ClientOption) (*SafeUserCreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSafeUserCreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "safeUserCreate",
 		Method:             "POST",
 		PathPattern:        "/domainSafeContact/user",
@@ -322,7 +380,12 @@ func (a *Client) SafeUserCreate(params *SafeUserCreateParams) (*SafeUserCreateOK
 		Reader:             &SafeUserCreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -337,17 +400,16 @@ func (a *Client) SafeUserCreate(params *SafeUserCreateParams) (*SafeUserCreateOK
 }
 
 /*
-  SafeUserDelete saves user delete
+SafeUserDelete saves user delete 0622003
 
-  Deleting an existing DomainSafe user.
+Deleting an existing DomainSafe user.
 */
-func (a *Client) SafeUserDelete(params *SafeUserDeleteParams) (*SafeUserDeleteOK, error) {
+func (a *Client) SafeUserDelete(params *SafeUserDeleteParams, opts ...ClientOption) (*SafeUserDeleteOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSafeUserDeleteParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "safeUserDelete",
 		Method:             "DELETE",
 		PathPattern:        "/domainSafeContact/user/{user}/{context}",
@@ -358,7 +420,12 @@ func (a *Client) SafeUserDelete(params *SafeUserDeleteParams) (*SafeUserDeleteOK
 		Reader:             &SafeUserDeleteReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -369,6 +436,46 @@ func (a *Client) SafeUserDelete(params *SafeUserDeleteParams) (*SafeUserDeleteOK
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for safeUserDelete: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+SafeUserUpdate saves user update 0622002
+
+Updating an existing DomainSafe user.
+*/
+func (a *Client) SafeUserUpdate(params *SafeUserUpdateParams, opts ...ClientOption) (*SafeUserUpdateOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewSafeUserUpdateParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "safeUserUpdate",
+		Method:             "PUT",
+		PathPattern:        "/domainSafeContact/user",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &SafeUserUpdateReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*SafeUserUpdateOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for safeUserUpdate: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -15,12 +17,19 @@ import (
 // swagger:model ContactNzExtensions
 type ContactNzExtensions struct {
 
-	// The irpo.
+	// Hide contact data in the Whois. Address, telephone, fax are affected.
+	//  Permitted only for natural persons ("individuals") who do not use the domain name to a significant extent in "trading" as defined and used in the Fair Trading Act 1986.
+	// Example: false
 	Irpo bool `json:"irpo,omitempty"`
 }
 
 // Validate validates this contact nz extensions
 func (m *ContactNzExtensions) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this contact nz extensions based on context it is used
+func (m *ContactNzExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

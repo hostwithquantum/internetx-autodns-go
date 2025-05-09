@@ -6,6 +6,7 @@ package domain_prereg_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *DomainPreregListReader) ReadResponse(response runtime.ClientResponse, c
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[POST /domainPrereg/_search] domainPreregList", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewDomainPreregListOK() *DomainPreregListOK {
 	return &DomainPreregListOK{}
 }
 
-/*DomainPreregListOK handles this case with default header values.
+/*
+DomainPreregListOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type DomainPreregListOK struct {
 	Payload *models.JSONResponseDataDomainPrereg
 }
 
+// IsSuccess returns true when this domain prereg list o k response has a 2xx status code
+func (o *DomainPreregListOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this domain prereg list o k response has a 3xx status code
+func (o *DomainPreregListOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this domain prereg list o k response has a 4xx status code
+func (o *DomainPreregListOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this domain prereg list o k response has a 5xx status code
+func (o *DomainPreregListOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this domain prereg list o k response a status code equal to that given
+func (o *DomainPreregListOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the domain prereg list o k response
+func (o *DomainPreregListOK) Code() int {
+	return 200
+}
+
 func (o *DomainPreregListOK) Error() string {
-	return fmt.Sprintf("[POST /domainPrereg/_search][%d] domainPreregListOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /domainPrereg/_search][%d] domainPreregListOK %s", 200, payload)
+}
+
+func (o *DomainPreregListOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /domainPrereg/_search][%d] domainPreregListOK %s", 200, payload)
 }
 
 func (o *DomainPreregListOK) GetPayload() *models.JSONResponseDataDomainPrereg {

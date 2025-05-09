@@ -6,10 +6,11 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // ObjectUserAssignment object user assignment
@@ -17,28 +18,23 @@ import (
 // swagger:model ObjectUserAssignment
 type ObjectUserAssignment struct {
 
-	// The cancelation mode.
+	// Mode when assigning domains with an active cancelation.
 	Cancelation ObjectAssignmentMode `json:"cancelation,omitempty"`
 
-	// The object name.
-	// Required: true
-	// Max Length: 2147483647
-	// Min Length: 1
-	Name *string `json:"name"`
+	// Name of the object to be reassigned.
+	Name string `json:"name,omitempty"`
 
-	// The owner of the object.
-	// Required: true
-	Owner *BasicUser `json:"owner"`
+	// The object owner.
+	Owner *BasicUser `json:"owner,omitempty"`
 
-	// The source owner.
+	// The user that currently has the object
 	Source *BasicUser `json:"source,omitempty"`
 
-	// The target owner.
+	// The user that should receive the object
 	Target *BasicUser `json:"target,omitempty"`
 
-	// The type of the object.
-	// Required: true
-	Type *string `json:"type"`
+	// Type of object, e.g. domain.
+	Type string `json:"type,omitempty"`
 }
 
 // Validate validates this object user assignment
@@ -46,10 +42,6 @@ func (m *ObjectUserAssignment) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateCancelation(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -65,10 +57,6 @@ func (m *ObjectUserAssignment) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateType(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -76,7 +64,6 @@ func (m *ObjectUserAssignment) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ObjectUserAssignment) validateCancelation(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Cancelation) { // not required
 		return nil
 	}
@@ -84,6 +71,8 @@ func (m *ObjectUserAssignment) validateCancelation(formats strfmt.Registry) erro
 	if err := m.Cancelation.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("cancelation")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("cancelation")
 		}
 		return err
 	}
@@ -91,33 +80,17 @@ func (m *ObjectUserAssignment) validateCancelation(formats strfmt.Registry) erro
 	return nil
 }
 
-func (m *ObjectUserAssignment) validateName(formats strfmt.Registry) error {
-
-	if err := validate.Required("name", "body", m.Name); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("name", "body", string(*m.Name), 1); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("name", "body", string(*m.Name), 2147483647); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *ObjectUserAssignment) validateOwner(formats strfmt.Registry) error {
-
-	if err := validate.Required("owner", "body", m.Owner); err != nil {
-		return err
+	if swag.IsZero(m.Owner) { // not required
+		return nil
 	}
 
 	if m.Owner != nil {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -127,7 +100,6 @@ func (m *ObjectUserAssignment) validateOwner(formats strfmt.Registry) error {
 }
 
 func (m *ObjectUserAssignment) validateSource(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Source) { // not required
 		return nil
 	}
@@ -136,6 +108,8 @@ func (m *ObjectUserAssignment) validateSource(formats strfmt.Registry) error {
 		if err := m.Source.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("source")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("source")
 			}
 			return err
 		}
@@ -145,7 +119,6 @@ func (m *ObjectUserAssignment) validateSource(formats strfmt.Registry) error {
 }
 
 func (m *ObjectUserAssignment) validateTarget(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Target) { // not required
 		return nil
 	}
@@ -154,6 +127,8 @@ func (m *ObjectUserAssignment) validateTarget(formats strfmt.Registry) error {
 		if err := m.Target.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("target")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("target")
 			}
 			return err
 		}
@@ -162,10 +137,108 @@ func (m *ObjectUserAssignment) validateTarget(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ObjectUserAssignment) validateType(formats strfmt.Registry) error {
+// ContextValidate validate this object user assignment based on the context it is used
+func (m *ObjectUserAssignment) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
 
-	if err := validate.Required("type", "body", m.Type); err != nil {
+	if err := m.contextValidateCancelation(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSource(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTarget(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ObjectUserAssignment) contextValidateCancelation(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Cancelation) { // not required
+		return nil
+	}
+
+	if err := m.Cancelation.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("cancelation")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("cancelation")
+		}
 		return err
+	}
+
+	return nil
+}
+
+func (m *ObjectUserAssignment) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ObjectUserAssignment) contextValidateSource(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Source != nil {
+
+		if swag.IsZero(m.Source) { // not required
+			return nil
+		}
+
+		if err := m.Source.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("source")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("source")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ObjectUserAssignment) contextValidateTarget(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Target != nil {
+
+		if swag.IsZero(m.Target) { // not required
+			return nil
+		}
+
+		if err := m.Target.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("target")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("target")
+			}
+			return err
+		}
 	}
 
 	return nil

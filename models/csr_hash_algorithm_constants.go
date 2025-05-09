@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -18,16 +19,22 @@ import (
 // swagger:model CsrHashAlgorithmConstants
 type CsrHashAlgorithmConstants string
 
+func NewCsrHashAlgorithmConstants(value CsrHashAlgorithmConstants) *CsrHashAlgorithmConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated CsrHashAlgorithmConstants.
+func (m CsrHashAlgorithmConstants) Pointer() *CsrHashAlgorithmConstants {
+	return &m
+}
+
 const (
 
-	// CsrHashAlgorithmConstantsECC captures enum value "ECC"
-	CsrHashAlgorithmConstantsECC CsrHashAlgorithmConstants = "ECC"
+	// CsrHashAlgorithmConstantsPRIME256V1 captures enum value "PRIME_256_V1"
+	CsrHashAlgorithmConstantsPRIME256V1 CsrHashAlgorithmConstants = "PRIME_256_V1"
 
-	// CsrHashAlgorithmConstantsRSA captures enum value "RSA"
-	CsrHashAlgorithmConstantsRSA CsrHashAlgorithmConstants = "RSA"
-
-	// CsrHashAlgorithmConstantsDSA captures enum value "DSA"
-	CsrHashAlgorithmConstantsDSA CsrHashAlgorithmConstants = "DSA"
+	// CsrHashAlgorithmConstantsSECP384R1 captures enum value "SECP_384_R1"
+	CsrHashAlgorithmConstantsSECP384R1 CsrHashAlgorithmConstants = "SECP_384_R1"
 )
 
 // for schema
@@ -35,7 +42,7 @@ var csrHashAlgorithmConstantsEnum []interface{}
 
 func init() {
 	var res []CsrHashAlgorithmConstants
-	if err := json.Unmarshal([]byte(`["ECC","RSA","DSA"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["PRIME_256_V1","SECP_384_R1"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -62,5 +69,10 @@ func (m CsrHashAlgorithmConstants) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this csr hash algorithm constants based on context it is used
+func (m CsrHashAlgorithmConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

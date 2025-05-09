@@ -19,86 +19,127 @@ import (
 	"github.com/hostwithquantum/internetx-autodns-go/models"
 )
 
-// NewZoneHistoryListParams creates a new ZoneHistoryListParams object
-// with the default values initialized.
+// NewZoneHistoryListParams creates a new ZoneHistoryListParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewZoneHistoryListParams() *ZoneHistoryListParams {
-	var ()
 	return &ZoneHistoryListParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewZoneHistoryListParamsWithTimeout creates a new ZoneHistoryListParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewZoneHistoryListParamsWithTimeout(timeout time.Duration) *ZoneHistoryListParams {
-	var ()
 	return &ZoneHistoryListParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewZoneHistoryListParamsWithContext creates a new ZoneHistoryListParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewZoneHistoryListParamsWithContext(ctx context.Context) *ZoneHistoryListParams {
-	var ()
 	return &ZoneHistoryListParams{
-
 		Context: ctx,
 	}
 }
 
 // NewZoneHistoryListParamsWithHTTPClient creates a new ZoneHistoryListParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewZoneHistoryListParamsWithHTTPClient(client *http.Client) *ZoneHistoryListParams {
-	var ()
 	return &ZoneHistoryListParams{
 		HTTPClient: client,
 	}
 }
 
-/*ZoneHistoryListParams contains all the parameters to send to the API endpoint
-for the zone history list operation typically these are written to a http.Request
+/*
+ZoneHistoryListParams contains all the parameters to send to the API endpoint
+
+	for the zone history list operation.
+
+	Typically these are written to a http.Request.
 */
 type ZoneHistoryListParams struct {
 
-	/*XDomainrobotBulkLimit*/
-	XDomainrobotBulkLimit *int32
-	/*XDomainrobotContext*/
-	XDomainrobotContext *int32
-	/*XDomainrobotDemo*/
-	XDomainrobotDemo *bool
-	/*XDomainrobotDomainSafePin*/
-	XDomainrobotDomainSafePin *string
-	/*XDomainrobotDomainSafeTan*/
-	XDomainrobotDomainSafeTan *string
-	/*XDomainrobotDomainSafeTransaction*/
-	XDomainrobotDomainSafeTransaction *string
-	/*XDomainrobotDomainSafeTransactionExpire*/
-	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
-	/*XDomainrobotOwnerContext*/
-	XDomainrobotOwnerContext *int32
-	/*XDomainrobotOwnerUser*/
-	XDomainrobotOwnerUser *string
-	/*XDomainrobotSessionID*/
-	XDomainrobotSessionID *string
-	/*XDomainrobotWS*/
-	XDomainrobotWS *string
-	/*Body
-	  query
+	// XDomainrobot2FAToken.
+	//
+	// Format: int32
+	XDomainrobot2FAToken *int32
 
+	// XDomainrobotBulkLimit.
+	//
+	// Format: int32
+	XDomainrobotBulkLimit *int32
+
+	// XDomainrobotContext.
+	//
+	// Format: int32
+	XDomainrobotContext *int32
+
+	// XDomainrobotDemo.
+	XDomainrobotDemo *bool
+
+	// XDomainrobotDomainSafePin.
+	XDomainrobotDomainSafePin *string
+
+	// XDomainrobotDomainSafeTan.
+	XDomainrobotDomainSafeTan *string
+
+	// XDomainrobotDomainSafeTransaction.
+	XDomainrobotDomainSafeTransaction *string
+
+	// XDomainrobotDomainSafeTransactionExpire.
+	//
+	// Format: date-time
+	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
+
+	// XDomainrobotOwnerContext.
+	//
+	// Format: int32
+	XDomainrobotOwnerContext *int32
+
+	// XDomainrobotOwnerUser.
+	XDomainrobotOwnerUser *string
+
+	// XDomainrobotSessionID.
+	XDomainrobotSessionID *string
+
+	// XDomainrobotWS.
+	XDomainrobotWS *string
+
+	/* Body.
+
+	   query
 	*/
 	Body *models.Query
-	/*Keys
-	  The query parameter to fetch additional details.
 
+	/* Keys.
+
+	   The query parameter to fetch additional details.
 	*/
 	Keys []string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the zone history list params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *ZoneHistoryListParams) WithDefaults() *ZoneHistoryListParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the zone history list params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *ZoneHistoryListParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the zone history list params
@@ -132,6 +173,17 @@ func (o *ZoneHistoryListParams) WithHTTPClient(client *http.Client) *ZoneHistory
 // SetHTTPClient adds the HTTPClient to the zone history list params
 func (o *ZoneHistoryListParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithXDomainrobot2FAToken adds the xDomainrobot2FAToken to the zone history list params
+func (o *ZoneHistoryListParams) WithXDomainrobot2FAToken(xDomainrobot2FAToken *int32) *ZoneHistoryListParams {
+	o.SetXDomainrobot2FAToken(xDomainrobot2FAToken)
+	return o
+}
+
+// SetXDomainrobot2FAToken adds the xDomainrobot2FAToken to the zone history list params
+func (o *ZoneHistoryListParams) SetXDomainrobot2FAToken(xDomainrobot2FAToken *int32) {
+	o.XDomainrobot2FAToken = xDomainrobot2FAToken
 }
 
 // WithXDomainrobotBulkLimit adds the xDomainrobotBulkLimit to the zone history list params
@@ -285,13 +337,20 @@ func (o *ZoneHistoryListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 	}
 	var res []error
 
+	if o.XDomainrobot2FAToken != nil {
+
+		// header param X-Domainrobot-2FA-Token
+		if err := r.SetHeaderParam("X-Domainrobot-2FA-Token", swag.FormatInt32(*o.XDomainrobot2FAToken)); err != nil {
+			return err
+		}
+	}
+
 	if o.XDomainrobotBulkLimit != nil {
 
 		// header param X-Domainrobot-Bulk-Limit
 		if err := r.SetHeaderParam("X-Domainrobot-Bulk-Limit", swag.FormatInt32(*o.XDomainrobotBulkLimit)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotContext != nil {
@@ -300,7 +359,6 @@ func (o *ZoneHistoryListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		if err := r.SetHeaderParam("X-Domainrobot-Context", swag.FormatInt32(*o.XDomainrobotContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDemo != nil {
@@ -309,7 +367,6 @@ func (o *ZoneHistoryListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		if err := r.SetHeaderParam("X-Domainrobot-Demo", swag.FormatBool(*o.XDomainrobotDemo)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafePin != nil {
@@ -318,7 +375,6 @@ func (o *ZoneHistoryListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Pin", *o.XDomainrobotDomainSafePin); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTan != nil {
@@ -327,7 +383,6 @@ func (o *ZoneHistoryListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Tan", *o.XDomainrobotDomainSafeTan); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransaction != nil {
@@ -336,7 +391,6 @@ func (o *ZoneHistoryListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction", *o.XDomainrobotDomainSafeTransaction); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransactionExpire != nil {
@@ -345,7 +399,6 @@ func (o *ZoneHistoryListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction-Expire", o.XDomainrobotDomainSafeTransactionExpire.String()); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerContext != nil {
@@ -354,7 +407,6 @@ func (o *ZoneHistoryListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-Context", swag.FormatInt32(*o.XDomainrobotOwnerContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerUser != nil {
@@ -363,7 +415,6 @@ func (o *ZoneHistoryListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-User", *o.XDomainrobotOwnerUser); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotSessionID != nil {
@@ -372,7 +423,6 @@ func (o *ZoneHistoryListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		if err := r.SetHeaderParam("X-Domainrobot-SessionId", *o.XDomainrobotSessionID); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotWS != nil {
@@ -381,25 +431,43 @@ func (o *ZoneHistoryListParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		if err := r.SetHeaderParam("X-Domainrobot-WS", *o.XDomainrobotWS); err != nil {
 			return err
 		}
-
 	}
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err
 		}
 	}
 
-	valuesKeys := o.Keys
+	if o.Keys != nil {
 
-	joinedKeys := swag.JoinByFormat(valuesKeys, "multi")
-	// query array param keys
-	if err := r.SetQueryParam("keys", joinedKeys...); err != nil {
-		return err
+		// binding items for keys
+		joinedKeys := o.bindParamKeys(reg)
+
+		// query array param keys
+		if err := r.SetQueryParam("keys", joinedKeys...); err != nil {
+			return err
+		}
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
+}
+
+// bindParamZoneHistoryList binds the parameter keys
+func (o *ZoneHistoryListParams) bindParamKeys(formats strfmt.Registry) []string {
+	keysIR := o.Keys
+
+	var keysIC []string
+	for _, keysIIR := range keysIR { // explode []string
+
+		keysIIV := keysIIR // string as string
+		keysIC = append(keysIC, keysIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	keysIS := swag.JoinByFormat(keysIC, "multi")
+
+	return keysIS
 }

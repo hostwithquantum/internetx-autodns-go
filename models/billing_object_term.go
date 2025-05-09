@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -27,30 +29,26 @@ type BillingObjectTerm struct {
 	Autodeleteable bool `json:"autodeleteable,omitempty"`
 
 	// cancelation
-	// Required: true
-	Cancelation *TimePeriod `json:"cancelation"`
+	Cancelation *TimePeriod `json:"cancelation,omitempty"`
 
 	// cancelation expire only
 	CancelationExpireOnly bool `json:"cancelationExpireOnly,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
 	// the related customer or group
-	// Required: true
-	Customer *GenericCustomer `json:"customer"`
+	Customer *GenericCustomer `json:"customer,omitempty"`
 
 	// initial
-	// Required: true
-	Initial *TimePeriod `json:"initial"`
+	Initial *TimePeriod `json:"initial,omitempty"`
 
-	// The owner of the object.
+	// The object owner.
 	Owner *BasicUser `json:"owner,omitempty"`
 
 	// renew
-	// Required: true
-	Renew *TimePeriod `json:"renew"`
+	Renew *TimePeriod `json:"renew,omitempty"`
 
 	// renew term
 	RenewTerm *TimePeriod `json:"renewTerm,omitempty"`
@@ -58,11 +56,11 @@ type BillingObjectTerm struct {
 	// Flag indication if the article can be restored
 	Restoreable bool `json:"restoreable,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The updating user of the object.
+	// User who performed the last update.
 	Updater *BasicUser `json:"updater,omitempty"`
 }
 
@@ -113,15 +111,16 @@ func (m *BillingObjectTerm) Validate(formats strfmt.Registry) error {
 }
 
 func (m *BillingObjectTerm) validateCancelation(formats strfmt.Registry) error {
-
-	if err := validate.Required("cancelation", "body", m.Cancelation); err != nil {
-		return err
+	if swag.IsZero(m.Cancelation) { // not required
+		return nil
 	}
 
 	if m.Cancelation != nil {
 		if err := m.Cancelation.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("cancelation")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("cancelation")
 			}
 			return err
 		}
@@ -131,7 +130,6 @@ func (m *BillingObjectTerm) validateCancelation(formats strfmt.Registry) error {
 }
 
 func (m *BillingObjectTerm) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -144,15 +142,16 @@ func (m *BillingObjectTerm) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *BillingObjectTerm) validateCustomer(formats strfmt.Registry) error {
-
-	if err := validate.Required("customer", "body", m.Customer); err != nil {
-		return err
+	if swag.IsZero(m.Customer) { // not required
+		return nil
 	}
 
 	if m.Customer != nil {
 		if err := m.Customer.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("customer")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("customer")
 			}
 			return err
 		}
@@ -162,15 +161,16 @@ func (m *BillingObjectTerm) validateCustomer(formats strfmt.Registry) error {
 }
 
 func (m *BillingObjectTerm) validateInitial(formats strfmt.Registry) error {
-
-	if err := validate.Required("initial", "body", m.Initial); err != nil {
-		return err
+	if swag.IsZero(m.Initial) { // not required
+		return nil
 	}
 
 	if m.Initial != nil {
 		if err := m.Initial.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("initial")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("initial")
 			}
 			return err
 		}
@@ -180,7 +180,6 @@ func (m *BillingObjectTerm) validateInitial(formats strfmt.Registry) error {
 }
 
 func (m *BillingObjectTerm) validateOwner(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -189,6 +188,8 @@ func (m *BillingObjectTerm) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -198,15 +199,16 @@ func (m *BillingObjectTerm) validateOwner(formats strfmt.Registry) error {
 }
 
 func (m *BillingObjectTerm) validateRenew(formats strfmt.Registry) error {
-
-	if err := validate.Required("renew", "body", m.Renew); err != nil {
-		return err
+	if swag.IsZero(m.Renew) { // not required
+		return nil
 	}
 
 	if m.Renew != nil {
 		if err := m.Renew.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("renew")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("renew")
 			}
 			return err
 		}
@@ -216,7 +218,6 @@ func (m *BillingObjectTerm) validateRenew(formats strfmt.Registry) error {
 }
 
 func (m *BillingObjectTerm) validateRenewTerm(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.RenewTerm) { // not required
 		return nil
 	}
@@ -225,6 +226,8 @@ func (m *BillingObjectTerm) validateRenewTerm(formats strfmt.Registry) error {
 		if err := m.RenewTerm.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("renewTerm")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("renewTerm")
 			}
 			return err
 		}
@@ -234,7 +237,6 @@ func (m *BillingObjectTerm) validateRenewTerm(formats strfmt.Registry) error {
 }
 
 func (m *BillingObjectTerm) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -247,7 +249,6 @@ func (m *BillingObjectTerm) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *BillingObjectTerm) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -256,6 +257,193 @@ func (m *BillingObjectTerm) validateUpdater(formats strfmt.Registry) error {
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this billing object term based on the context it is used
+func (m *BillingObjectTerm) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateCancelation(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateCustomer(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateInitial(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRenew(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRenewTerm(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *BillingObjectTerm) contextValidateCancelation(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Cancelation != nil {
+
+		if swag.IsZero(m.Cancelation) { // not required
+			return nil
+		}
+
+		if err := m.Cancelation.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("cancelation")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("cancelation")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *BillingObjectTerm) contextValidateCustomer(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Customer != nil {
+
+		if swag.IsZero(m.Customer) { // not required
+			return nil
+		}
+
+		if err := m.Customer.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("customer")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("customer")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *BillingObjectTerm) contextValidateInitial(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Initial != nil {
+
+		if swag.IsZero(m.Initial) { // not required
+			return nil
+		}
+
+		if err := m.Initial.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("initial")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("initial")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *BillingObjectTerm) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *BillingObjectTerm) contextValidateRenew(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Renew != nil {
+
+		if swag.IsZero(m.Renew) { // not required
+			return nil
+		}
+
+		if err := m.Renew.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("renew")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("renew")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *BillingObjectTerm) contextValidateRenewTerm(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.RenewTerm != nil {
+
+		if swag.IsZero(m.RenewTerm) { // not required
+			return nil
+		}
+
+		if err := m.RenewTerm.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("renewTerm")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("renewTerm")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *BillingObjectTerm) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}

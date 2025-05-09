@@ -15,68 +15,83 @@ import (
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
-	"github.com/hostwithquantum/internetx-autodns-go/models"
 )
 
-// NewTmchMarkDocumentInfoParams creates a new TmchMarkDocumentInfoParams object
-// with the default values initialized.
+// NewTmchMarkDocumentInfoParams creates a new TmchMarkDocumentInfoParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewTmchMarkDocumentInfoParams() *TmchMarkDocumentInfoParams {
-	var ()
 	return &TmchMarkDocumentInfoParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewTmchMarkDocumentInfoParamsWithTimeout creates a new TmchMarkDocumentInfoParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewTmchMarkDocumentInfoParamsWithTimeout(timeout time.Duration) *TmchMarkDocumentInfoParams {
-	var ()
 	return &TmchMarkDocumentInfoParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewTmchMarkDocumentInfoParamsWithContext creates a new TmchMarkDocumentInfoParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewTmchMarkDocumentInfoParamsWithContext(ctx context.Context) *TmchMarkDocumentInfoParams {
-	var ()
 	return &TmchMarkDocumentInfoParams{
-
 		Context: ctx,
 	}
 }
 
 // NewTmchMarkDocumentInfoParamsWithHTTPClient creates a new TmchMarkDocumentInfoParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewTmchMarkDocumentInfoParamsWithHTTPClient(client *http.Client) *TmchMarkDocumentInfoParams {
-	var ()
 	return &TmchMarkDocumentInfoParams{
 		HTTPClient: client,
 	}
 }
 
-/*TmchMarkDocumentInfoParams contains all the parameters to send to the API endpoint
-for the tmch mark document info operation typically these are written to a http.Request
+/*
+TmchMarkDocumentInfoParams contains all the parameters to send to the API endpoint
+
+	for the tmch mark document info operation.
+
+	Typically these are written to a http.Request.
 */
 type TmchMarkDocumentInfoParams struct {
 
-	/*Body
-	  type
+	/* Keys.
 
-	*/
-	Body models.DocumentTypeConstants
-	/*Keys
-	  The query parameter to enable generate a download link.
-
+	   The query parameter to enable generate a download link.
 	*/
 	Keys []string
+
+	// Reference.
+	Reference string
+
+	// Type.
+	Type string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the tmch mark document info params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *TmchMarkDocumentInfoParams) WithDefaults() *TmchMarkDocumentInfoParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the tmch mark document info params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *TmchMarkDocumentInfoParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the tmch mark document info params
@@ -112,17 +127,6 @@ func (o *TmchMarkDocumentInfoParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithBody adds the body to the tmch mark document info params
-func (o *TmchMarkDocumentInfoParams) WithBody(body models.DocumentTypeConstants) *TmchMarkDocumentInfoParams {
-	o.SetBody(body)
-	return o
-}
-
-// SetBody adds the body to the tmch mark document info params
-func (o *TmchMarkDocumentInfoParams) SetBody(body models.DocumentTypeConstants) {
-	o.Body = body
-}
-
 // WithKeys adds the keys to the tmch mark document info params
 func (o *TmchMarkDocumentInfoParams) WithKeys(keys []string) *TmchMarkDocumentInfoParams {
 	o.SetKeys(keys)
@@ -134,6 +138,28 @@ func (o *TmchMarkDocumentInfoParams) SetKeys(keys []string) {
 	o.Keys = keys
 }
 
+// WithReference adds the reference to the tmch mark document info params
+func (o *TmchMarkDocumentInfoParams) WithReference(reference string) *TmchMarkDocumentInfoParams {
+	o.SetReference(reference)
+	return o
+}
+
+// SetReference adds the reference to the tmch mark document info params
+func (o *TmchMarkDocumentInfoParams) SetReference(reference string) {
+	o.Reference = reference
+}
+
+// WithType adds the typeVar to the tmch mark document info params
+func (o *TmchMarkDocumentInfoParams) WithType(typeVar string) *TmchMarkDocumentInfoParams {
+	o.SetType(typeVar)
+	return o
+}
+
+// SetType adds the type to the tmch mark document info params
+func (o *TmchMarkDocumentInfoParams) SetType(typeVar string) {
+	o.Type = typeVar
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *TmchMarkDocumentInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -142,15 +168,24 @@ func (o *TmchMarkDocumentInfoParams) WriteToRequest(r runtime.ClientRequest, reg
 	}
 	var res []error
 
-	if err := r.SetBodyParam(o.Body); err != nil {
+	if o.Keys != nil {
+
+		// binding items for keys
+		joinedKeys := o.bindParamKeys(reg)
+
+		// query array param keys
+		if err := r.SetQueryParam("keys", joinedKeys...); err != nil {
+			return err
+		}
+	}
+
+	// path param reference
+	if err := r.SetPathParam("reference", o.Reference); err != nil {
 		return err
 	}
 
-	valuesKeys := o.Keys
-
-	joinedKeys := swag.JoinByFormat(valuesKeys, "multi")
-	// query array param keys
-	if err := r.SetQueryParam("keys", joinedKeys...); err != nil {
+	// path param type
+	if err := r.SetPathParam("type", o.Type); err != nil {
 		return err
 	}
 
@@ -158,4 +193,21 @@ func (o *TmchMarkDocumentInfoParams) WriteToRequest(r runtime.ClientRequest, reg
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
+}
+
+// bindParamTmchMarkDocumentInfo binds the parameter keys
+func (o *TmchMarkDocumentInfoParams) bindParamKeys(formats strfmt.Registry) []string {
+	keysIR := o.Keys
+
+	var keysIC []string
+	for _, keysIIR := range keysIR { // explode []string
+
+		keysIIV := keysIIR // string as string
+		keysIC = append(keysIC, keysIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	keysIS := swag.JoinByFormat(keysIC, "multi")
+
+	return keysIS
 }

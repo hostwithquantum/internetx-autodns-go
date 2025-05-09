@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -18,23 +20,20 @@ import (
 type OTPAuth struct {
 
 	// Crypto algorithm
-	// Required: true
-	Algorithm CryptoFormatConstants `json:"algorithm"`
+	Algorithm CryptoFormatConstants `json:"algorithm,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
 	// The length of the token
-	// Required: true
-	Digits *int32 `json:"digits"`
+	Digits int32 `json:"digits,omitempty"`
 
-	// The owner of the object.
+	// The object owner.
 	Owner *BasicUser `json:"owner,omitempty"`
 
 	// The type of protocol
-	// Required: true
-	ProtocolType ProtocolTypeConstants `json:"protocolType"`
+	ProtocolType ProtocolTypeConstants `json:"protocolType,omitempty"`
 
 	// The generated qr code png.
 	QrCode *BasicDocument `json:"qrCode,omitempty"`
@@ -43,20 +42,17 @@ type OTPAuth struct {
 	Secret string `json:"secret,omitempty"`
 
 	// Timeout in seconds
-	// Required: true
-	// Maximum: 90
-	// Minimum: 5
-	Timeout *int32 `json:"timeout"`
+	Timeout int32 `json:"timeout,omitempty"`
 
 	// The generated support 'tokens'.
 	// Unique: true
 	Tokens []string `json:"tokens"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The updating user of the object.
+	// User who performed the last update.
 	Updater *BasicUser `json:"updater,omitempty"`
 }
 
@@ -72,10 +68,6 @@ func (m *OTPAuth) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateDigits(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateOwner(formats); err != nil {
 		res = append(res, err)
 	}
@@ -85,10 +77,6 @@ func (m *OTPAuth) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateQrCode(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateTimeout(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -111,10 +99,15 @@ func (m *OTPAuth) Validate(formats strfmt.Registry) error {
 }
 
 func (m *OTPAuth) validateAlgorithm(formats strfmt.Registry) error {
+	if swag.IsZero(m.Algorithm) { // not required
+		return nil
+	}
 
 	if err := m.Algorithm.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("algorithm")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("algorithm")
 		}
 		return err
 	}
@@ -123,7 +116,6 @@ func (m *OTPAuth) validateAlgorithm(formats strfmt.Registry) error {
 }
 
 func (m *OTPAuth) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -135,17 +127,7 @@ func (m *OTPAuth) validateCreated(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *OTPAuth) validateDigits(formats strfmt.Registry) error {
-
-	if err := validate.Required("digits", "body", m.Digits); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *OTPAuth) validateOwner(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -154,6 +136,8 @@ func (m *OTPAuth) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -163,10 +147,15 @@ func (m *OTPAuth) validateOwner(formats strfmt.Registry) error {
 }
 
 func (m *OTPAuth) validateProtocolType(formats strfmt.Registry) error {
+	if swag.IsZero(m.ProtocolType) { // not required
+		return nil
+	}
 
 	if err := m.ProtocolType.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("protocolType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("protocolType")
 		}
 		return err
 	}
@@ -175,7 +164,6 @@ func (m *OTPAuth) validateProtocolType(formats strfmt.Registry) error {
 }
 
 func (m *OTPAuth) validateQrCode(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.QrCode) { // not required
 		return nil
 	}
@@ -184,6 +172,8 @@ func (m *OTPAuth) validateQrCode(formats strfmt.Registry) error {
 		if err := m.QrCode.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("qrCode")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("qrCode")
 			}
 			return err
 		}
@@ -192,25 +182,7 @@ func (m *OTPAuth) validateQrCode(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *OTPAuth) validateTimeout(formats strfmt.Registry) error {
-
-	if err := validate.Required("timeout", "body", m.Timeout); err != nil {
-		return err
-	}
-
-	if err := validate.MinimumInt("timeout", "body", int64(*m.Timeout), 5, false); err != nil {
-		return err
-	}
-
-	if err := validate.MaximumInt("timeout", "body", int64(*m.Timeout), 90, false); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *OTPAuth) validateTokens(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Tokens) { // not required
 		return nil
 	}
@@ -223,7 +195,6 @@ func (m *OTPAuth) validateTokens(formats strfmt.Registry) error {
 }
 
 func (m *OTPAuth) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -236,7 +207,6 @@ func (m *OTPAuth) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *OTPAuth) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -245,6 +215,137 @@ func (m *OTPAuth) validateUpdater(formats strfmt.Registry) error {
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this o t p auth based on the context it is used
+func (m *OTPAuth) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateAlgorithm(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateProtocolType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateQrCode(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *OTPAuth) contextValidateAlgorithm(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Algorithm) { // not required
+		return nil
+	}
+
+	if err := m.Algorithm.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("algorithm")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("algorithm")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *OTPAuth) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *OTPAuth) contextValidateProtocolType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ProtocolType) { // not required
+		return nil
+	}
+
+	if err := m.ProtocolType.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("protocolType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("protocolType")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *OTPAuth) contextValidateQrCode(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.QrCode != nil {
+
+		if swag.IsZero(m.QrCode) { // not required
+			return nil
+		}
+
+		if err := m.QrCode.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("qrCode")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("qrCode")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *OTPAuth) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}

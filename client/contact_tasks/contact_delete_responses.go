@@ -6,6 +6,7 @@ package contact_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *ContactDeleteReader) ReadResponse(response runtime.ClientResponse, cons
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[DELETE /contact/{id}] contactDelete", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewContactDeleteOK() *ContactDeleteOK {
 	return &ContactDeleteOK{}
 }
 
-/*ContactDeleteOK handles this case with default header values.
+/*
+ContactDeleteOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type ContactDeleteOK struct {
 	Payload *models.JSONResponseDataJSONNoData
 }
 
+// IsSuccess returns true when this contact delete o k response has a 2xx status code
+func (o *ContactDeleteOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this contact delete o k response has a 3xx status code
+func (o *ContactDeleteOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this contact delete o k response has a 4xx status code
+func (o *ContactDeleteOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this contact delete o k response has a 5xx status code
+func (o *ContactDeleteOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this contact delete o k response a status code equal to that given
+func (o *ContactDeleteOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the contact delete o k response
+func (o *ContactDeleteOK) Code() int {
+	return 200
+}
+
 func (o *ContactDeleteOK) Error() string {
-	return fmt.Sprintf("[DELETE /contact/{id}][%d] contactDeleteOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /contact/{id}][%d] contactDeleteOK %s", 200, payload)
+}
+
+func (o *ContactDeleteOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /contact/{id}][%d] contactDeleteOK %s", 200, payload)
 }
 
 func (o *ContactDeleteOK) GetPayload() *models.JSONResponseDataJSONNoData {

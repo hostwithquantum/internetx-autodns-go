@@ -6,6 +6,7 @@ package user_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *UserProfileInfoReader) ReadResponse(response runtime.ClientResponse, co
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[GET /user/{name}/{context}/profile] userProfileInfo", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewUserProfileInfoOK() *UserProfileInfoOK {
 	return &UserProfileInfoOK{}
 }
 
-/*UserProfileInfoOK handles this case with default header values.
+/*
+UserProfileInfoOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type UserProfileInfoOK struct {
 	Payload *models.JSONResponseDataUserProfileViews
 }
 
+// IsSuccess returns true when this user profile info o k response has a 2xx status code
+func (o *UserProfileInfoOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this user profile info o k response has a 3xx status code
+func (o *UserProfileInfoOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this user profile info o k response has a 4xx status code
+func (o *UserProfileInfoOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this user profile info o k response has a 5xx status code
+func (o *UserProfileInfoOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this user profile info o k response a status code equal to that given
+func (o *UserProfileInfoOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the user profile info o k response
+func (o *UserProfileInfoOK) Code() int {
+	return 200
+}
+
 func (o *UserProfileInfoOK) Error() string {
-	return fmt.Sprintf("[GET /user/{name}/{context}/profile][%d] userProfileInfoOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user/{name}/{context}/profile][%d] userProfileInfoOK %s", 200, payload)
+}
+
+func (o *UserProfileInfoOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user/{name}/{context}/profile][%d] userProfileInfoOK %s", 200, payload)
 }
 
 func (o *UserProfileInfoOK) GetPayload() *models.JSONResponseDataUserProfileViews {

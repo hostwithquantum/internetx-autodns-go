@@ -6,10 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"github.com/go-openapi/errors"
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // DomainSafeUser domain safe user
@@ -18,50 +18,25 @@ import (
 type DomainSafeUser struct {
 
 	// The context.
-	// Required: true
-	Context *int32 `json:"context"`
+	Context int32 `json:"context,omitempty"`
+
+	// The mobile of the user.
+	Mobile Phone `json:"mobile,omitempty"`
 
 	// The pin.
 	Pin string `json:"pin,omitempty"`
 
 	// The user name.
-	// Required: true
-	User *string `json:"user"`
+	User string `json:"user,omitempty"`
 }
 
 // Validate validates this domain safe user
 func (m *DomainSafeUser) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateContext(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateUser(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 
-func (m *DomainSafeUser) validateContext(formats strfmt.Registry) error {
-
-	if err := validate.Required("context", "body", m.Context); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *DomainSafeUser) validateUser(formats strfmt.Registry) error {
-
-	if err := validate.Required("user", "body", m.User); err != nil {
-		return err
-	}
-
+// ContextValidate validates this domain safe user based on context it is used
+func (m *DomainSafeUser) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

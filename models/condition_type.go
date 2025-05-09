@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model ConditionType
 type ConditionType string
+
+func NewConditionType(value ConditionType) *ConditionType {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated ConditionType.
+func (m ConditionType) Pointer() *ConditionType {
+	return &m
+}
 
 const (
 
@@ -59,5 +69,10 @@ func (m ConditionType) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this condition type based on context it is used
+func (m ConditionType) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

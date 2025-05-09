@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -19,23 +20,21 @@ import (
 // swagger:model DomainSafeAccount
 type DomainSafeAccount struct {
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
 	// The mobile of the object.
-	// Required: true
-	Mobile Phone `json:"mobile"`
+	Mobile Phone `json:"mobile,omitempty"`
 
 	// The name of the object.
 	Name string `json:"name,omitempty"`
 
-	// The owner of the object.
+	// The object owner.
 	Owner *BasicUser `json:"owner,omitempty"`
 
 	// The pin of the object.
-	// Required: true
-	Pin *string `json:"pin"`
+	Pin string `json:"pin,omitempty"`
 
 	// The revalidationNumber of the object.
 	RevalidationNumber Phone `json:"revalidationNumber,omitempty"`
@@ -43,11 +42,11 @@ type DomainSafeAccount struct {
 	// The safeUser of the object.
 	Safeuser []*DomainSafeUser `json:"safeuser"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The updating user of the object.
+	// User who performed the last update.
 	Updater *BasicUser `json:"updater,omitempty"`
 }
 
@@ -59,15 +58,7 @@ func (m *DomainSafeAccount) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateMobile(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateOwner(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validatePin(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -90,7 +81,6 @@ func (m *DomainSafeAccount) Validate(formats strfmt.Registry) error {
 }
 
 func (m *DomainSafeAccount) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -102,17 +92,7 @@ func (m *DomainSafeAccount) validateCreated(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *DomainSafeAccount) validateMobile(formats strfmt.Registry) error {
-
-	if err := validate.Required("mobile", "body", m.Mobile); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *DomainSafeAccount) validateOwner(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -121,6 +101,8 @@ func (m *DomainSafeAccount) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -129,17 +111,7 @@ func (m *DomainSafeAccount) validateOwner(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *DomainSafeAccount) validatePin(formats strfmt.Registry) error {
-
-	if err := validate.Required("pin", "body", m.Pin); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *DomainSafeAccount) validateSafeuser(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Safeuser) { // not required
 		return nil
 	}
@@ -153,6 +125,8 @@ func (m *DomainSafeAccount) validateSafeuser(formats strfmt.Registry) error {
 			if err := m.Safeuser[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("safeuser" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("safeuser" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -164,7 +138,6 @@ func (m *DomainSafeAccount) validateSafeuser(formats strfmt.Registry) error {
 }
 
 func (m *DomainSafeAccount) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -177,7 +150,6 @@ func (m *DomainSafeAccount) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *DomainSafeAccount) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -186,6 +158,97 @@ func (m *DomainSafeAccount) validateUpdater(formats strfmt.Registry) error {
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this domain safe account based on the context it is used
+func (m *DomainSafeAccount) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSafeuser(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *DomainSafeAccount) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainSafeAccount) contextValidateSafeuser(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Safeuser); i++ {
+
+		if m.Safeuser[i] != nil {
+
+			if swag.IsZero(m.Safeuser[i]) { // not required
+				return nil
+			}
+
+			if err := m.Safeuser[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("safeuser" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("safeuser" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *DomainSafeAccount) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}

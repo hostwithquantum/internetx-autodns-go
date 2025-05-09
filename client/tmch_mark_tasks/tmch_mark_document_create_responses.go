@@ -6,6 +6,7 @@ package tmch_mark_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *TmchMarkDocumentCreateReader) ReadResponse(response runtime.ClientRespo
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[POST /tmchMark/{reference}/document] tmchMarkDocumentCreate", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewTmchMarkDocumentCreateOK() *TmchMarkDocumentCreateOK {
 	return &TmchMarkDocumentCreateOK{}
 }
 
-/*TmchMarkDocumentCreateOK handles this case with default header values.
+/*
+TmchMarkDocumentCreateOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type TmchMarkDocumentCreateOK struct {
 	Payload *models.JSONResponseDataTmchMarkDocument
 }
 
+// IsSuccess returns true when this tmch mark document create o k response has a 2xx status code
+func (o *TmchMarkDocumentCreateOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this tmch mark document create o k response has a 3xx status code
+func (o *TmchMarkDocumentCreateOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this tmch mark document create o k response has a 4xx status code
+func (o *TmchMarkDocumentCreateOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this tmch mark document create o k response has a 5xx status code
+func (o *TmchMarkDocumentCreateOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this tmch mark document create o k response a status code equal to that given
+func (o *TmchMarkDocumentCreateOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the tmch mark document create o k response
+func (o *TmchMarkDocumentCreateOK) Code() int {
+	return 200
+}
+
 func (o *TmchMarkDocumentCreateOK) Error() string {
-	return fmt.Sprintf("[POST /tmchMark/{reference}/document][%d] tmchMarkDocumentCreateOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /tmchMark/{reference}/document][%d] tmchMarkDocumentCreateOK %s", 200, payload)
+}
+
+func (o *TmchMarkDocumentCreateOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /tmchMark/{reference}/document][%d] tmchMarkDocumentCreateOK %s", 200, payload)
 }
 
 func (o *TmchMarkDocumentCreateOK) GetPayload() *models.JSONResponseDataTmchMarkDocument {

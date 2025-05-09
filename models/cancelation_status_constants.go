@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model CancelationStatusConstants
 type CancelationStatusConstants string
+
+func NewCancelationStatusConstants(value CancelationStatusConstants) *CancelationStatusConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated CancelationStatusConstants.
+func (m CancelationStatusConstants) Pointer() *CancelationStatusConstants {
+	return &m
+}
 
 const (
 
@@ -71,5 +81,10 @@ func (m CancelationStatusConstants) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this cancelation status constants based on context it is used
+func (m CancelationStatusConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

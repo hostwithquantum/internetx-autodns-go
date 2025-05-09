@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -19,16 +21,18 @@ type ContactCaExtensions struct {
 	// The agreement version.
 	AgreementVersion float64 `json:"agreementVersion,omitempty"`
 
-	// The cira cpr.
+	// Canadian Presence Requirements.
+	//  Enter the reason for the authorization to register a .ca domain.
 	Cpr CiraCprConstants `json:"cpr,omitempty"`
 
-	// The official representative.
+	// Offical representative.
 	OfficialRepresentative string `json:"officialRepresentative,omitempty"`
 
 	// The originating ip.
 	OriginatingIP string `json:"originatingIp,omitempty"`
 
-	// The trustee percentage.
+	// Share of Canadians in a trust.
+	//  Value must be <= 66. Mandatory if CPR = TRS (Trust).
 	TrusteePercentage float64 `json:"trusteePercentage,omitempty"`
 }
 
@@ -47,7 +51,6 @@ func (m *ContactCaExtensions) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ContactCaExtensions) validateCpr(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Cpr) { // not required
 		return nil
 	}
@@ -55,6 +58,40 @@ func (m *ContactCaExtensions) validateCpr(formats strfmt.Registry) error {
 	if err := m.Cpr.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("cpr")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("cpr")
+		}
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this contact ca extensions based on the context it is used
+func (m *ContactCaExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateCpr(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ContactCaExtensions) contextValidateCpr(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Cpr) { // not required
+		return nil
+	}
+
+	if err := m.Cpr.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("cpr")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("cpr")
 		}
 		return err
 	}

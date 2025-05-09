@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -15,7 +17,19 @@ import (
 // swagger:model WorkflowEvent
 type WorkflowEvent struct {
 
-	// Event type
+	// Client Transaction ID
+	Ctid string `json:"ctid,omitempty"`
+
+	// Job id
+	JobID int64 `json:"jobId,omitempty"`
+
+	// Object for which the job was created. (e.g. domain)
+	Object string `json:"object,omitempty"`
+
+	// Subtype of the event to specify the event type (e.g . DONUTS-PSIUSA_toys)
+	Subtype string `json:"subtype,omitempty"`
+
+	// Type of Event
 	Type string `json:"type,omitempty"`
 
 	// Vertex
@@ -24,6 +38,11 @@ type WorkflowEvent struct {
 
 // Validate validates this workflow event
 func (m *WorkflowEvent) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this workflow event based on context it is used
+func (m *WorkflowEvent) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

@@ -9,12 +9,38 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime"
+	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new backup mx tasks API client.
 func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new backup mx tasks API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new backup mx tasks API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -25,31 +51,37 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
 // ClientService is the interface for Client methods
 type ClientService interface {
-	BackupMxCreate(params *BackupMxCreateParams) (*BackupMxCreateOK, error)
+	BackupMxCreate(params *BackupMxCreateParams, opts ...ClientOption) (*BackupMxCreateOK, error)
 
-	BackupMxDelete(params *BackupMxDeleteParams) (*BackupMxDeleteOK, error)
+	BackupMxCreates(params *BackupMxCreatesParams, opts ...ClientOption) (*BackupMxCreatesOK, error)
 
-	BackupMxInfo(params *BackupMxInfoParams) (*BackupMxInfoOK, error)
+	BackupMxDelete(params *BackupMxDeleteParams, opts ...ClientOption) (*BackupMxDeleteOK, error)
 
-	BackupMxList(params *BackupMxListParams) (*BackupMxListOK, error)
+	BackupMxDeletes(params *BackupMxDeletesParams, opts ...ClientOption) (*BackupMxDeletesOK, error)
+
+	BackupMxInfo(params *BackupMxInfoParams, opts ...ClientOption) (*BackupMxInfoOK, error)
+
+	BackupMxList(params *BackupMxListParams, opts ...ClientOption) (*BackupMxListOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
 
 /*
-  BackupMxCreate backups mx create
+BackupMxCreate backups mx create 0521
 
-  Creating a new backupmx.
+Creating a new BackupMx.
 */
-func (a *Client) BackupMxCreate(params *BackupMxCreateParams) (*BackupMxCreateOK, error) {
+func (a *Client) BackupMxCreate(params *BackupMxCreateParams, opts ...ClientOption) (*BackupMxCreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewBackupMxCreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "backupMxCreate",
 		Method:             "POST",
 		PathPattern:        "/backupMx",
@@ -60,7 +92,12 @@ func (a *Client) BackupMxCreate(params *BackupMxCreateParams) (*BackupMxCreateOK
 		Reader:             &BackupMxCreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -75,17 +112,56 @@ func (a *Client) BackupMxCreate(params *BackupMxCreateParams) (*BackupMxCreateOK
 }
 
 /*
-  BackupMxDelete backups mx delete
+BackupMxCreates backups mx create bulk 0521
 
-  Deleting an existing backup mx.
+Creating several new backupMxs.
 */
-func (a *Client) BackupMxDelete(params *BackupMxDeleteParams) (*BackupMxDeleteOK, error) {
+func (a *Client) BackupMxCreates(params *BackupMxCreatesParams, opts ...ClientOption) (*BackupMxCreatesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewBackupMxCreatesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "backupMxCreates",
+		Method:             "POST",
+		PathPattern:        "/bulk/backupMx",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &BackupMxCreatesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*BackupMxCreatesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for backupMxCreates: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+BackupMxDelete backups mx delete 0523
+
+Deleting an existing BackupMx.
+*/
+func (a *Client) BackupMxDelete(params *BackupMxDeleteParams, opts ...ClientOption) (*BackupMxDeleteOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewBackupMxDeleteParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "backupMxDelete",
 		Method:             "DELETE",
 		PathPattern:        "/backupMx/{domain}",
@@ -96,7 +172,12 @@ func (a *Client) BackupMxDelete(params *BackupMxDeleteParams) (*BackupMxDeleteOK
 		Reader:             &BackupMxDeleteReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -111,17 +192,56 @@ func (a *Client) BackupMxDelete(params *BackupMxDeleteParams) (*BackupMxDeleteOK
 }
 
 /*
-  BackupMxInfo backups mx info
+BackupMxDeletes backups mx delete bulk 0523
 
-  Inquiring the data for the specified backup mx.
+Deleting several existing backupMxs.
 */
-func (a *Client) BackupMxInfo(params *BackupMxInfoParams) (*BackupMxInfoOK, error) {
+func (a *Client) BackupMxDeletes(params *BackupMxDeletesParams, opts ...ClientOption) (*BackupMxDeletesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewBackupMxDeletesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "backupMxDeletes",
+		Method:             "DELETE",
+		PathPattern:        "/bulk/backupMx",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &BackupMxDeletesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*BackupMxDeletesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for backupMxDeletes: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+BackupMxInfo backups mx info 0524
+
+Inquiring the data for the specified backup mx.
+*/
+func (a *Client) BackupMxInfo(params *BackupMxInfoParams, opts ...ClientOption) (*BackupMxInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewBackupMxInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "backupMxInfo",
 		Method:             "GET",
 		PathPattern:        "/backupMx/{domain}",
@@ -132,7 +252,12 @@ func (a *Client) BackupMxInfo(params *BackupMxInfoParams) (*BackupMxInfoOK, erro
 		Reader:             &BackupMxInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -147,17 +272,16 @@ func (a *Client) BackupMxInfo(params *BackupMxInfoParams) (*BackupMxInfoOK, erro
 }
 
 /*
-  BackupMxList backups mx list
+BackupMxList backups mx list 0524
 
-  Inquiring a list of backupmx with certain details. The following keys can be used for filtering, ordering and inquiring additional data via query parameter: domain, created, updated
+Inquiring a list of BackupMx with certain details. The following keys can be used for filtering, ordering and inquiring additional data via query parameter: domain, created, updated
 */
-func (a *Client) BackupMxList(params *BackupMxListParams) (*BackupMxListOK, error) {
+func (a *Client) BackupMxList(params *BackupMxListParams, opts ...ClientOption) (*BackupMxListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewBackupMxListParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "backupMxList",
 		Method:             "POST",
 		PathPattern:        "/backupMx/_search",
@@ -168,7 +292,12 @@ func (a *Client) BackupMxList(params *BackupMxListParams) (*BackupMxListOK, erro
 		Reader:             &BackupMxListReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}

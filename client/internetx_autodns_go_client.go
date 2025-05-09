@@ -6,49 +6,55 @@ package client
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"net/http"
+
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/spec"
 	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 
-	"github.com/hostwithquantum/internetx-autodns-go/client/accounting_tasks"
-	"github.com/hostwithquantum/internetx-autodns-go/client/backup_mx_bulk_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/backup_mx_tasks"
-	"github.com/hostwithquantum/internetx-autodns-go/client/certificate_bulk_tasks"
+	"github.com/hostwithquantum/internetx-autodns-go/client/billing_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/certificate_tasks"
+	"github.com/hostwithquantum/internetx-autodns-go/client/client_customer_tasks"
+	"github.com/hostwithquantum/internetx-autodns-go/client/contact_document_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/contact_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/customer_account_tasks"
+	"github.com/hostwithquantum/internetx-autodns-go/client/customer_price_list_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/document_tasks"
-	"github.com/hostwithquantum/internetx-autodns-go/client/domain_bulk_tasks"
-	"github.com/hostwithquantum/internetx-autodns-go/client/domain_prereg_bulk_tasks"
+	"github.com/hostwithquantum/internetx-autodns-go/client/domain_premium_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/domain_prereg_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/domain_safe_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/domain_studio"
 	"github.com/hostwithquantum/internetx-autodns-go/client/domain_tasks"
+	"github.com/hostwithquantum/internetx-autodns-go/client/elastic_tld_search_tasks"
+	"github.com/hostwithquantum/internetx-autodns-go/client/elastic_tld_statistic"
 	"github.com/hostwithquantum/internetx-autodns-go/client/guest_account_tasks"
-	"github.com/hostwithquantum/internetx-autodns-go/client/id4me_agent_tasks"
-	"github.com/hostwithquantum/internetx-autodns-go/client/id4me_identity_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/invoice_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/job_tasks"
-	"github.com/hostwithquantum/internetx-autodns-go/client/mail_proxy_bulk_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/mail_proxy_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/mail_tasks"
-	"github.com/hostwithquantum/internetx-autodns-go/client/object_user_assignment_bulk_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/object_user_assignment_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/poll_tasks"
-	"github.com/hostwithquantum/internetx-autodns-go/client/redirect_bulk_tasks"
+	"github.com/hostwithquantum/internetx-autodns-go/client/price_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/redirect_tasks"
-	"github.com/hostwithquantum/internetx-autodns-go/client/s_s_l_contact_tasks"
+	"github.com/hostwithquantum/internetx-autodns-go/client/sales_report_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/session_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/ssl_contact_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/subject_product_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/subscription_tasks"
+	"github.com/hostwithquantum/internetx-autodns-go/client/test_tasks"
+	"github.com/hostwithquantum/internetx-autodns-go/client/tmch_mark_claim_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/tmch_mark_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/transfer_request_tasks"
-	"github.com/hostwithquantum/internetx-autodns-go/client/trusted_application_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/user_2fa_tasks"
+	"github.com/hostwithquantum/internetx-autodns-go/client/user_task_limit_task"
 	"github.com/hostwithquantum/internetx-autodns-go/client/user_tasks"
-	"github.com/hostwithquantum/internetx-autodns-go/client/zone_bulk_tasks"
+	"github.com/hostwithquantum/internetx-autodns-go/client/zone_query_tasks"
 	"github.com/hostwithquantum/internetx-autodns-go/client/zone_tasks"
+	"github.com/hostwithquantum/internetx-autodns-go/models"
 )
 
 // Default internetx autodns go HTTP client.
@@ -93,44 +99,45 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *InternetxA
 
 	cli := new(InternetxAutodnsGo)
 	cli.Transport = transport
-	cli.AccountingTasks = accounting_tasks.New(transport, formats)
-	cli.BackupMxBulkTasks = backup_mx_bulk_tasks.New(transport, formats)
 	cli.BackupMxTasks = backup_mx_tasks.New(transport, formats)
-	cli.CertificateBulkTasks = certificate_bulk_tasks.New(transport, formats)
+	cli.BillingTasks = billing_tasks.New(transport, formats)
 	cli.CertificateTasks = certificate_tasks.New(transport, formats)
+	cli.ClientCustomerTasks = client_customer_tasks.New(transport, formats)
+	cli.ContactDocumentTasks = contact_document_tasks.New(transport, formats)
 	cli.ContactTasks = contact_tasks.New(transport, formats)
 	cli.CustomerAccountTasks = customer_account_tasks.New(transport, formats)
+	cli.CustomerPriceListTasks = customer_price_list_tasks.New(transport, formats)
 	cli.DocumentTasks = document_tasks.New(transport, formats)
-	cli.DomainBulkTasks = domain_bulk_tasks.New(transport, formats)
-	cli.DomainPreregBulkTasks = domain_prereg_bulk_tasks.New(transport, formats)
+	cli.DomainPremiumTasks = domain_premium_tasks.New(transport, formats)
 	cli.DomainPreregTasks = domain_prereg_tasks.New(transport, formats)
 	cli.DomainSafeTasks = domain_safe_tasks.New(transport, formats)
 	cli.DomainStudio = domain_studio.New(transport, formats)
 	cli.DomainTasks = domain_tasks.New(transport, formats)
+	cli.ElasticTldSearchTasks = elastic_tld_search_tasks.New(transport, formats)
+	cli.ElasticTldStatistic = elastic_tld_statistic.New(transport, formats)
 	cli.GuestAccountTasks = guest_account_tasks.New(transport, formats)
-	cli.Id4meAgentTasks = id4me_agent_tasks.New(transport, formats)
-	cli.Id4meIdentityTasks = id4me_identity_tasks.New(transport, formats)
 	cli.InvoiceTasks = invoice_tasks.New(transport, formats)
 	cli.JobTasks = job_tasks.New(transport, formats)
-	cli.MailProxyBulkTasks = mail_proxy_bulk_tasks.New(transport, formats)
 	cli.MailProxyTasks = mail_proxy_tasks.New(transport, formats)
 	cli.MailTasks = mail_tasks.New(transport, formats)
-	cli.ObjectUserAssignmentBulkTasks = object_user_assignment_bulk_tasks.New(transport, formats)
 	cli.ObjectUserAssignmentTasks = object_user_assignment_tasks.New(transport, formats)
+	cli.Operations = operations.New(transport, formats)
 	cli.PollTasks = poll_tasks.New(transport, formats)
-	cli.RedirectBulkTasks = redirect_bulk_tasks.New(transport, formats)
+	cli.PriceTasks = price_tasks.New(transport, formats)
 	cli.RedirectTasks = redirect_tasks.New(transport, formats)
-	cli.SslContactTasks = s_s_l_contact_tasks.New(transport, formats)
+	cli.SalesReportTasks = sales_report_tasks.New(transport, formats)
 	cli.SessionTasks = session_tasks.New(transport, formats)
 	cli.SslContactTasks = ssl_contact_tasks.New(transport, formats)
 	cli.SubjectProductTasks = subject_product_tasks.New(transport, formats)
 	cli.SubscriptionTasks = subscription_tasks.New(transport, formats)
+	cli.TestTasks = test_tasks.New(transport, formats)
+	cli.TmchMarkClaimTasks = tmch_mark_claim_tasks.New(transport, formats)
 	cli.TmchMarkTasks = tmch_mark_tasks.New(transport, formats)
 	cli.TransferRequestTasks = transfer_request_tasks.New(transport, formats)
-	cli.TrustedApplicationTasks = trusted_application_tasks.New(transport, formats)
 	cli.User2faTasks = user_2fa_tasks.New(transport, formats)
+	cli.UserTaskLimitTask = user_task_limit_task.New(transport, formats)
 	cli.UserTasks = user_tasks.New(transport, formats)
-	cli.ZoneBulkTasks = zone_bulk_tasks.New(transport, formats)
+	cli.ZoneQueryTasks = zone_query_tasks.New(transport, formats)
 	cli.ZoneTasks = zone_tasks.New(transport, formats)
 	return cli
 }
@@ -176,25 +183,25 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 
 // InternetxAutodnsGo is a client for internetx autodns go
 type InternetxAutodnsGo struct {
-	AccountingTasks accounting_tasks.ClientService
-
-	BackupMxBulkTasks backup_mx_bulk_tasks.ClientService
-
 	BackupMxTasks backup_mx_tasks.ClientService
 
-	CertificateBulkTasks certificate_bulk_tasks.ClientService
+	BillingTasks billing_tasks.ClientService
 
 	CertificateTasks certificate_tasks.ClientService
+
+	ClientCustomerTasks client_customer_tasks.ClientService
+
+	ContactDocumentTasks contact_document_tasks.ClientService
 
 	ContactTasks contact_tasks.ClientService
 
 	CustomerAccountTasks customer_account_tasks.ClientService
 
+	CustomerPriceListTasks customer_price_list_tasks.ClientService
+
 	DocumentTasks document_tasks.ClientService
 
-	DomainBulkTasks domain_bulk_tasks.ClientService
-
-	DomainPreregBulkTasks domain_prereg_bulk_tasks.ClientService
+	DomainPremiumTasks domain_premium_tasks.ClientService
 
 	DomainPreregTasks domain_prereg_tasks.ClientService
 
@@ -204,33 +211,31 @@ type InternetxAutodnsGo struct {
 
 	DomainTasks domain_tasks.ClientService
 
+	ElasticTldSearchTasks elastic_tld_search_tasks.ClientService
+
+	ElasticTldStatistic elastic_tld_statistic.ClientService
+
 	GuestAccountTasks guest_account_tasks.ClientService
-
-	Id4meAgentTasks id4me_agent_tasks.ClientService
-
-	Id4meIdentityTasks id4me_identity_tasks.ClientService
 
 	InvoiceTasks invoice_tasks.ClientService
 
 	JobTasks job_tasks.ClientService
 
-	MailProxyBulkTasks mail_proxy_bulk_tasks.ClientService
-
 	MailProxyTasks mail_proxy_tasks.ClientService
 
 	MailTasks mail_tasks.ClientService
 
-	ObjectUserAssignmentBulkTasks object_user_assignment_bulk_tasks.ClientService
-
 	ObjectUserAssignmentTasks object_user_assignment_tasks.ClientService
+
+	Operations operations.ClientService
 
 	PollTasks poll_tasks.ClientService
 
-	RedirectBulkTasks redirect_bulk_tasks.ClientService
+	PriceTasks price_tasks.ClientService
 
 	RedirectTasks redirect_tasks.ClientService
 
-	SslContactTasks s_s_l_contact_tasks.ClientService
+	SalesReportTasks sales_report_tasks.ClientService
 
 	SessionTasks session_tasks.ClientService
 
@@ -240,17 +245,21 @@ type InternetxAutodnsGo struct {
 
 	SubscriptionTasks subscription_tasks.ClientService
 
+	TestTasks test_tasks.ClientService
+
+	TmchMarkClaimTasks tmch_mark_claim_tasks.ClientService
+
 	TmchMarkTasks tmch_mark_tasks.ClientService
 
 	TransferRequestTasks transfer_request_tasks.ClientService
 
-	TrustedApplicationTasks trusted_application_tasks.ClientService
-
 	User2faTasks user_2fa_tasks.ClientService
+
+	UserTaskLimitTask user_task_limit_task.ClientService
 
 	UserTasks user_tasks.ClientService
 
-	ZoneBulkTasks zone_bulk_tasks.ClientService
+	ZoneQueryTasks zone_query_tasks.ClientService
 
 	ZoneTasks zone_tasks.ClientService
 
@@ -260,43 +269,44 @@ type InternetxAutodnsGo struct {
 // SetTransport changes the transport on the client and all its subresources
 func (c *InternetxAutodnsGo) SetTransport(transport runtime.ClientTransport) {
 	c.Transport = transport
-	c.AccountingTasks.SetTransport(transport)
-	c.BackupMxBulkTasks.SetTransport(transport)
 	c.BackupMxTasks.SetTransport(transport)
-	c.CertificateBulkTasks.SetTransport(transport)
+	c.BillingTasks.SetTransport(transport)
 	c.CertificateTasks.SetTransport(transport)
+	c.ClientCustomerTasks.SetTransport(transport)
+	c.ContactDocumentTasks.SetTransport(transport)
 	c.ContactTasks.SetTransport(transport)
 	c.CustomerAccountTasks.SetTransport(transport)
+	c.CustomerPriceListTasks.SetTransport(transport)
 	c.DocumentTasks.SetTransport(transport)
-	c.DomainBulkTasks.SetTransport(transport)
-	c.DomainPreregBulkTasks.SetTransport(transport)
+	c.DomainPremiumTasks.SetTransport(transport)
 	c.DomainPreregTasks.SetTransport(transport)
 	c.DomainSafeTasks.SetTransport(transport)
 	c.DomainStudio.SetTransport(transport)
 	c.DomainTasks.SetTransport(transport)
+	c.ElasticTldSearchTasks.SetTransport(transport)
+	c.ElasticTldStatistic.SetTransport(transport)
 	c.GuestAccountTasks.SetTransport(transport)
-	c.Id4meAgentTasks.SetTransport(transport)
-	c.Id4meIdentityTasks.SetTransport(transport)
 	c.InvoiceTasks.SetTransport(transport)
 	c.JobTasks.SetTransport(transport)
-	c.MailProxyBulkTasks.SetTransport(transport)
 	c.MailProxyTasks.SetTransport(transport)
 	c.MailTasks.SetTransport(transport)
-	c.ObjectUserAssignmentBulkTasks.SetTransport(transport)
 	c.ObjectUserAssignmentTasks.SetTransport(transport)
+	c.Operations.SetTransport(transport)
 	c.PollTasks.SetTransport(transport)
-	c.RedirectBulkTasks.SetTransport(transport)
+	c.PriceTasks.SetTransport(transport)
 	c.RedirectTasks.SetTransport(transport)
-	c.SslContactTasks.SetTransport(transport)
+	c.SalesReportTasks.SetTransport(transport)
 	c.SessionTasks.SetTransport(transport)
 	c.SslContactTasks.SetTransport(transport)
 	c.SubjectProductTasks.SetTransport(transport)
 	c.SubscriptionTasks.SetTransport(transport)
+	c.TestTasks.SetTransport(transport)
+	c.TmchMarkClaimTasks.SetTransport(transport)
 	c.TmchMarkTasks.SetTransport(transport)
 	c.TransferRequestTasks.SetTransport(transport)
-	c.TrustedApplicationTasks.SetTransport(transport)
 	c.User2faTasks.SetTransport(transport)
+	c.UserTaskLimitTask.SetTransport(transport)
 	c.UserTasks.SetTransport(transport)
-	c.ZoneBulkTasks.SetTransport(transport)
+	c.ZoneQueryTasks.SetTransport(transport)
 	c.ZoneTasks.SetTransport(transport)
 }

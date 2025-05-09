@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -49,7 +51,6 @@ func (m *DomainStudioService) Validate(formats strfmt.Registry) error {
 }
 
 func (m *DomainStudioService) validateEstimation(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Estimation) { // not required
 		return nil
 	}
@@ -58,6 +59,8 @@ func (m *DomainStudioService) validateEstimation(formats strfmt.Registry) error 
 		if err := m.Estimation.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("estimation")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("estimation")
 			}
 			return err
 		}
@@ -67,7 +70,6 @@ func (m *DomainStudioService) validateEstimation(formats strfmt.Registry) error 
 }
 
 func (m *DomainStudioService) validatePrice(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Price) { // not required
 		return nil
 	}
@@ -76,6 +78,8 @@ func (m *DomainStudioService) validatePrice(formats strfmt.Registry) error {
 		if err := m.Price.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("price")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("price")
 			}
 			return err
 		}
@@ -85,7 +89,6 @@ func (m *DomainStudioService) validatePrice(formats strfmt.Registry) error {
 }
 
 func (m *DomainStudioService) validateWhois(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Whois) { // not required
 		return nil
 	}
@@ -94,6 +97,93 @@ func (m *DomainStudioService) validateWhois(formats strfmt.Registry) error {
 		if err := m.Whois.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("whois")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("whois")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this domain studio service based on the context it is used
+func (m *DomainStudioService) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateEstimation(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePrice(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateWhois(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *DomainStudioService) contextValidateEstimation(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Estimation != nil {
+
+		if swag.IsZero(m.Estimation) { // not required
+			return nil
+		}
+
+		if err := m.Estimation.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("estimation")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("estimation")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainStudioService) contextValidatePrice(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Price != nil {
+
+		if swag.IsZero(m.Price) { // not required
+			return nil
+		}
+
+		if err := m.Price.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("price")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("price")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainStudioService) contextValidateWhois(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Whois != nil {
+
+		if swag.IsZero(m.Whois) { // not required
+			return nil
+		}
+
+		if err := m.Whois.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("whois")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("whois")
 			}
 			return err
 		}

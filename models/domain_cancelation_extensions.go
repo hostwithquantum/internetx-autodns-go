@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -40,7 +42,6 @@ func (m *DomainCancelationExtensions) Validate(formats strfmt.Registry) error {
 }
 
 func (m *DomainCancelationExtensions) validateCancelation(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Cancelation) { // not required
 		return nil
 	}
@@ -49,6 +50,11 @@ func (m *DomainCancelationExtensions) validateCancelation(formats strfmt.Registr
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this domain cancelation extensions based on context it is used
+func (m *DomainCancelationExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

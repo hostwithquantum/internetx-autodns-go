@@ -19,88 +19,149 @@ import (
 	"github.com/hostwithquantum/internetx-autodns-go/models"
 )
 
-// NewDomainUpdateParams creates a new DomainUpdateParams object
-// with the default values initialized.
+// NewDomainUpdateParams creates a new DomainUpdateParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewDomainUpdateParams() *DomainUpdateParams {
-	var ()
 	return &DomainUpdateParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewDomainUpdateParamsWithTimeout creates a new DomainUpdateParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewDomainUpdateParamsWithTimeout(timeout time.Duration) *DomainUpdateParams {
-	var ()
 	return &DomainUpdateParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewDomainUpdateParamsWithContext creates a new DomainUpdateParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewDomainUpdateParamsWithContext(ctx context.Context) *DomainUpdateParams {
-	var ()
 	return &DomainUpdateParams{
-
 		Context: ctx,
 	}
 }
 
 // NewDomainUpdateParamsWithHTTPClient creates a new DomainUpdateParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewDomainUpdateParamsWithHTTPClient(client *http.Client) *DomainUpdateParams {
-	var ()
 	return &DomainUpdateParams{
 		HTTPClient: client,
 	}
 }
 
-/*DomainUpdateParams contains all the parameters to send to the API endpoint
-for the domain update operation typically these are written to a http.Request
+/*
+DomainUpdateParams contains all the parameters to send to the API endpoint
+
+	for the domain update operation.
+
+	Typically these are written to a http.Request.
 */
 type DomainUpdateParams struct {
 
-	/*XDomainrobotBulkLimit*/
-	XDomainrobotBulkLimit *int32
-	/*XDomainrobotContext*/
-	XDomainrobotContext *int32
-	/*XDomainrobotDemo*/
-	XDomainrobotDemo *bool
-	/*XDomainrobotDomainSafePin*/
-	XDomainrobotDomainSafePin *string
-	/*XDomainrobotDomainSafeTan*/
-	XDomainrobotDomainSafeTan *string
-	/*XDomainrobotDomainSafeTransaction*/
-	XDomainrobotDomainSafeTransaction *string
-	/*XDomainrobotDomainSafeTransactionExpire*/
-	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
-	/*XDomainrobotOwnerContext*/
-	XDomainrobotOwnerContext *int32
-	/*XDomainrobotOwnerUser*/
-	XDomainrobotOwnerUser *string
-	/*XDomainrobotSessionID*/
-	XDomainrobotSessionID *string
-	/*XDomainrobotWS*/
-	XDomainrobotWS *string
-	/*Body
-	  domain
+	// XDomainrobot2FAToken.
+	//
+	// Format: int32
+	XDomainrobot2FAToken *int32
 
+	// XDomainrobotBulkLimit.
+	//
+	// Format: int32
+	XDomainrobotBulkLimit *int32
+
+	// XDomainrobotContext.
+	//
+	// Format: int32
+	XDomainrobotContext *int32
+
+	// XDomainrobotDemo.
+	XDomainrobotDemo *bool
+
+	// XDomainrobotDomainSafePin.
+	XDomainrobotDomainSafePin *string
+
+	// XDomainrobotDomainSafeTan.
+	XDomainrobotDomainSafeTan *string
+
+	// XDomainrobotDomainSafeTransaction.
+	XDomainrobotDomainSafeTransaction *string
+
+	// XDomainrobotDomainSafeTransactionExpire.
+	//
+	// Format: date-time
+	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
+
+	// XDomainrobotOwnerContext.
+	//
+	// Format: int32
+	XDomainrobotOwnerContext *int32
+
+	// XDomainrobotOwnerUser.
+	XDomainrobotOwnerUser *string
+
+	// XDomainrobotSessionID.
+	XDomainrobotSessionID *string
+
+	// XDomainrobotWS.
+	XDomainrobotWS *string
+
+	/* Body.
+
+	   domain
 	*/
 	Body *models.Domain
-	/*Name*/
-	Name string
-	/*NsCheck
-	  Specifies the name server check to use. Forces the name server nast check if set. Example : ?nsCheck
 
+	// Name.
+	Name string
+
+	/* NsCheck.
+
+	   Specifies the name server check to use. Forces the name server nast check if set
+
+	   Default: "NONE"
 	*/
-	NsCheck *DNSCheck
+	NsCheck *string
+
+	/* ReplyTo.
+
+	   The query parameter to override the  default reply to address.
+	*/
+	ReplyTo *string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the domain update params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *DomainUpdateParams) WithDefaults() *DomainUpdateParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the domain update params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *DomainUpdateParams) SetDefaults() {
+	var (
+		nsCheckDefault = string("NONE")
+	)
+
+	val := DomainUpdateParams{
+		NsCheck: &nsCheckDefault,
+	}
+
+	val.timeout = o.timeout
+	val.Context = o.Context
+	val.HTTPClient = o.HTTPClient
+	*o = val
 }
 
 // WithTimeout adds the timeout to the domain update params
@@ -134,6 +195,17 @@ func (o *DomainUpdateParams) WithHTTPClient(client *http.Client) *DomainUpdatePa
 // SetHTTPClient adds the HTTPClient to the domain update params
 func (o *DomainUpdateParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithXDomainrobot2FAToken adds the xDomainrobot2FAToken to the domain update params
+func (o *DomainUpdateParams) WithXDomainrobot2FAToken(xDomainrobot2FAToken *int32) *DomainUpdateParams {
+	o.SetXDomainrobot2FAToken(xDomainrobot2FAToken)
+	return o
+}
+
+// SetXDomainrobot2FAToken adds the xDomainrobot2FAToken to the domain update params
+func (o *DomainUpdateParams) SetXDomainrobot2FAToken(xDomainrobot2FAToken *int32) {
+	o.XDomainrobot2FAToken = xDomainrobot2FAToken
 }
 
 // WithXDomainrobotBulkLimit adds the xDomainrobotBulkLimit to the domain update params
@@ -280,14 +352,25 @@ func (o *DomainUpdateParams) SetName(name string) {
 }
 
 // WithNsCheck adds the nsCheck to the domain update params
-func (o *DomainUpdateParams) WithNsCheck(nsCheck *DNSCheck) *DomainUpdateParams {
+func (o *DomainUpdateParams) WithNsCheck(nsCheck *string) *DomainUpdateParams {
 	o.SetNsCheck(nsCheck)
 	return o
 }
 
 // SetNsCheck adds the nsCheck to the domain update params
-func (o *DomainUpdateParams) SetNsCheck(nsCheck *DNSCheck) {
+func (o *DomainUpdateParams) SetNsCheck(nsCheck *string) {
 	o.NsCheck = nsCheck
+}
+
+// WithReplyTo adds the replyTo to the domain update params
+func (o *DomainUpdateParams) WithReplyTo(replyTo *string) *DomainUpdateParams {
+	o.SetReplyTo(replyTo)
+	return o
+}
+
+// SetReplyTo adds the replyTo to the domain update params
+func (o *DomainUpdateParams) SetReplyTo(replyTo *string) {
+	o.ReplyTo = replyTo
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -298,13 +381,20 @@ func (o *DomainUpdateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 	}
 	var res []error
 
+	if o.XDomainrobot2FAToken != nil {
+
+		// header param X-Domainrobot-2FA-Token
+		if err := r.SetHeaderParam("X-Domainrobot-2FA-Token", swag.FormatInt32(*o.XDomainrobot2FAToken)); err != nil {
+			return err
+		}
+	}
+
 	if o.XDomainrobotBulkLimit != nil {
 
 		// header param X-Domainrobot-Bulk-Limit
 		if err := r.SetHeaderParam("X-Domainrobot-Bulk-Limit", swag.FormatInt32(*o.XDomainrobotBulkLimit)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotContext != nil {
@@ -313,7 +403,6 @@ func (o *DomainUpdateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if err := r.SetHeaderParam("X-Domainrobot-Context", swag.FormatInt32(*o.XDomainrobotContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDemo != nil {
@@ -322,7 +411,6 @@ func (o *DomainUpdateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if err := r.SetHeaderParam("X-Domainrobot-Demo", swag.FormatBool(*o.XDomainrobotDemo)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafePin != nil {
@@ -331,7 +419,6 @@ func (o *DomainUpdateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Pin", *o.XDomainrobotDomainSafePin); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTan != nil {
@@ -340,7 +427,6 @@ func (o *DomainUpdateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Tan", *o.XDomainrobotDomainSafeTan); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransaction != nil {
@@ -349,7 +435,6 @@ func (o *DomainUpdateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction", *o.XDomainrobotDomainSafeTransaction); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransactionExpire != nil {
@@ -358,7 +443,6 @@ func (o *DomainUpdateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction-Expire", o.XDomainrobotDomainSafeTransactionExpire.String()); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerContext != nil {
@@ -367,7 +451,6 @@ func (o *DomainUpdateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-Context", swag.FormatInt32(*o.XDomainrobotOwnerContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerUser != nil {
@@ -376,7 +459,6 @@ func (o *DomainUpdateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-User", *o.XDomainrobotOwnerUser); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotSessionID != nil {
@@ -385,7 +467,6 @@ func (o *DomainUpdateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if err := r.SetHeaderParam("X-Domainrobot-SessionId", *o.XDomainrobotSessionID); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotWS != nil {
@@ -394,9 +475,7 @@ func (o *DomainUpdateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if err := r.SetHeaderParam("X-Domainrobot-WS", *o.XDomainrobotWS); err != nil {
 			return err
 		}
-
 	}
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err
@@ -411,17 +490,35 @@ func (o *DomainUpdateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 	if o.NsCheck != nil {
 
 		// query param nsCheck
-		var qrNsCheck DNSCheck
+		var qrNsCheck string
+
 		if o.NsCheck != nil {
 			qrNsCheck = *o.NsCheck
 		}
 		qNsCheck := qrNsCheck
 		if qNsCheck != "" {
+
 			if err := r.SetQueryParam("nsCheck", qNsCheck); err != nil {
 				return err
 			}
 		}
+	}
 
+	if o.ReplyTo != nil {
+
+		// query param replyTo
+		var qrReplyTo string
+
+		if o.ReplyTo != nil {
+			qrReplyTo = *o.ReplyTo
+		}
+		qReplyTo := qrReplyTo
+		if qReplyTo != "" {
+
+			if err := r.SetQueryParam("replyTo", qReplyTo); err != nil {
+				return err
+			}
+		}
 	}
 
 	if len(res) > 0 {

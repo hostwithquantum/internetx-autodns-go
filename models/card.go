@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,25 +19,28 @@ import (
 // swagger:model Card
 type Card struct {
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// The actual status of the credit card
+	// The provider
+	Provider Provider `json:"provider,omitempty"`
+
+	// Credit card status
 	Status CardStatus `json:"status,omitempty"`
 
 	// The credit card vendor
 	Type CreditCardVendor `json:"type,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The valid from date
+	// Start of the credit card validity period
 	// Format: date-time
 	ValidFrom strfmt.DateTime `json:"validFrom,omitempty"`
 
-	// The valid to date
+	// End of the credit card validity period
 	// Format: date-time
 	ValidTo strfmt.DateTime `json:"validTo,omitempty"`
 }
@@ -45,6 +50,10 @@ func (m *Card) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateCreated(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateProvider(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -75,7 +84,6 @@ func (m *Card) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Card) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -87,8 +95,24 @@ func (m *Card) validateCreated(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Card) validateStatus(formats strfmt.Registry) error {
+func (m *Card) validateProvider(formats strfmt.Registry) error {
+	if swag.IsZero(m.Provider) { // not required
+		return nil
+	}
 
+	if err := m.Provider.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("provider")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("provider")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *Card) validateStatus(formats strfmt.Registry) error {
 	if swag.IsZero(m.Status) { // not required
 		return nil
 	}
@@ -96,6 +120,8 @@ func (m *Card) validateStatus(formats strfmt.Registry) error {
 	if err := m.Status.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
 		}
 		return err
 	}
@@ -104,7 +130,6 @@ func (m *Card) validateStatus(formats strfmt.Registry) error {
 }
 
 func (m *Card) validateType(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Type) { // not required
 		return nil
 	}
@@ -112,6 +137,8 @@ func (m *Card) validateType(formats strfmt.Registry) error {
 	if err := m.Type.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
 		}
 		return err
 	}
@@ -120,7 +147,6 @@ func (m *Card) validateType(formats strfmt.Registry) error {
 }
 
 func (m *Card) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -133,7 +159,6 @@ func (m *Card) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *Card) validateValidFrom(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ValidFrom) { // not required
 		return nil
 	}
@@ -146,12 +171,87 @@ func (m *Card) validateValidFrom(formats strfmt.Registry) error {
 }
 
 func (m *Card) validateValidTo(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ValidTo) { // not required
 		return nil
 	}
 
 	if err := validate.FormatOf("validTo", "body", "date-time", m.ValidTo.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this card based on the context it is used
+func (m *Card) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateProvider(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Card) contextValidateProvider(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Provider) { // not required
+		return nil
+	}
+
+	if err := m.Provider.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("provider")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("provider")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *Card) contextValidateStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	if err := m.Status.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *Card) contextValidateType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	if err := m.Type.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
+		}
 		return err
 	}
 

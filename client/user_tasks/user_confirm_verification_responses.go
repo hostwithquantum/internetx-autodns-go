@@ -6,6 +6,7 @@ package user_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *UserConfirmVerificationReader) ReadResponse(response runtime.ClientResp
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[GET /user/_verify/{token}] userConfirmVerification", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewUserConfirmVerificationOK() *UserConfirmVerificationOK {
 	return &UserConfirmVerificationOK{}
 }
 
-/*UserConfirmVerificationOK handles this case with default header values.
+/*
+UserConfirmVerificationOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type UserConfirmVerificationOK struct {
 	Payload *models.JSONResponseDataUser
 }
 
+// IsSuccess returns true when this user confirm verification o k response has a 2xx status code
+func (o *UserConfirmVerificationOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this user confirm verification o k response has a 3xx status code
+func (o *UserConfirmVerificationOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this user confirm verification o k response has a 4xx status code
+func (o *UserConfirmVerificationOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this user confirm verification o k response has a 5xx status code
+func (o *UserConfirmVerificationOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this user confirm verification o k response a status code equal to that given
+func (o *UserConfirmVerificationOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the user confirm verification o k response
+func (o *UserConfirmVerificationOK) Code() int {
+	return 200
+}
+
 func (o *UserConfirmVerificationOK) Error() string {
-	return fmt.Sprintf("[GET /user/_verify/{token}][%d] userConfirmVerificationOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user/_verify/{token}][%d] userConfirmVerificationOK %s", 200, payload)
+}
+
+func (o *UserConfirmVerificationOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user/_verify/{token}][%d] userConfirmVerificationOK %s", 200, payload)
 }
 
 func (o *UserConfirmVerificationOK) GetPayload() *models.JSONResponseDataUser {

@@ -9,12 +9,38 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime"
+	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new job tasks API client.
 func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new job tasks API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new job tasks API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -25,49 +51,41 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
 // ClientService is the interface for Client methods
 type ClientService interface {
-	JobCancel(params *JobCancelParams) (*JobCancelOK, error)
+	JobCancel(params *JobCancelParams, opts ...ClientOption) (*JobCancelOK, error)
 
-	JobConfirm(params *JobConfirmParams) (*JobConfirmOK, error)
+	JobConfirm(params *JobConfirmParams, opts ...ClientOption) (*JobConfirmOK, error)
 
-	JobFailed(params *JobFailedParams) (*JobFailedOK, error)
+	JobHistoryInfo(params *JobHistoryInfoParams, opts ...ClientOption) (*JobHistoryInfoOK, error)
 
-	JobHistoryInfo(params *JobHistoryInfoParams) (*JobHistoryInfoOK, error)
+	JobHistoryList(params *JobHistoryListParams, opts ...ClientOption) (*JobHistoryListOK, error)
 
-	JobHistoryList(params *JobHistoryListParams) (*JobHistoryListOK, error)
+	JobInfo(params *JobInfoParams, opts ...ClientOption) (*JobInfoOK, error)
 
-	JobInfo(params *JobInfoParams) (*JobInfoOK, error)
+	JobList(params *JobListParams, opts ...ClientOption) (*JobListOK, error)
 
-	JobList(params *JobListParams) (*JobListOK, error)
+	ResendApproverEmail(params *ResendApproverEmailParams, opts ...ClientOption) (*ResendApproverEmailOK, error)
 
-	JobReject(params *JobRejectParams) (*JobRejectOK, error)
-
-	JobRestart(params *JobRestartParams) (*JobRestartOK, error)
-
-	JobRetry(params *JobRetryParams) (*JobRetryOK, error)
-
-	JobSucceded(params *JobSuccededParams) (*JobSuccededOK, error)
-
-	ResendApproverEmail(params *ResendApproverEmailParams) (*ResendApproverEmailOK, error)
-
-	ResendPhoneAuthorization(params *ResendPhoneAuthorizationParams) (*ResendPhoneAuthorizationOK, error)
+	ResendPhoneAuthorization(params *ResendPhoneAuthorizationParams, opts ...ClientOption) (*ResendPhoneAuthorizationOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
 
 /*
-  JobCancel jobs cancel
+JobCancel jobs cancel 300121
 
-  Cancelling the specified job.
+Cancelling the specified job.
 */
-func (a *Client) JobCancel(params *JobCancelParams) (*JobCancelOK, error) {
+func (a *Client) JobCancel(params *JobCancelParams, opts ...ClientOption) (*JobCancelOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewJobCancelParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "jobCancel",
 		Method:             "PUT",
 		PathPattern:        "/job/{id}/_cancel",
@@ -78,7 +96,12 @@ func (a *Client) JobCancel(params *JobCancelParams) (*JobCancelOK, error) {
 		Reader:             &JobCancelReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -93,17 +116,16 @@ func (a *Client) JobCancel(params *JobCancelParams) (*JobCancelOK, error) {
 }
 
 /*
-  JobConfirm jobs confirm
+JobConfirm jobs confirm 300122
 
-  Confirming the specified job.
+Confirming the specified job.
 */
-func (a *Client) JobConfirm(params *JobConfirmParams) (*JobConfirmOK, error) {
+func (a *Client) JobConfirm(params *JobConfirmParams, opts ...ClientOption) (*JobConfirmOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewJobConfirmParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "jobConfirm",
 		Method:             "PUT",
 		PathPattern:        "/job/{id}/_confirm",
@@ -114,7 +136,12 @@ func (a *Client) JobConfirm(params *JobConfirmParams) (*JobConfirmOK, error) {
 		Reader:             &JobConfirmReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -129,53 +156,16 @@ func (a *Client) JobConfirm(params *JobConfirmParams) (*JobConfirmOK, error) {
 }
 
 /*
-  JobFailed jobs failed
+JobHistoryInfo jobs history info 300134
 
-  Ending the specified job and setting the status to failed.
+Inquiring the data for the specified finished job.
 */
-func (a *Client) JobFailed(params *JobFailedParams) (*JobFailedOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewJobFailedParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "jobFailed",
-		Method:             "PUT",
-		PathPattern:        "/job/{id}/_failed",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &JobFailedReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*JobFailedOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for jobFailed: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-  JobHistoryInfo jobs history info
-
-  Inquiring the data for the specified finished job.
-*/
-func (a *Client) JobHistoryInfo(params *JobHistoryInfoParams) (*JobHistoryInfoOK, error) {
+func (a *Client) JobHistoryInfo(params *JobHistoryInfoParams, opts ...ClientOption) (*JobHistoryInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewJobHistoryInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "jobHistoryInfo",
 		Method:             "GET",
 		PathPattern:        "/job/history/{id}",
@@ -186,7 +176,12 @@ func (a *Client) JobHistoryInfo(params *JobHistoryInfoParams) (*JobHistoryInfoOK
 		Reader:             &JobHistoryInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -201,17 +196,16 @@ func (a *Client) JobHistoryInfo(params *JobHistoryInfoParams) (*JobHistoryInfoOK
 }
 
 /*
-  JobHistoryList jobs history list
+JobHistoryList jobs history list 300135
 
-  Inquiring a list of finished jobs with certain details. The following keys can be used for filtering, ordering and inquiring additional data via query parameter: parent, execution, subStatus, type, created, id, updated, status, object, action.
+Inquiring a list of finished jobs with certain details. The following keys can be used for filtering, ordering and inquiring additional data via query parameter: parent, execution, subStatus, type, created, id, updated, status, object, action.
 */
-func (a *Client) JobHistoryList(params *JobHistoryListParams) (*JobHistoryListOK, error) {
+func (a *Client) JobHistoryList(params *JobHistoryListParams, opts ...ClientOption) (*JobHistoryListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewJobHistoryListParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "jobHistoryList",
 		Method:             "POST",
 		PathPattern:        "/job/history/_search",
@@ -222,7 +216,12 @@ func (a *Client) JobHistoryList(params *JobHistoryListParams) (*JobHistoryListOK
 		Reader:             &JobHistoryListReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -237,17 +236,16 @@ func (a *Client) JobHistoryList(params *JobHistoryListParams) (*JobHistoryListOK
 }
 
 /*
-  JobInfo jobs info
+JobInfo jobs info 300114
 
-  Inquiring the data of the specified job.
+Inquiring the data of the specified job.
 */
-func (a *Client) JobInfo(params *JobInfoParams) (*JobInfoOK, error) {
+func (a *Client) JobInfo(params *JobInfoParams, opts ...ClientOption) (*JobInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewJobInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "jobInfo",
 		Method:             "GET",
 		PathPattern:        "/job/{id}",
@@ -258,7 +256,12 @@ func (a *Client) JobInfo(params *JobInfoParams) (*JobInfoOK, error) {
 		Reader:             &JobInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -273,17 +276,16 @@ func (a *Client) JobInfo(params *JobInfoParams) (*JobInfoOK, error) {
 }
 
 /*
-  JobList jobs list
+JobList jobs list 300115
 
-  Inquiring a list of jobs with certain details. The following keys can be used for filtering, ordering and inquiring additional data via query parameter: parent, execution, subStatus, type, created, id, updated, status, object, action.
+Inquiring a list of jobs with certain details. The following keys can be used for filtering, ordering and inquiring additional data via query parameter: parent, execution, subStatus, type, created, id, updated, status, object, action.
 */
-func (a *Client) JobList(params *JobListParams) (*JobListOK, error) {
+func (a *Client) JobList(params *JobListParams, opts ...ClientOption) (*JobListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewJobListParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "jobList",
 		Method:             "POST",
 		PathPattern:        "/job/_search",
@@ -294,7 +296,12 @@ func (a *Client) JobList(params *JobListParams) (*JobListOK, error) {
 		Reader:             &JobListReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -309,161 +316,16 @@ func (a *Client) JobList(params *JobListParams) (*JobListOK, error) {
 }
 
 /*
-  JobReject jobs reject
+ResendApproverEmail approvers email resend 400118
 
-  Rejecting the specified job.
+Resending the approver email.
 */
-func (a *Client) JobReject(params *JobRejectParams) (*JobRejectOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewJobRejectParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "jobReject",
-		Method:             "PUT",
-		PathPattern:        "/job/{id}/_reject",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &JobRejectReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*JobRejectOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for jobReject: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-  JobRestart jobs restart
-
-  Restarting the specified job.
-*/
-func (a *Client) JobRestart(params *JobRestartParams) (*JobRestartOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewJobRestartParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "jobRestart",
-		Method:             "PUT",
-		PathPattern:        "/job/{id}/_restart",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &JobRestartReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*JobRestartOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for jobRestart: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-  JobRetry jobs retry
-
-  Retrying the specified job.
-*/
-func (a *Client) JobRetry(params *JobRetryParams) (*JobRetryOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewJobRetryParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "jobRetry",
-		Method:             "PUT",
-		PathPattern:        "/job/{id}/_retry",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &JobRetryReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*JobRetryOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for jobRetry: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-  JobSucceded jobs succeeded
-
-  Ending the specified job and set the status to success.
-*/
-func (a *Client) JobSucceded(params *JobSuccededParams) (*JobSuccededOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewJobSuccededParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "jobSucceded",
-		Method:             "PUT",
-		PathPattern:        "/job/{id}/_succeded",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &JobSuccededReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*JobSuccededOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for jobSucceded: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-  ResendApproverEmail approvers email resend
-
-  Resending the approver email.
-*/
-func (a *Client) ResendApproverEmail(params *ResendApproverEmailParams) (*ResendApproverEmailOK, error) {
+func (a *Client) ResendApproverEmail(params *ResendApproverEmailParams, opts ...ClientOption) (*ResendApproverEmailOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewResendApproverEmailParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "resendApproverEmail",
 		Method:             "PUT",
 		PathPattern:        "/job/{id}/_resendApproverEmail",
@@ -474,7 +336,12 @@ func (a *Client) ResendApproverEmail(params *ResendApproverEmailParams) (*Resend
 		Reader:             &ResendApproverEmailReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -489,17 +356,16 @@ func (a *Client) ResendApproverEmail(params *ResendApproverEmailParams) (*Resend
 }
 
 /*
-  ResendPhoneAuthorization phones authorization resend
+ResendPhoneAuthorization phones authorization resend 400119
 
-  Resending the phone authorization.
+Resending the phone authorization.
 */
-func (a *Client) ResendPhoneAuthorization(params *ResendPhoneAuthorizationParams) (*ResendPhoneAuthorizationOK, error) {
+func (a *Client) ResendPhoneAuthorization(params *ResendPhoneAuthorizationParams, opts ...ClientOption) (*ResendPhoneAuthorizationOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewResendPhoneAuthorizationParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "resendPhoneAuthorization",
 		Method:             "PUT",
 		PathPattern:        "/job/{id}/_resendPhoneAuthorization",
@@ -510,7 +376,12 @@ func (a *Client) ResendPhoneAuthorization(params *ResendPhoneAuthorizationParams
 		Reader:             &ResendPhoneAuthorizationReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}

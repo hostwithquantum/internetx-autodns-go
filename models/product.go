@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -18,28 +20,29 @@ import (
 type Product struct {
 
 	// Article
-	// Required: true
-	Article *Article `json:"article"`
+	Article *Article `json:"article,omitempty"`
 
 	// Business case
-	// Required: true
-	BusinessCase *string `json:"businessCase"`
+	BusinessCase string `json:"businessCase,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// The owner of the object.
+	// The unique id of the product
+	ID int32 `json:"id,omitempty"`
+
+	// The object owner.
 	Owner *BasicUser `json:"owner,omitempty"`
 
 	// Shows if the product requires a price
 	PriceRequired bool `json:"priceRequired,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The updating user of the object.
+	// User who performed the last update.
 	Updater *BasicUser `json:"updater,omitempty"`
 
 	// Vat type
@@ -51,10 +54,6 @@ func (m *Product) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateArticle(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateBusinessCase(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -81,15 +80,16 @@ func (m *Product) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Product) validateArticle(formats strfmt.Registry) error {
-
-	if err := validate.Required("article", "body", m.Article); err != nil {
-		return err
+	if swag.IsZero(m.Article) { // not required
+		return nil
 	}
 
 	if m.Article != nil {
 		if err := m.Article.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("article")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("article")
 			}
 			return err
 		}
@@ -98,17 +98,7 @@ func (m *Product) validateArticle(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Product) validateBusinessCase(formats strfmt.Registry) error {
-
-	if err := validate.Required("businessCase", "body", m.BusinessCase); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *Product) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -121,7 +111,6 @@ func (m *Product) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *Product) validateOwner(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -130,6 +119,8 @@ func (m *Product) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -139,7 +130,6 @@ func (m *Product) validateOwner(formats strfmt.Registry) error {
 }
 
 func (m *Product) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -152,7 +142,6 @@ func (m *Product) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *Product) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -161,6 +150,93 @@ func (m *Product) validateUpdater(formats strfmt.Registry) error {
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this product based on the context it is used
+func (m *Product) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateArticle(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Product) contextValidateArticle(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Article != nil {
+
+		if swag.IsZero(m.Article) { // not required
+			return nil
+		}
+
+		if err := m.Article.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("article")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("article")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Product) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Product) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}

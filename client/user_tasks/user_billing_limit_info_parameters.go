@@ -17,86 +17,127 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// NewUserBillingLimitInfoParams creates a new UserBillingLimitInfoParams object
-// with the default values initialized.
+// NewUserBillingLimitInfoParams creates a new UserBillingLimitInfoParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewUserBillingLimitInfoParams() *UserBillingLimitInfoParams {
-	var ()
 	return &UserBillingLimitInfoParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewUserBillingLimitInfoParamsWithTimeout creates a new UserBillingLimitInfoParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewUserBillingLimitInfoParamsWithTimeout(timeout time.Duration) *UserBillingLimitInfoParams {
-	var ()
 	return &UserBillingLimitInfoParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewUserBillingLimitInfoParamsWithContext creates a new UserBillingLimitInfoParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewUserBillingLimitInfoParamsWithContext(ctx context.Context) *UserBillingLimitInfoParams {
-	var ()
 	return &UserBillingLimitInfoParams{
-
 		Context: ctx,
 	}
 }
 
 // NewUserBillingLimitInfoParamsWithHTTPClient creates a new UserBillingLimitInfoParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewUserBillingLimitInfoParamsWithHTTPClient(client *http.Client) *UserBillingLimitInfoParams {
-	var ()
 	return &UserBillingLimitInfoParams{
 		HTTPClient: client,
 	}
 }
 
-/*UserBillingLimitInfoParams contains all the parameters to send to the API endpoint
-for the user billing limit info operation typically these are written to a http.Request
+/*
+UserBillingLimitInfoParams contains all the parameters to send to the API endpoint
+
+	for the user billing limit info operation.
+
+	Typically these are written to a http.Request.
 */
 type UserBillingLimitInfoParams struct {
 
-	/*XDomainrobotBulkLimit*/
-	XDomainrobotBulkLimit *int32
-	/*XDomainrobotContext*/
-	XDomainrobotContext *int32
-	/*XDomainrobotDemo*/
-	XDomainrobotDemo *bool
-	/*XDomainrobotDomainSafePin*/
-	XDomainrobotDomainSafePin *string
-	/*XDomainrobotDomainSafeTan*/
-	XDomainrobotDomainSafeTan *string
-	/*XDomainrobotDomainSafeTransaction*/
-	XDomainrobotDomainSafeTransaction *string
-	/*XDomainrobotDomainSafeTransactionExpire*/
-	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
-	/*XDomainrobotOwnerContext*/
-	XDomainrobotOwnerContext *int32
-	/*XDomainrobotOwnerUser*/
-	XDomainrobotOwnerUser *string
-	/*XDomainrobotSessionID*/
-	XDomainrobotSessionID *string
-	/*XDomainrobotWS*/
-	XDomainrobotWS *string
-	/*ArticleTypes
-	  Specifies whether the limits should be limited to the defined article type labesl. Example : ?articleTypes[]=domain&articleTypes[]=package
+	// XDomainrobot2FAToken.
+	//
+	// Format: int32
+	XDomainrobot2FAToken *int32
 
+	// XDomainrobotBulkLimit.
+	//
+	// Format: int32
+	XDomainrobotBulkLimit *int32
+
+	// XDomainrobotContext.
+	//
+	// Format: int32
+	XDomainrobotContext *int32
+
+	// XDomainrobotDemo.
+	XDomainrobotDemo *bool
+
+	// XDomainrobotDomainSafePin.
+	XDomainrobotDomainSafePin *string
+
+	// XDomainrobotDomainSafeTan.
+	XDomainrobotDomainSafeTan *string
+
+	// XDomainrobotDomainSafeTransaction.
+	XDomainrobotDomainSafeTransaction *string
+
+	// XDomainrobotDomainSafeTransactionExpire.
+	//
+	// Format: date-time
+	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
+
+	// XDomainrobotOwnerContext.
+	//
+	// Format: int32
+	XDomainrobotOwnerContext *int32
+
+	// XDomainrobotOwnerUser.
+	XDomainrobotOwnerUser *string
+
+	// XDomainrobotSessionID.
+	XDomainrobotSessionID *string
+
+	// XDomainrobotWS.
+	XDomainrobotWS *string
+
+	/* ArticleTypes.
+
+	   Specifies whether the limits should be limited to the defined article type labesl. Example : ?articleTypes[]=domain&articleTypes[]=package
 	*/
 	ArticleTypes []string
-	/*Keys
-	  Additional control keys, if the unlimited limits should be excluded, the key excludeUnlimited must be set. The key count, fetches the object counts of the selected limits
 
+	/* Keys.
+
+	   Additional control keys, if the unlimited limits should be excluded, the key excludeUnlimited must be set. The key count, fetches the object counts of the selected limits
 	*/
 	Keys []string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the user billing limit info params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UserBillingLimitInfoParams) WithDefaults() *UserBillingLimitInfoParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the user billing limit info params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UserBillingLimitInfoParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the user billing limit info params
@@ -130,6 +171,17 @@ func (o *UserBillingLimitInfoParams) WithHTTPClient(client *http.Client) *UserBi
 // SetHTTPClient adds the HTTPClient to the user billing limit info params
 func (o *UserBillingLimitInfoParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithXDomainrobot2FAToken adds the xDomainrobot2FAToken to the user billing limit info params
+func (o *UserBillingLimitInfoParams) WithXDomainrobot2FAToken(xDomainrobot2FAToken *int32) *UserBillingLimitInfoParams {
+	o.SetXDomainrobot2FAToken(xDomainrobot2FAToken)
+	return o
+}
+
+// SetXDomainrobot2FAToken adds the xDomainrobot2FAToken to the user billing limit info params
+func (o *UserBillingLimitInfoParams) SetXDomainrobot2FAToken(xDomainrobot2FAToken *int32) {
+	o.XDomainrobot2FAToken = xDomainrobot2FAToken
 }
 
 // WithXDomainrobotBulkLimit adds the xDomainrobotBulkLimit to the user billing limit info params
@@ -283,13 +335,20 @@ func (o *UserBillingLimitInfoParams) WriteToRequest(r runtime.ClientRequest, reg
 	}
 	var res []error
 
+	if o.XDomainrobot2FAToken != nil {
+
+		// header param X-Domainrobot-2FA-Token
+		if err := r.SetHeaderParam("X-Domainrobot-2FA-Token", swag.FormatInt32(*o.XDomainrobot2FAToken)); err != nil {
+			return err
+		}
+	}
+
 	if o.XDomainrobotBulkLimit != nil {
 
 		// header param X-Domainrobot-Bulk-Limit
 		if err := r.SetHeaderParam("X-Domainrobot-Bulk-Limit", swag.FormatInt32(*o.XDomainrobotBulkLimit)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotContext != nil {
@@ -298,7 +357,6 @@ func (o *UserBillingLimitInfoParams) WriteToRequest(r runtime.ClientRequest, reg
 		if err := r.SetHeaderParam("X-Domainrobot-Context", swag.FormatInt32(*o.XDomainrobotContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDemo != nil {
@@ -307,7 +365,6 @@ func (o *UserBillingLimitInfoParams) WriteToRequest(r runtime.ClientRequest, reg
 		if err := r.SetHeaderParam("X-Domainrobot-Demo", swag.FormatBool(*o.XDomainrobotDemo)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafePin != nil {
@@ -316,7 +373,6 @@ func (o *UserBillingLimitInfoParams) WriteToRequest(r runtime.ClientRequest, reg
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Pin", *o.XDomainrobotDomainSafePin); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTan != nil {
@@ -325,7 +381,6 @@ func (o *UserBillingLimitInfoParams) WriteToRequest(r runtime.ClientRequest, reg
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Tan", *o.XDomainrobotDomainSafeTan); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransaction != nil {
@@ -334,7 +389,6 @@ func (o *UserBillingLimitInfoParams) WriteToRequest(r runtime.ClientRequest, reg
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction", *o.XDomainrobotDomainSafeTransaction); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransactionExpire != nil {
@@ -343,7 +397,6 @@ func (o *UserBillingLimitInfoParams) WriteToRequest(r runtime.ClientRequest, reg
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction-Expire", o.XDomainrobotDomainSafeTransactionExpire.String()); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerContext != nil {
@@ -352,7 +405,6 @@ func (o *UserBillingLimitInfoParams) WriteToRequest(r runtime.ClientRequest, reg
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-Context", swag.FormatInt32(*o.XDomainrobotOwnerContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerUser != nil {
@@ -361,7 +413,6 @@ func (o *UserBillingLimitInfoParams) WriteToRequest(r runtime.ClientRequest, reg
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-User", *o.XDomainrobotOwnerUser); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotSessionID != nil {
@@ -370,7 +421,6 @@ func (o *UserBillingLimitInfoParams) WriteToRequest(r runtime.ClientRequest, reg
 		if err := r.SetHeaderParam("X-Domainrobot-SessionId", *o.XDomainrobotSessionID); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotWS != nil {
@@ -379,27 +429,66 @@ func (o *UserBillingLimitInfoParams) WriteToRequest(r runtime.ClientRequest, reg
 		if err := r.SetHeaderParam("X-Domainrobot-WS", *o.XDomainrobotWS); err != nil {
 			return err
 		}
-
 	}
 
-	valuesArticleTypes := o.ArticleTypes
+	if o.ArticleTypes != nil {
 
-	joinedArticleTypes := swag.JoinByFormat(valuesArticleTypes, "multi")
-	// query array param articleTypes
-	if err := r.SetQueryParam("articleTypes", joinedArticleTypes...); err != nil {
-		return err
+		// binding items for articleTypes
+		joinedArticleTypes := o.bindParamArticleTypes(reg)
+
+		// query array param articleTypes
+		if err := r.SetQueryParam("articleTypes", joinedArticleTypes...); err != nil {
+			return err
+		}
 	}
 
-	valuesKeys := o.Keys
+	if o.Keys != nil {
 
-	joinedKeys := swag.JoinByFormat(valuesKeys, "multi")
-	// query array param keys
-	if err := r.SetQueryParam("keys", joinedKeys...); err != nil {
-		return err
+		// binding items for keys
+		joinedKeys := o.bindParamKeys(reg)
+
+		// query array param keys
+		if err := r.SetQueryParam("keys", joinedKeys...); err != nil {
+			return err
+		}
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
+}
+
+// bindParamUserBillingLimitInfo binds the parameter articleTypes
+func (o *UserBillingLimitInfoParams) bindParamArticleTypes(formats strfmt.Registry) []string {
+	articleTypesIR := o.ArticleTypes
+
+	var articleTypesIC []string
+	for _, articleTypesIIR := range articleTypesIR { // explode []string
+
+		articleTypesIIV := articleTypesIIR // string as string
+		articleTypesIC = append(articleTypesIC, articleTypesIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	articleTypesIS := swag.JoinByFormat(articleTypesIC, "multi")
+
+	return articleTypesIS
+}
+
+// bindParamUserBillingLimitInfo binds the parameter keys
+func (o *UserBillingLimitInfoParams) bindParamKeys(formats strfmt.Registry) []string {
+	keysIR := o.Keys
+
+	var keysIC []string
+	for _, keysIIR := range keysIR { // explode []string
+
+		keysIIV := keysIIR // string as string
+		keysIC = append(keysIC, keysIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	keysIS := swag.JoinByFormat(keysIC, "multi")
+
+	return keysIS
 }

@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -18,16 +19,16 @@ import (
 // swagger:model DomainServices
 type DomainServices struct {
 
-	// Removes pending services like BackupMX and MailProxy.
+	// This object contains possible domain services that can be configured during a DomainCreate or DomainUpdate.
 	BackupMx []*BackupMx `json:"backupMx"`
 
-	// Removes pending services like BackupMX and MailProxy.
+	// This object contains possible domain services that can be configured during a DomainCreate or DomainUpdate.
 	DomainMonitoring []*DomainMonitoring `json:"domainMonitoring"`
 
-	// Removes pending services like BackupMX and MailProxy.
+	// This object contains possible domain services that can be configured during a DomainCreate or DomainUpdate.
 	MailProxy []*MailProxy `json:"mailProxy"`
 
-	// Removes pending services like BackupMX and MailProxy.
+	// This object contains possible domain services that can be configured during a DomainCreate or DomainUpdate.
 	Redirect []*Redirect `json:"redirect"`
 }
 
@@ -58,7 +59,6 @@ func (m *DomainServices) Validate(formats strfmt.Registry) error {
 }
 
 func (m *DomainServices) validateBackupMx(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.BackupMx) { // not required
 		return nil
 	}
@@ -72,6 +72,8 @@ func (m *DomainServices) validateBackupMx(formats strfmt.Registry) error {
 			if err := m.BackupMx[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("backupMx" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("backupMx" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -83,7 +85,6 @@ func (m *DomainServices) validateBackupMx(formats strfmt.Registry) error {
 }
 
 func (m *DomainServices) validateDomainMonitoring(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.DomainMonitoring) { // not required
 		return nil
 	}
@@ -97,6 +98,8 @@ func (m *DomainServices) validateDomainMonitoring(formats strfmt.Registry) error
 			if err := m.DomainMonitoring[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("domainMonitoring" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("domainMonitoring" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -108,7 +111,6 @@ func (m *DomainServices) validateDomainMonitoring(formats strfmt.Registry) error
 }
 
 func (m *DomainServices) validateMailProxy(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.MailProxy) { // not required
 		return nil
 	}
@@ -122,6 +124,8 @@ func (m *DomainServices) validateMailProxy(formats strfmt.Registry) error {
 			if err := m.MailProxy[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("mailProxy" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("mailProxy" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -133,7 +137,6 @@ func (m *DomainServices) validateMailProxy(formats strfmt.Registry) error {
 }
 
 func (m *DomainServices) validateRedirect(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Redirect) { // not required
 		return nil
 	}
@@ -147,6 +150,134 @@ func (m *DomainServices) validateRedirect(formats strfmt.Registry) error {
 			if err := m.Redirect[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("redirect" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("redirect" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this domain services based on the context it is used
+func (m *DomainServices) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateBackupMx(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateDomainMonitoring(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateMailProxy(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRedirect(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *DomainServices) contextValidateBackupMx(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.BackupMx); i++ {
+
+		if m.BackupMx[i] != nil {
+
+			if swag.IsZero(m.BackupMx[i]) { // not required
+				return nil
+			}
+
+			if err := m.BackupMx[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("backupMx" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("backupMx" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *DomainServices) contextValidateDomainMonitoring(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.DomainMonitoring); i++ {
+
+		if m.DomainMonitoring[i] != nil {
+
+			if swag.IsZero(m.DomainMonitoring[i]) { // not required
+				return nil
+			}
+
+			if err := m.DomainMonitoring[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("domainMonitoring" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("domainMonitoring" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *DomainServices) contextValidateMailProxy(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.MailProxy); i++ {
+
+		if m.MailProxy[i] != nil {
+
+			if swag.IsZero(m.MailProxy[i]) { // not required
+				return nil
+			}
+
+			if err := m.MailProxy[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("mailProxy" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("mailProxy" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *DomainServices) contextValidateRedirect(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Redirect); i++ {
+
+		if m.Redirect[i] != nil {
+
+			if swag.IsZero(m.Redirect[i]) { // not required
+				return nil
+			}
+
+			if err := m.Redirect[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("redirect" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("redirect" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

@@ -19,81 +19,121 @@ import (
 	"github.com/hostwithquantum/internetx-autodns-go/models"
 )
 
-// NewSubjectProductListParams creates a new SubjectProductListParams object
-// with the default values initialized.
+// NewSubjectProductListParams creates a new SubjectProductListParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewSubjectProductListParams() *SubjectProductListParams {
-	var ()
 	return &SubjectProductListParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewSubjectProductListParamsWithTimeout creates a new SubjectProductListParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewSubjectProductListParamsWithTimeout(timeout time.Duration) *SubjectProductListParams {
-	var ()
 	return &SubjectProductListParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewSubjectProductListParamsWithContext creates a new SubjectProductListParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewSubjectProductListParamsWithContext(ctx context.Context) *SubjectProductListParams {
-	var ()
 	return &SubjectProductListParams{
-
 		Context: ctx,
 	}
 }
 
 // NewSubjectProductListParamsWithHTTPClient creates a new SubjectProductListParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewSubjectProductListParamsWithHTTPClient(client *http.Client) *SubjectProductListParams {
-	var ()
 	return &SubjectProductListParams{
 		HTTPClient: client,
 	}
 }
 
-/*SubjectProductListParams contains all the parameters to send to the API endpoint
-for the subject product list operation typically these are written to a http.Request
+/*
+SubjectProductListParams contains all the parameters to send to the API endpoint
+
+	for the subject product list operation.
+
+	Typically these are written to a http.Request.
 */
 type SubjectProductListParams struct {
 
-	/*XDomainrobotBulkLimit*/
-	XDomainrobotBulkLimit *int32
-	/*XDomainrobotContext*/
-	XDomainrobotContext *int32
-	/*XDomainrobotDemo*/
-	XDomainrobotDemo *bool
-	/*XDomainrobotDomainSafePin*/
-	XDomainrobotDomainSafePin *string
-	/*XDomainrobotDomainSafeTan*/
-	XDomainrobotDomainSafeTan *string
-	/*XDomainrobotDomainSafeTransaction*/
-	XDomainrobotDomainSafeTransaction *string
-	/*XDomainrobotDomainSafeTransactionExpire*/
-	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
-	/*XDomainrobotOwnerContext*/
-	XDomainrobotOwnerContext *int32
-	/*XDomainrobotOwnerUser*/
-	XDomainrobotOwnerUser *string
-	/*XDomainrobotSessionID*/
-	XDomainrobotSessionID *string
-	/*XDomainrobotWS*/
-	XDomainrobotWS *string
-	/*Body
-	  query
+	// XDomainrobot2FAToken.
+	//
+	// Format: int32
+	XDomainrobot2FAToken *int32
 
+	// XDomainrobotBulkLimit.
+	//
+	// Format: int32
+	XDomainrobotBulkLimit *int32
+
+	// XDomainrobotContext.
+	//
+	// Format: int32
+	XDomainrobotContext *int32
+
+	// XDomainrobotDemo.
+	XDomainrobotDemo *bool
+
+	// XDomainrobotDomainSafePin.
+	XDomainrobotDomainSafePin *string
+
+	// XDomainrobotDomainSafeTan.
+	XDomainrobotDomainSafeTan *string
+
+	// XDomainrobotDomainSafeTransaction.
+	XDomainrobotDomainSafeTransaction *string
+
+	// XDomainrobotDomainSafeTransactionExpire.
+	//
+	// Format: date-time
+	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
+
+	// XDomainrobotOwnerContext.
+	//
+	// Format: int32
+	XDomainrobotOwnerContext *int32
+
+	// XDomainrobotOwnerUser.
+	XDomainrobotOwnerUser *string
+
+	// XDomainrobotSessionID.
+	XDomainrobotSessionID *string
+
+	// XDomainrobotWS.
+	XDomainrobotWS *string
+
+	/* Body.
+
+	   query
 	*/
 	Body *models.Query
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the subject product list params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *SubjectProductListParams) WithDefaults() *SubjectProductListParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the subject product list params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *SubjectProductListParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the subject product list params
@@ -127,6 +167,17 @@ func (o *SubjectProductListParams) WithHTTPClient(client *http.Client) *SubjectP
 // SetHTTPClient adds the HTTPClient to the subject product list params
 func (o *SubjectProductListParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithXDomainrobot2FAToken adds the xDomainrobot2FAToken to the subject product list params
+func (o *SubjectProductListParams) WithXDomainrobot2FAToken(xDomainrobot2FAToken *int32) *SubjectProductListParams {
+	o.SetXDomainrobot2FAToken(xDomainrobot2FAToken)
+	return o
+}
+
+// SetXDomainrobot2FAToken adds the xDomainrobot2FAToken to the subject product list params
+func (o *SubjectProductListParams) SetXDomainrobot2FAToken(xDomainrobot2FAToken *int32) {
+	o.XDomainrobot2FAToken = xDomainrobot2FAToken
 }
 
 // WithXDomainrobotBulkLimit adds the xDomainrobotBulkLimit to the subject product list params
@@ -269,13 +320,20 @@ func (o *SubjectProductListParams) WriteToRequest(r runtime.ClientRequest, reg s
 	}
 	var res []error
 
+	if o.XDomainrobot2FAToken != nil {
+
+		// header param X-Domainrobot-2FA-Token
+		if err := r.SetHeaderParam("X-Domainrobot-2FA-Token", swag.FormatInt32(*o.XDomainrobot2FAToken)); err != nil {
+			return err
+		}
+	}
+
 	if o.XDomainrobotBulkLimit != nil {
 
 		// header param X-Domainrobot-Bulk-Limit
 		if err := r.SetHeaderParam("X-Domainrobot-Bulk-Limit", swag.FormatInt32(*o.XDomainrobotBulkLimit)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotContext != nil {
@@ -284,7 +342,6 @@ func (o *SubjectProductListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		if err := r.SetHeaderParam("X-Domainrobot-Context", swag.FormatInt32(*o.XDomainrobotContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDemo != nil {
@@ -293,7 +350,6 @@ func (o *SubjectProductListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		if err := r.SetHeaderParam("X-Domainrobot-Demo", swag.FormatBool(*o.XDomainrobotDemo)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafePin != nil {
@@ -302,7 +358,6 @@ func (o *SubjectProductListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Pin", *o.XDomainrobotDomainSafePin); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTan != nil {
@@ -311,7 +366,6 @@ func (o *SubjectProductListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Tan", *o.XDomainrobotDomainSafeTan); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransaction != nil {
@@ -320,7 +374,6 @@ func (o *SubjectProductListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction", *o.XDomainrobotDomainSafeTransaction); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransactionExpire != nil {
@@ -329,7 +382,6 @@ func (o *SubjectProductListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction-Expire", o.XDomainrobotDomainSafeTransactionExpire.String()); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerContext != nil {
@@ -338,7 +390,6 @@ func (o *SubjectProductListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-Context", swag.FormatInt32(*o.XDomainrobotOwnerContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerUser != nil {
@@ -347,7 +398,6 @@ func (o *SubjectProductListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-User", *o.XDomainrobotOwnerUser); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotSessionID != nil {
@@ -356,7 +406,6 @@ func (o *SubjectProductListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		if err := r.SetHeaderParam("X-Domainrobot-SessionId", *o.XDomainrobotSessionID); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotWS != nil {
@@ -365,9 +414,7 @@ func (o *SubjectProductListParams) WriteToRequest(r runtime.ClientRequest, reg s
 		if err := r.SetHeaderParam("X-Domainrobot-WS", *o.XDomainrobotWS); err != nil {
 			return err
 		}
-
 	}
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

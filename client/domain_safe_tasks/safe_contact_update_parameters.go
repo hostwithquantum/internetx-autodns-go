@@ -14,63 +14,85 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 
 	"github.com/hostwithquantum/internetx-autodns-go/models"
 )
 
-// NewSafeContactUpdateParams creates a new SafeContactUpdateParams object
-// with the default values initialized.
+// NewSafeContactUpdateParams creates a new SafeContactUpdateParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewSafeContactUpdateParams() *SafeContactUpdateParams {
-	var ()
 	return &SafeContactUpdateParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewSafeContactUpdateParamsWithTimeout creates a new SafeContactUpdateParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewSafeContactUpdateParamsWithTimeout(timeout time.Duration) *SafeContactUpdateParams {
-	var ()
 	return &SafeContactUpdateParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewSafeContactUpdateParamsWithContext creates a new SafeContactUpdateParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewSafeContactUpdateParamsWithContext(ctx context.Context) *SafeContactUpdateParams {
-	var ()
 	return &SafeContactUpdateParams{
-
 		Context: ctx,
 	}
 }
 
 // NewSafeContactUpdateParamsWithHTTPClient creates a new SafeContactUpdateParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewSafeContactUpdateParamsWithHTTPClient(client *http.Client) *SafeContactUpdateParams {
-	var ()
 	return &SafeContactUpdateParams{
 		HTTPClient: client,
 	}
 }
 
-/*SafeContactUpdateParams contains all the parameters to send to the API endpoint
-for the safe contact update operation typically these are written to a http.Request
+/*
+SafeContactUpdateParams contains all the parameters to send to the API endpoint
+
+	for the safe contact update operation.
+
+	Typically these are written to a http.Request.
 */
 type SafeContactUpdateParams struct {
 
-	/*Body
-	  domainSafeUser
+	/* Body.
 
+	   domainSafeContact
 	*/
-	Body *models.DomainSafeUser
+	Body *models.DomainSafeAccount
+
+	// ID.
+	//
+	// Format: int32
+	ID int32
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the safe contact update params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *SafeContactUpdateParams) WithDefaults() *SafeContactUpdateParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the safe contact update params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *SafeContactUpdateParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the safe contact update params
@@ -107,14 +129,25 @@ func (o *SafeContactUpdateParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithBody adds the body to the safe contact update params
-func (o *SafeContactUpdateParams) WithBody(body *models.DomainSafeUser) *SafeContactUpdateParams {
+func (o *SafeContactUpdateParams) WithBody(body *models.DomainSafeAccount) *SafeContactUpdateParams {
 	o.SetBody(body)
 	return o
 }
 
 // SetBody adds the body to the safe contact update params
-func (o *SafeContactUpdateParams) SetBody(body *models.DomainSafeUser) {
+func (o *SafeContactUpdateParams) SetBody(body *models.DomainSafeAccount) {
 	o.Body = body
+}
+
+// WithID adds the id to the safe contact update params
+func (o *SafeContactUpdateParams) WithID(id int32) *SafeContactUpdateParams {
+	o.SetID(id)
+	return o
+}
+
+// SetID adds the id to the safe contact update params
+func (o *SafeContactUpdateParams) SetID(id int32) {
+	o.ID = id
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -124,11 +157,15 @@ func (o *SafeContactUpdateParams) WriteToRequest(r runtime.ClientRequest, reg st
 		return err
 	}
 	var res []error
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err
 		}
+	}
+
+	// path param id
+	if err := r.SetPathParam("id", swag.FormatInt32(o.ID)); err != nil {
+		return err
 	}
 
 	if len(res) > 0 {

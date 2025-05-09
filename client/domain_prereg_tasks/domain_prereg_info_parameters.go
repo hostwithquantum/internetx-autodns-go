@@ -16,56 +16,72 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-// NewDomainPreregInfoParams creates a new DomainPreregInfoParams object
-// with the default values initialized.
+// NewDomainPreregInfoParams creates a new DomainPreregInfoParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewDomainPreregInfoParams() *DomainPreregInfoParams {
-	var ()
 	return &DomainPreregInfoParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewDomainPreregInfoParamsWithTimeout creates a new DomainPreregInfoParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewDomainPreregInfoParamsWithTimeout(timeout time.Duration) *DomainPreregInfoParams {
-	var ()
 	return &DomainPreregInfoParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewDomainPreregInfoParamsWithContext creates a new DomainPreregInfoParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewDomainPreregInfoParamsWithContext(ctx context.Context) *DomainPreregInfoParams {
-	var ()
 	return &DomainPreregInfoParams{
-
 		Context: ctx,
 	}
 }
 
 // NewDomainPreregInfoParamsWithHTTPClient creates a new DomainPreregInfoParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewDomainPreregInfoParamsWithHTTPClient(client *http.Client) *DomainPreregInfoParams {
-	var ()
 	return &DomainPreregInfoParams{
 		HTTPClient: client,
 	}
 }
 
-/*DomainPreregInfoParams contains all the parameters to send to the API endpoint
-for the domain prereg info operation typically these are written to a http.Request
+/*
+DomainPreregInfoParams contains all the parameters to send to the API endpoint
+
+	for the domain prereg info operation.
+
+	Typically these are written to a http.Request.
 */
 type DomainPreregInfoParams struct {
 
-	/*Reference*/
+	// Reference.
 	Reference string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the domain prereg info params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *DomainPreregInfoParams) WithDefaults() *DomainPreregInfoParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the domain prereg info params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *DomainPreregInfoParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the domain prereg info params

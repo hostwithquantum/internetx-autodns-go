@@ -6,10 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"github.com/go-openapi/errors"
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // NameServer name server
@@ -17,37 +17,24 @@ import (
 // swagger:model NameServer
 type NameServer struct {
 
-	// The ip addresses.
+	// IPv4 and IPv6 addresses of the name server. For GLUE records only;
+	// optional. The values for the IP addresses are only relevant for domain operations and are only used there in the case of glue name servers.
 	IPAddresses []string `json:"ipAddresses"`
 
-	// Host name of the nameserver.
-	// Required: true
-	Name *string `json:"name"`
+	// Host name of the nameserver written as a Fully-Qualified-Domain-Name (FQDN).
+	Name string `json:"name,omitempty"`
 
-	// The time to live.
+	// Time-to-live value of the nameservers in seconds
 	TTL int64 `json:"ttl,omitempty"`
 }
 
 // Validate validates this name server
 func (m *NameServer) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateName(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 
-func (m *NameServer) validateName(formats strfmt.Registry) error {
-
-	if err := validate.Required("name", "body", m.Name); err != nil {
-		return err
-	}
-
+// ContextValidate validates this name server based on context it is used
+func (m *NameServer) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

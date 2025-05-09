@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -15,24 +17,31 @@ import (
 // swagger:model ContactJobsExtensions
 type ContactJobsExtensions struct {
 
-	// Contact is the administrative contact with the permission to act as an independent agent / recruiter on behalf of the listed registrant.
+	// Here you enter whether the contact is the administrative contact with the permission to act as an independent agent /recruiter on behalf of the listed registrant.
+	// Example: false
 	AdminType bool `json:"adminType,omitempty"`
 
 	// Title of the domain contact in the organization.
 	ContactTitle string `json:"contactTitle,omitempty"`
 
 	// Choose whether the contact is is a member of the Human Resource Organization
+	// Example: false
 	HrMember bool `json:"hrMember,omitempty"`
 
-	// The Industry class.
+	// The industry class in which the company is active in.
 	IndustryClass int32 `json:"industryClass,omitempty"`
 
-	// The Website.
+	// The website URL of the company.
 	Website string `json:"website,omitempty"`
 }
 
 // Validate validates this contact jobs extensions
 func (m *ContactJobsExtensions) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this contact jobs extensions based on context it is used
+func (m *ContactJobsExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

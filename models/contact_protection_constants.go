@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model ContactProtectionConstants
 type ContactProtectionConstants string
+
+func NewContactProtectionConstants(value ContactProtectionConstants) *ContactProtectionConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated ContactProtectionConstants.
+func (m ContactProtectionConstants) Pointer() *ContactProtectionConstants {
+	return &m
+}
 
 const (
 
@@ -59,5 +69,10 @@ func (m ContactProtectionConstants) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this contact protection constants based on context it is used
+func (m ContactProtectionConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

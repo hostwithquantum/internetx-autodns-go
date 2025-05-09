@@ -6,6 +6,7 @@ package domain_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *DomainCancelationCreateReader) ReadResponse(response runtime.ClientResp
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[POST /domain/{name}/cancelation] domainCancelationCreate", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewDomainCancelationCreateOK() *DomainCancelationCreateOK {
 	return &DomainCancelationCreateOK{}
 }
 
-/*DomainCancelationCreateOK handles this case with default header values.
+/*
+DomainCancelationCreateOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type DomainCancelationCreateOK struct {
 	Payload *models.JSONResponseDataDomainCancelation
 }
 
+// IsSuccess returns true when this domain cancelation create o k response has a 2xx status code
+func (o *DomainCancelationCreateOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this domain cancelation create o k response has a 3xx status code
+func (o *DomainCancelationCreateOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this domain cancelation create o k response has a 4xx status code
+func (o *DomainCancelationCreateOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this domain cancelation create o k response has a 5xx status code
+func (o *DomainCancelationCreateOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this domain cancelation create o k response a status code equal to that given
+func (o *DomainCancelationCreateOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the domain cancelation create o k response
+func (o *DomainCancelationCreateOK) Code() int {
+	return 200
+}
+
 func (o *DomainCancelationCreateOK) Error() string {
-	return fmt.Sprintf("[POST /domain/{name}/cancelation][%d] domainCancelationCreateOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /domain/{name}/cancelation][%d] domainCancelationCreateOK %s", 200, payload)
+}
+
+func (o *DomainCancelationCreateOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /domain/{name}/cancelation][%d] domainCancelationCreateOK %s", 200, payload)
 }
 
 func (o *DomainCancelationCreateOK) GetPayload() *models.JSONResponseDataDomainCancelation {

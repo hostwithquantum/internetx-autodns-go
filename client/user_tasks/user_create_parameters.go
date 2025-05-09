@@ -19,81 +19,127 @@ import (
 	"github.com/hostwithquantum/internetx-autodns-go/models"
 )
 
-// NewUserCreateParams creates a new UserCreateParams object
-// with the default values initialized.
+// NewUserCreateParams creates a new UserCreateParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewUserCreateParams() *UserCreateParams {
-	var ()
 	return &UserCreateParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewUserCreateParamsWithTimeout creates a new UserCreateParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewUserCreateParamsWithTimeout(timeout time.Duration) *UserCreateParams {
-	var ()
 	return &UserCreateParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewUserCreateParamsWithContext creates a new UserCreateParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewUserCreateParamsWithContext(ctx context.Context) *UserCreateParams {
-	var ()
 	return &UserCreateParams{
-
 		Context: ctx,
 	}
 }
 
 // NewUserCreateParamsWithHTTPClient creates a new UserCreateParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewUserCreateParamsWithHTTPClient(client *http.Client) *UserCreateParams {
-	var ()
 	return &UserCreateParams{
 		HTTPClient: client,
 	}
 }
 
-/*UserCreateParams contains all the parameters to send to the API endpoint
-for the user create operation typically these are written to a http.Request
+/*
+UserCreateParams contains all the parameters to send to the API endpoint
+
+	for the user create operation.
+
+	Typically these are written to a http.Request.
 */
 type UserCreateParams struct {
 
-	/*XDomainrobotBulkLimit*/
-	XDomainrobotBulkLimit *int32
-	/*XDomainrobotContext*/
-	XDomainrobotContext *int32
-	/*XDomainrobotDemo*/
-	XDomainrobotDemo *bool
-	/*XDomainrobotDomainSafePin*/
-	XDomainrobotDomainSafePin *string
-	/*XDomainrobotDomainSafeTan*/
-	XDomainrobotDomainSafeTan *string
-	/*XDomainrobotDomainSafeTransaction*/
-	XDomainrobotDomainSafeTransaction *string
-	/*XDomainrobotDomainSafeTransactionExpire*/
-	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
-	/*XDomainrobotOwnerContext*/
-	XDomainrobotOwnerContext *int32
-	/*XDomainrobotOwnerUser*/
-	XDomainrobotOwnerUser *string
-	/*XDomainrobotSessionID*/
-	XDomainrobotSessionID *string
-	/*XDomainrobotWS*/
-	XDomainrobotWS *string
-	/*Body
-	  user
+	// XDomainrobot2FAToken.
+	//
+	// Format: int32
+	XDomainrobot2FAToken *int32
 
+	// XDomainrobotBulkLimit.
+	//
+	// Format: int32
+	XDomainrobotBulkLimit *int32
+
+	// XDomainrobotContext.
+	//
+	// Format: int32
+	XDomainrobotContext *int32
+
+	// XDomainrobotDemo.
+	XDomainrobotDemo *bool
+
+	// XDomainrobotDomainSafePin.
+	XDomainrobotDomainSafePin *string
+
+	// XDomainrobotDomainSafeTan.
+	XDomainrobotDomainSafeTan *string
+
+	// XDomainrobotDomainSafeTransaction.
+	XDomainrobotDomainSafeTransaction *string
+
+	// XDomainrobotDomainSafeTransactionExpire.
+	//
+	// Format: date-time
+	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
+
+	// XDomainrobotOwnerContext.
+	//
+	// Format: int32
+	XDomainrobotOwnerContext *int32
+
+	// XDomainrobotOwnerUser.
+	XDomainrobotOwnerUser *string
+
+	// XDomainrobotSessionID.
+	XDomainrobotSessionID *string
+
+	// XDomainrobotWS.
+	XDomainrobotWS *string
+
+	/* Body.
+
+	   user
 	*/
 	Body *models.User
+
+	/* ReplyURL.
+
+	   Optional reply url in case of user invite
+	*/
+	ReplyURL *string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the user create params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UserCreateParams) WithDefaults() *UserCreateParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the user create params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UserCreateParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the user create params
@@ -127,6 +173,17 @@ func (o *UserCreateParams) WithHTTPClient(client *http.Client) *UserCreateParams
 // SetHTTPClient adds the HTTPClient to the user create params
 func (o *UserCreateParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithXDomainrobot2FAToken adds the xDomainrobot2FAToken to the user create params
+func (o *UserCreateParams) WithXDomainrobot2FAToken(xDomainrobot2FAToken *int32) *UserCreateParams {
+	o.SetXDomainrobot2FAToken(xDomainrobot2FAToken)
+	return o
+}
+
+// SetXDomainrobot2FAToken adds the xDomainrobot2FAToken to the user create params
+func (o *UserCreateParams) SetXDomainrobot2FAToken(xDomainrobot2FAToken *int32) {
+	o.XDomainrobot2FAToken = xDomainrobot2FAToken
 }
 
 // WithXDomainrobotBulkLimit adds the xDomainrobotBulkLimit to the user create params
@@ -261,6 +318,17 @@ func (o *UserCreateParams) SetBody(body *models.User) {
 	o.Body = body
 }
 
+// WithReplyURL adds the replyURL to the user create params
+func (o *UserCreateParams) WithReplyURL(replyURL *string) *UserCreateParams {
+	o.SetReplyURL(replyURL)
+	return o
+}
+
+// SetReplyURL adds the replyUrl to the user create params
+func (o *UserCreateParams) SetReplyURL(replyURL *string) {
+	o.ReplyURL = replyURL
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *UserCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -269,13 +337,20 @@ func (o *UserCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Re
 	}
 	var res []error
 
+	if o.XDomainrobot2FAToken != nil {
+
+		// header param X-Domainrobot-2FA-Token
+		if err := r.SetHeaderParam("X-Domainrobot-2FA-Token", swag.FormatInt32(*o.XDomainrobot2FAToken)); err != nil {
+			return err
+		}
+	}
+
 	if o.XDomainrobotBulkLimit != nil {
 
 		// header param X-Domainrobot-Bulk-Limit
 		if err := r.SetHeaderParam("X-Domainrobot-Bulk-Limit", swag.FormatInt32(*o.XDomainrobotBulkLimit)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotContext != nil {
@@ -284,7 +359,6 @@ func (o *UserCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Re
 		if err := r.SetHeaderParam("X-Domainrobot-Context", swag.FormatInt32(*o.XDomainrobotContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDemo != nil {
@@ -293,7 +367,6 @@ func (o *UserCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Re
 		if err := r.SetHeaderParam("X-Domainrobot-Demo", swag.FormatBool(*o.XDomainrobotDemo)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafePin != nil {
@@ -302,7 +375,6 @@ func (o *UserCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Re
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Pin", *o.XDomainrobotDomainSafePin); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTan != nil {
@@ -311,7 +383,6 @@ func (o *UserCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Re
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Tan", *o.XDomainrobotDomainSafeTan); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransaction != nil {
@@ -320,7 +391,6 @@ func (o *UserCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Re
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction", *o.XDomainrobotDomainSafeTransaction); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransactionExpire != nil {
@@ -329,7 +399,6 @@ func (o *UserCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Re
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction-Expire", o.XDomainrobotDomainSafeTransactionExpire.String()); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerContext != nil {
@@ -338,7 +407,6 @@ func (o *UserCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Re
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-Context", swag.FormatInt32(*o.XDomainrobotOwnerContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerUser != nil {
@@ -347,7 +415,6 @@ func (o *UserCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Re
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-User", *o.XDomainrobotOwnerUser); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotSessionID != nil {
@@ -356,7 +423,6 @@ func (o *UserCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Re
 		if err := r.SetHeaderParam("X-Domainrobot-SessionId", *o.XDomainrobotSessionID); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotWS != nil {
@@ -365,12 +431,27 @@ func (o *UserCreateParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Re
 		if err := r.SetHeaderParam("X-Domainrobot-WS", *o.XDomainrobotWS); err != nil {
 			return err
 		}
-
 	}
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err
+		}
+	}
+
+	if o.ReplyURL != nil {
+
+		// query param replyUrl
+		var qrReplyURL string
+
+		if o.ReplyURL != nil {
+			qrReplyURL = *o.ReplyURL
+		}
+		qReplyURL := qrReplyURL
+		if qReplyURL != "" {
+
+			if err := r.SetQueryParam("replyUrl", qReplyURL); err != nil {
+				return err
+			}
 		}
 	}
 

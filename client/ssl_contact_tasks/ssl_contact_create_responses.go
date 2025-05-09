@@ -6,6 +6,7 @@ package ssl_contact_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *SslContactCreateReader) ReadResponse(response runtime.ClientResponse, c
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[POST /sslcontact] sslContactCreate", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewSslContactCreateOK() *SslContactCreateOK {
 	return &SslContactCreateOK{}
 }
 
-/*SslContactCreateOK handles this case with default header values.
+/*
+SslContactCreateOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type SslContactCreateOK struct {
 	Payload *models.JSONResponseDataSslContact
 }
 
+// IsSuccess returns true when this ssl contact create o k response has a 2xx status code
+func (o *SslContactCreateOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this ssl contact create o k response has a 3xx status code
+func (o *SslContactCreateOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this ssl contact create o k response has a 4xx status code
+func (o *SslContactCreateOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this ssl contact create o k response has a 5xx status code
+func (o *SslContactCreateOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this ssl contact create o k response a status code equal to that given
+func (o *SslContactCreateOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the ssl contact create o k response
+func (o *SslContactCreateOK) Code() int {
+	return 200
+}
+
 func (o *SslContactCreateOK) Error() string {
-	return fmt.Sprintf("[POST /sslcontact][%d] sslContactCreateOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /sslcontact][%d] sslContactCreateOK %s", 200, payload)
+}
+
+func (o *SslContactCreateOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /sslcontact][%d] sslContactCreateOK %s", 200, payload)
 }
 
 func (o *SslContactCreateOK) GetPayload() *models.JSONResponseDataSslContact {

@@ -19,85 +19,129 @@ import (
 	"github.com/hostwithquantum/internetx-autodns-go/models"
 )
 
-// NewUserCopyParams creates a new UserCopyParams object
-// with the default values initialized.
+// NewUserCopyParams creates a new UserCopyParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewUserCopyParams() *UserCopyParams {
-	var ()
 	return &UserCopyParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewUserCopyParamsWithTimeout creates a new UserCopyParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewUserCopyParamsWithTimeout(timeout time.Duration) *UserCopyParams {
-	var ()
 	return &UserCopyParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewUserCopyParamsWithContext creates a new UserCopyParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewUserCopyParamsWithContext(ctx context.Context) *UserCopyParams {
-	var ()
 	return &UserCopyParams{
-
 		Context: ctx,
 	}
 }
 
 // NewUserCopyParamsWithHTTPClient creates a new UserCopyParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewUserCopyParamsWithHTTPClient(client *http.Client) *UserCopyParams {
-	var ()
 	return &UserCopyParams{
 		HTTPClient: client,
 	}
 }
 
-/*UserCopyParams contains all the parameters to send to the API endpoint
-for the user copy operation typically these are written to a http.Request
+/*
+UserCopyParams contains all the parameters to send to the API endpoint
+
+	for the user copy operation.
+
+	Typically these are written to a http.Request.
 */
 type UserCopyParams struct {
 
-	/*XDomainrobotBulkLimit*/
-	XDomainrobotBulkLimit *int32
-	/*XDomainrobotContext*/
-	XDomainrobotContext *int32
-	/*XDomainrobotDemo*/
-	XDomainrobotDemo *bool
-	/*XDomainrobotDomainSafePin*/
-	XDomainrobotDomainSafePin *string
-	/*XDomainrobotDomainSafeTan*/
-	XDomainrobotDomainSafeTan *string
-	/*XDomainrobotDomainSafeTransaction*/
-	XDomainrobotDomainSafeTransaction *string
-	/*XDomainrobotDomainSafeTransactionExpire*/
-	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
-	/*XDomainrobotOwnerContext*/
-	XDomainrobotOwnerContext *int32
-	/*XDomainrobotOwnerUser*/
-	XDomainrobotOwnerUser *string
-	/*XDomainrobotSessionID*/
-	XDomainrobotSessionID *string
-	/*XDomainrobotWS*/
-	XDomainrobotWS *string
-	/*Body
-	  user
+	// XDomainrobot2FAToken.
+	//
+	// Format: int32
+	XDomainrobot2FAToken *int32
 
+	// XDomainrobotBulkLimit.
+	//
+	// Format: int32
+	XDomainrobotBulkLimit *int32
+
+	// XDomainrobotContext.
+	//
+	// Format: int32
+	XDomainrobotContext *int32
+
+	// XDomainrobotDemo.
+	XDomainrobotDemo *bool
+
+	// XDomainrobotDomainSafePin.
+	XDomainrobotDomainSafePin *string
+
+	// XDomainrobotDomainSafeTan.
+	XDomainrobotDomainSafeTan *string
+
+	// XDomainrobotDomainSafeTransaction.
+	XDomainrobotDomainSafeTransaction *string
+
+	// XDomainrobotDomainSafeTransactionExpire.
+	//
+	// Format: date-time
+	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
+
+	// XDomainrobotOwnerContext.
+	//
+	// Format: int32
+	XDomainrobotOwnerContext *int32
+
+	// XDomainrobotOwnerUser.
+	XDomainrobotOwnerUser *string
+
+	// XDomainrobotSessionID.
+	XDomainrobotSessionID *string
+
+	// XDomainrobotWS.
+	XDomainrobotWS *string
+
+	/* Body.
+
+	   user
 	*/
 	Body *models.User
-	/*Context*/
-	Context string
-	/*Name*/
+
+	// Context.
+	//
+	// Format: int32
+	Context int32
+
+	// Name.
 	Name string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the user copy params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UserCopyParams) WithDefaults() *UserCopyParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the user copy params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UserCopyParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the user copy params
@@ -131,6 +175,17 @@ func (o *UserCopyParams) WithHTTPClient(client *http.Client) *UserCopyParams {
 // SetHTTPClient adds the HTTPClient to the user copy params
 func (o *UserCopyParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithXDomainrobot2FAToken adds the xDomainrobot2FAToken to the user copy params
+func (o *UserCopyParams) WithXDomainrobot2FAToken(xDomainrobot2FAToken *int32) *UserCopyParams {
+	o.SetXDomainrobot2FAToken(xDomainrobot2FAToken)
+	return o
+}
+
+// SetXDomainrobot2FAToken adds the xDomainrobot2FAToken to the user copy params
+func (o *UserCopyParams) SetXDomainrobot2FAToken(xDomainrobot2FAToken *int32) {
+	o.XDomainrobot2FAToken = xDomainrobot2FAToken
 }
 
 // WithXDomainrobotBulkLimit adds the xDomainrobotBulkLimit to the user copy params
@@ -266,13 +321,13 @@ func (o *UserCopyParams) SetBody(body *models.User) {
 }
 
 // WithContext adds the context to the user copy params
-func (o *UserCopyParams) WithContext(context string) *UserCopyParams {
+func (o *UserCopyParams) WithContext(context int32) *UserCopyParams {
 	o.SetContext(context)
 	return o
 }
 
 // SetContext adds the context to the user copy params
-func (o *UserCopyParams) SetContext(context string) {
+func (o *UserCopyParams) SetContext(context int32) {
 	o.Context = context
 }
 
@@ -295,13 +350,20 @@ func (o *UserCopyParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 	}
 	var res []error
 
+	if o.XDomainrobot2FAToken != nil {
+
+		// header param X-Domainrobot-2FA-Token
+		if err := r.SetHeaderParam("X-Domainrobot-2FA-Token", swag.FormatInt32(*o.XDomainrobot2FAToken)); err != nil {
+			return err
+		}
+	}
+
 	if o.XDomainrobotBulkLimit != nil {
 
 		// header param X-Domainrobot-Bulk-Limit
 		if err := r.SetHeaderParam("X-Domainrobot-Bulk-Limit", swag.FormatInt32(*o.XDomainrobotBulkLimit)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotContext != nil {
@@ -310,7 +372,6 @@ func (o *UserCopyParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 		if err := r.SetHeaderParam("X-Domainrobot-Context", swag.FormatInt32(*o.XDomainrobotContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDemo != nil {
@@ -319,7 +380,6 @@ func (o *UserCopyParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 		if err := r.SetHeaderParam("X-Domainrobot-Demo", swag.FormatBool(*o.XDomainrobotDemo)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafePin != nil {
@@ -328,7 +388,6 @@ func (o *UserCopyParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Pin", *o.XDomainrobotDomainSafePin); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTan != nil {
@@ -337,7 +396,6 @@ func (o *UserCopyParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Tan", *o.XDomainrobotDomainSafeTan); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransaction != nil {
@@ -346,7 +404,6 @@ func (o *UserCopyParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction", *o.XDomainrobotDomainSafeTransaction); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransactionExpire != nil {
@@ -355,7 +412,6 @@ func (o *UserCopyParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction-Expire", o.XDomainrobotDomainSafeTransactionExpire.String()); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerContext != nil {
@@ -364,7 +420,6 @@ func (o *UserCopyParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-Context", swag.FormatInt32(*o.XDomainrobotOwnerContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerUser != nil {
@@ -373,7 +428,6 @@ func (o *UserCopyParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-User", *o.XDomainrobotOwnerUser); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotSessionID != nil {
@@ -382,7 +436,6 @@ func (o *UserCopyParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 		if err := r.SetHeaderParam("X-Domainrobot-SessionId", *o.XDomainrobotSessionID); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotWS != nil {
@@ -391,9 +444,7 @@ func (o *UserCopyParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 		if err := r.SetHeaderParam("X-Domainrobot-WS", *o.XDomainrobotWS); err != nil {
 			return err
 		}
-
 	}
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err
@@ -401,7 +452,7 @@ func (o *UserCopyParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 	}
 
 	// path param context
-	if err := r.SetPathParam("context", o.Context); err != nil {
+	if err := r.SetPathParam("context", swag.FormatInt32(o.Context)); err != nil {
 		return err
 	}
 

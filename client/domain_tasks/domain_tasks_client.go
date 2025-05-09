@@ -9,12 +9,38 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime"
+	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new domain tasks API client.
 func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new domain tasks API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new domain tasks API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -25,69 +51,117 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
 // ClientService is the interface for Client methods
 type ClientService interface {
-	AuthinfoSend(params *AuthinfoSendParams) (*AuthinfoSendOK, error)
+	AuthinfoSend(params *AuthinfoSendParams, opts ...ClientOption) (*AuthinfoSendOK, error)
 
-	AutoDnssecKeyRollover(params *AutoDnssecKeyRolloverParams) (*AutoDnssecKeyRolloverOK, error)
+	AutoDeleteList(params *AutoDeleteListParams, opts ...ClientOption) (*AutoDeleteListOK, error)
 
-	DomainAuthinfo1Create(params *DomainAuthinfo1CreateParams) (*DomainAuthinfo1CreateOK, error)
+	AutoDnssecKeyRollover(params *AutoDnssecKeyRolloverParams, opts ...ClientOption) (*AutoDnssecKeyRolloverOK, error)
 
-	DomainAuthinfo1Delete(params *DomainAuthinfo1DeleteParams) (*DomainAuthinfo1DeleteOK, error)
+	DomainAddDomainSafe(params *DomainAddDomainSafeParams, opts ...ClientOption) (*DomainAddDomainSafeOK, error)
 
-	DomainAuthinfo2Create(params *DomainAuthinfo2CreateParams) (*DomainAuthinfo2CreateOK, error)
+	DomainAuthinfo1Create(params *DomainAuthinfo1CreateParams, opts ...ClientOption) (*DomainAuthinfo1CreateOK, error)
 
-	DomainBuy(params *DomainBuyParams) (*DomainBuyOK, error)
+	DomainAuthinfo1Delete(params *DomainAuthinfo1DeleteParams, opts ...ClientOption) (*DomainAuthinfo1DeleteOK, error)
 
-	DomainCancelationCreate(params *DomainCancelationCreateParams) (*DomainCancelationCreateOK, error)
+	DomainAuthinfo2Create(params *DomainAuthinfo2CreateParams, opts ...ClientOption) (*DomainAuthinfo2CreateOK, error)
 
-	DomainCancelationDelete(params *DomainCancelationDeleteParams) (*DomainCancelationDeleteOK, error)
+	DomainAuthinfo2Creates(params *DomainAuthinfo2CreatesParams, opts ...ClientOption) (*DomainAuthinfo2CreatesOK, error)
 
-	DomainCancelationInfo(params *DomainCancelationInfoParams) (*DomainCancelationInfoOK, error)
+	DomainAuthinfoCreates(params *DomainAuthinfoCreatesParams, opts ...ClientOption) (*DomainAuthinfoCreatesOK, error)
 
-	DomainCancelationList(params *DomainCancelationListParams) (*DomainCancelationListOK, error)
+	DomainAuthinfoDeletes(params *DomainAuthinfoDeletesParams, opts ...ClientOption) (*DomainAuthinfoDeletesOK, error)
 
-	DomainCancelationUpdate(params *DomainCancelationUpdateParams) (*DomainCancelationUpdateOK, error)
+	DomainBuy(params *DomainBuyParams, opts ...ClientOption) (*DomainBuyOK, error)
 
-	DomainCommentUpdate(params *DomainCommentUpdateParams) (*DomainCommentUpdateOK, error)
+	DomainBuys(params *DomainBuysParams, opts ...ClientOption) (*DomainBuysOK, error)
 
-	DomainCreate(params *DomainCreateParams) (*DomainCreateOK, error)
+	DomainCancelationCreate(params *DomainCancelationCreateParams, opts ...ClientOption) (*DomainCancelationCreateOK, error)
 
-	DomainInfo(params *DomainInfoParams) (*DomainInfoOK, error)
+	DomainCancelationCreates(params *DomainCancelationCreatesParams, opts ...ClientOption) (*DomainCancelationCreatesOK, error)
 
-	DomainList(params *DomainListParams) (*DomainListOK, error)
+	DomainCancelationDelete(params *DomainCancelationDeleteParams, opts ...ClientOption) (*DomainCancelationDeleteOK, error)
 
-	DomainOwnerChange(params *DomainOwnerChangeParams) (*DomainOwnerChangeOK, error)
+	DomainCancelationDeletes(params *DomainCancelationDeletesParams, opts ...ClientOption) (*DomainCancelationDeletesOK, error)
 
-	DomainRenew(params *DomainRenewParams) (*DomainRenewOK, error)
+	DomainCancelationInfo(params *DomainCancelationInfoParams, opts ...ClientOption) (*DomainCancelationInfoOK, error)
 
-	DomainRestore(params *DomainRestoreParams) (*DomainRestoreOK, error)
+	DomainCancelationList(params *DomainCancelationListParams, opts ...ClientOption) (*DomainCancelationListOK, error)
 
-	DomainRestoreList(params *DomainRestoreListParams) (*DomainRestoreListOK, error)
+	DomainCancelationPatches(params *DomainCancelationPatchesParams, opts ...ClientOption) (*DomainCancelationPatchesOK, error)
 
-	DomainServicesUpdate(params *DomainServicesUpdateParams) (*DomainServicesUpdateOK, error)
+	DomainCancelationUpdate(params *DomainCancelationUpdateParams, opts ...ClientOption) (*DomainCancelationUpdateOK, error)
 
-	DomainStatusUpdate(params *DomainStatusUpdateParams) (*DomainStatusUpdateOK, error)
+	DomainCommentUpdate(params *DomainCommentUpdateParams, opts ...ClientOption) (*DomainCommentUpdateOK, error)
 
-	DomainTransfer(params *DomainTransferParams) (*DomainTransferOK, error)
+	DomainCreate(params *DomainCreateParams, opts ...ClientOption) (*DomainCreateOK, error)
 
-	DomainUpdate(params *DomainUpdateParams) (*DomainUpdateOK, error)
+	DomainCreates(params *DomainCreatesParams, opts ...ClientOption) (*DomainCreatesOK, error)
+
+	DomainDeleteDomainSafe(params *DomainDeleteDomainSafeParams, opts ...ClientOption) (*DomainDeleteDomainSafeOK, error)
+
+	DomainInfo(params *DomainInfoParams, opts ...ClientOption) (*DomainInfoOK, error)
+
+	DomainList(params *DomainListParams, opts ...ClientOption) (*DomainListOK, error)
+
+	DomainOwnerChange(params *DomainOwnerChangeParams, opts ...ClientOption) (*DomainOwnerChangeOK, error)
+
+	DomainPatches(params *DomainPatchesParams, opts ...ClientOption) (*DomainPatchesOK, error)
+
+	DomainRenew(params *DomainRenewParams, opts ...ClientOption) (*DomainRenewOK, error)
+
+	DomainRenews(params *DomainRenewsParams, opts ...ClientOption) (*DomainRenewsOK, error)
+
+	DomainRestore(params *DomainRestoreParams, opts ...ClientOption) (*DomainRestoreOK, error)
+
+	DomainRestoreList(params *DomainRestoreListParams, opts ...ClientOption) (*DomainRestoreListOK, error)
+
+	DomainRestores(params *DomainRestoresParams, opts ...ClientOption) (*DomainRestoresOK, error)
+
+	DomainServicesUpdate(params *DomainServicesUpdateParams, opts ...ClientOption) (*DomainServicesUpdateOK, error)
+
+	DomainStatusUpdate(params *DomainStatusUpdateParams, opts ...ClientOption) (*DomainStatusUpdateOK, error)
+
+	DomainTrade(params *DomainTradeParams, opts ...ClientOption) (*DomainTradeOK, error)
+
+	DomainTransfer(params *DomainTransferParams, opts ...ClientOption) (*DomainTransferOK, error)
+
+	DomainTransfers(params *DomainTransfersParams, opts ...ClientOption) (*DomainTransfersOK, error)
+
+	DomainUpdate(params *DomainUpdateParams, opts ...ClientOption) (*DomainUpdateOK, error)
+
+	DomainUpdateComments(params *DomainUpdateCommentsParams, opts ...ClientOption) (*DomainUpdateCommentsOK, error)
+
+	DomainUpdateDNSSec(params *DomainUpdateDNSSecParams, opts ...ClientOption) (*DomainUpdateDNSSecOK, error)
+
+	DomainsAddDomainSafe(params *DomainsAddDomainSafeParams, opts ...ClientOption) (*DomainsAddDomainSafeOK, error)
+
+	DomainsAddDomainSafeZone(params *DomainsAddDomainSafeZoneParams, opts ...ClientOption) (*DomainsAddDomainSafeZoneOK, error)
+
+	DomainsDeleteDomainSafe(params *DomainsDeleteDomainSafeParams, opts ...ClientOption) (*DomainsDeleteDomainSafeOK, error)
+
+	DomainsDeleteDomainSafeZone(params *DomainsDeleteDomainSafeZoneParams, opts ...ClientOption) (*DomainsDeleteDomainSafeZoneOK, error)
+
+	OwnercChange(params *OwnercChangeParams, opts ...ClientOption) (*OwnercChangeOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
 
 /*
-  AuthinfoSend auths info send
+AuthinfoSend auths info send 0113005
 
-  Sending the AuthInfo for the specified domain to the domain owner.
+Sending the AuthInfo for the specified domain to the domain owner.
 */
-func (a *Client) AuthinfoSend(params *AuthinfoSendParams) (*AuthinfoSendOK, error) {
+func (a *Client) AuthinfoSend(params *AuthinfoSendParams, opts ...ClientOption) (*AuthinfoSendOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewAuthinfoSendParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "authinfoSend",
 		Method:             "PUT",
 		PathPattern:        "/domain/{name}/_sendAuthinfoToOwnerc",
@@ -98,7 +172,12 @@ func (a *Client) AuthinfoSend(params *AuthinfoSendParams) (*AuthinfoSendOK, erro
 		Reader:             &AuthinfoSendReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -113,17 +192,56 @@ func (a *Client) AuthinfoSend(params *AuthinfoSendParams) (*AuthinfoSendOK, erro
 }
 
 /*
-  AutoDnssecKeyRollover autos DNS sec key rollover
+AutoDeleteList autos delete list 0718
 
-  Invoking an AutoDNSSec key rollover. Note the AutoDNSSec feature must be enabled for the domain
+AutoDelete list
 */
-func (a *Client) AutoDnssecKeyRollover(params *AutoDnssecKeyRolloverParams) (*AutoDnssecKeyRolloverOK, error) {
+func (a *Client) AutoDeleteList(params *AutoDeleteListParams, opts ...ClientOption) (*AutoDeleteListOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewAutoDeleteListParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "autoDeleteList",
+		Method:             "POST",
+		PathPattern:        "/domain/autodelete/_search",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &AutoDeleteListReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*AutoDeleteListOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for autoDeleteList: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+AutoDnssecKeyRollover autos DNS sec key rollover 0120002
+
+Invoking an AutoDNSSec key rollover. Note the AutoDNSSec feature must be enabled for the domain
+*/
+func (a *Client) AutoDnssecKeyRollover(params *AutoDnssecKeyRolloverParams, opts ...ClientOption) (*AutoDnssecKeyRolloverOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewAutoDnssecKeyRolloverParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "autoDnssecKeyRollover",
 		Method:             "PUT",
 		PathPattern:        "/domain/{name}/_autoDnssecKeyRollover",
@@ -134,7 +252,12 @@ func (a *Client) AutoDnssecKeyRollover(params *AutoDnssecKeyRolloverParams) (*Au
 		Reader:             &AutoDnssecKeyRolloverReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -149,17 +272,56 @@ func (a *Client) AutoDnssecKeyRollover(params *AutoDnssecKeyRolloverParams) (*Au
 }
 
 /*
-  DomainAuthinfo1Create authinfos create
+DomainAddDomainSafe saves object create 0601
 
-  Creating an AuthInfo 1 for the specified domain.
+Adding the domain to the domain safe
 */
-func (a *Client) DomainAuthinfo1Create(params *DomainAuthinfo1CreateParams) (*DomainAuthinfo1CreateOK, error) {
+func (a *Client) DomainAddDomainSafe(params *DomainAddDomainSafeParams, opts ...ClientOption) (*DomainAddDomainSafeOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainAddDomainSafeParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainAddDomainSafe",
+		Method:             "PUT",
+		PathPattern:        "/domain/{name}/_domainSafe",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainAddDomainSafeReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainAddDomainSafeOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainAddDomainSafe: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainAuthinfo1Create authinfos create 0113001
+
+Creating an AuthInfo 1 for the specified domain.
+*/
+func (a *Client) DomainAuthinfo1Create(params *DomainAuthinfo1CreateParams, opts ...ClientOption) (*DomainAuthinfo1CreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainAuthinfo1CreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainAuthinfo1Create",
 		Method:             "POST",
 		PathPattern:        "/domain/{name}/_authinfo1",
@@ -170,7 +332,12 @@ func (a *Client) DomainAuthinfo1Create(params *DomainAuthinfo1CreateParams) (*Do
 		Reader:             &DomainAuthinfo1CreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -185,17 +352,16 @@ func (a *Client) DomainAuthinfo1Create(params *DomainAuthinfo1CreateParams) (*Do
 }
 
 /*
-  DomainAuthinfo1Delete authinfos delete
+DomainAuthinfo1Delete authinfos delete
 
-  Deleting an existing AuthInfo1 for the specified domain.
+Deleting an existing AuthInfo1 for the specified domain.
 */
-func (a *Client) DomainAuthinfo1Delete(params *DomainAuthinfo1DeleteParams) (*DomainAuthinfo1DeleteOK, error) {
+func (a *Client) DomainAuthinfo1Delete(params *DomainAuthinfo1DeleteParams, opts ...ClientOption) (*DomainAuthinfo1DeleteOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainAuthinfo1DeleteParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainAuthinfo1Delete",
 		Method:             "DELETE",
 		PathPattern:        "/domain/{name}/_authinfo1",
@@ -206,7 +372,12 @@ func (a *Client) DomainAuthinfo1Delete(params *DomainAuthinfo1DeleteParams) (*Do
 		Reader:             &DomainAuthinfo1DeleteReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -221,17 +392,16 @@ func (a *Client) DomainAuthinfo1Delete(params *DomainAuthinfo1DeleteParams) (*Do
 }
 
 /*
-  DomainAuthinfo2Create authinfo2s create
+DomainAuthinfo2Create authinfo2s create 0113003
 
-  Creating an AuthInfo 2 for the specified domain.
+Creating an AuthInfo 2 for the specified domain.
 */
-func (a *Client) DomainAuthinfo2Create(params *DomainAuthinfo2CreateParams) (*DomainAuthinfo2CreateOK, error) {
+func (a *Client) DomainAuthinfo2Create(params *DomainAuthinfo2CreateParams, opts ...ClientOption) (*DomainAuthinfo2CreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainAuthinfo2CreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainAuthinfo2Create",
 		Method:             "POST",
 		PathPattern:        "/domain/{name}/_authinfo2",
@@ -242,7 +412,12 @@ func (a *Client) DomainAuthinfo2Create(params *DomainAuthinfo2CreateParams) (*Do
 		Reader:             &DomainAuthinfo2CreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -257,17 +432,136 @@ func (a *Client) DomainAuthinfo2Create(params *DomainAuthinfo2CreateParams) (*Do
 }
 
 /*
-  DomainBuy domains buy order
+DomainAuthinfo2Creates auths info2 create bulk 0113003
 
-  Buying a domain from the premium market. The operation is asynchronous and creates a job.
+Creating several AuthInfos 2 with one request.
 */
-func (a *Client) DomainBuy(params *DomainBuyParams) (*DomainBuyOK, error) {
+func (a *Client) DomainAuthinfo2Creates(params *DomainAuthinfo2CreatesParams, opts ...ClientOption) (*DomainAuthinfo2CreatesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainAuthinfo2CreatesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainAuthinfo2Creates",
+		Method:             "POST",
+		PathPattern:        "/bulk/domain/_authinfo2",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainAuthinfo2CreatesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainAuthinfo2CreatesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainAuthinfo2Creates: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainAuthinfoCreates authinfo1s create bulk 0113001
+
+Creating several AuthInfos 1 with one request.
+*/
+func (a *Client) DomainAuthinfoCreates(params *DomainAuthinfoCreatesParams, opts ...ClientOption) (*DomainAuthinfoCreatesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainAuthinfoCreatesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainAuthinfoCreates",
+		Method:             "POST",
+		PathPattern:        "/bulk/domain/_authinfo1",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainAuthinfoCreatesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainAuthinfoCreatesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainAuthinfoCreates: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainAuthinfoDeletes authinfo1s delete bulk 0113002
+
+Deleting several AuthInfos 1 with one request.
+*/
+func (a *Client) DomainAuthinfoDeletes(params *DomainAuthinfoDeletesParams, opts ...ClientOption) (*DomainAuthinfoDeletesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainAuthinfoDeletesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainAuthinfoDeletes",
+		Method:             "DELETE",
+		PathPattern:        "/bulk/domain/_authinfo1",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainAuthinfoDeletesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainAuthinfoDeletesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainAuthinfoDeletes: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainBuy domains buy order 0101006
+
+Buying a domain from the premium market. The operation is asynchronous and creates a job.
+*/
+func (a *Client) DomainBuy(params *DomainBuyParams, opts ...ClientOption) (*DomainBuyOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainBuyParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainBuy",
 		Method:             "POST",
 		PathPattern:        "/domain/_buy",
@@ -278,7 +572,12 @@ func (a *Client) DomainBuy(params *DomainBuyParams) (*DomainBuyOK, error) {
 		Reader:             &DomainBuyReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -293,17 +592,56 @@ func (a *Client) DomainBuy(params *DomainBuyParams) (*DomainBuyOK, error) {
 }
 
 /*
-  DomainCancelationCreate domains cancelation create
+DomainBuys domains buy bulk 0101006
 
-  Creating a cancelation for the specified domain.
+Buying several domains with one request.
 */
-func (a *Client) DomainCancelationCreate(params *DomainCancelationCreateParams) (*DomainCancelationCreateOK, error) {
+func (a *Client) DomainBuys(params *DomainBuysParams, opts ...ClientOption) (*DomainBuysOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainBuysParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainBuys",
+		Method:             "POST",
+		PathPattern:        "/bulk/domain/_buy",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainBuysReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainBuysOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainBuys: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainCancelationCreate cancelations create 0103101
+
+Creating a cancelation for the specified domain.
+*/
+func (a *Client) DomainCancelationCreate(params *DomainCancelationCreateParams, opts ...ClientOption) (*DomainCancelationCreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainCancelationCreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainCancelationCreate",
 		Method:             "POST",
 		PathPattern:        "/domain/{name}/cancelation",
@@ -314,7 +652,12 @@ func (a *Client) DomainCancelationCreate(params *DomainCancelationCreateParams) 
 		Reader:             &DomainCancelationCreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -329,17 +672,56 @@ func (a *Client) DomainCancelationCreate(params *DomainCancelationCreateParams) 
 }
 
 /*
-  DomainCancelationDelete domains cancelation delete
+DomainCancelationCreates cancelations create bulk 0103101
 
-  Deleting an existing cancelation for the specified domain.
+Creating several domain cancelations with one request.
 */
-func (a *Client) DomainCancelationDelete(params *DomainCancelationDeleteParams) (*DomainCancelationDeleteOK, error) {
+func (a *Client) DomainCancelationCreates(params *DomainCancelationCreatesParams, opts ...ClientOption) (*DomainCancelationCreatesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainCancelationCreatesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainCancelationCreates",
+		Method:             "POST",
+		PathPattern:        "/bulk/domain/cancelation",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainCancelationCreatesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainCancelationCreatesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainCancelationCreates: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainCancelationDelete cancelations delete 0103103
+
+Deleting an existing cancelation for the specified domain.
+*/
+func (a *Client) DomainCancelationDelete(params *DomainCancelationDeleteParams, opts ...ClientOption) (*DomainCancelationDeleteOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainCancelationDeleteParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainCancelationDelete",
 		Method:             "DELETE",
 		PathPattern:        "/domain/{name}/cancelation",
@@ -350,7 +732,12 @@ func (a *Client) DomainCancelationDelete(params *DomainCancelationDeleteParams) 
 		Reader:             &DomainCancelationDeleteReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -365,17 +752,56 @@ func (a *Client) DomainCancelationDelete(params *DomainCancelationDeleteParams) 
 }
 
 /*
-  DomainCancelationInfo domains cancelation info
+DomainCancelationDeletes cancelations delete bulk 0103103
 
-  Inquiring the cancelation data for the specified domain.
+Deleting several domain cancelations with one request.
 */
-func (a *Client) DomainCancelationInfo(params *DomainCancelationInfoParams) (*DomainCancelationInfoOK, error) {
+func (a *Client) DomainCancelationDeletes(params *DomainCancelationDeletesParams, opts ...ClientOption) (*DomainCancelationDeletesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainCancelationDeletesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainCancelationDeletes",
+		Method:             "DELETE",
+		PathPattern:        "/bulk/domain/cancelation",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainCancelationDeletesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainCancelationDeletesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainCancelationDeletes: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainCancelationInfo cancelations info 0103104
+
+Inquiring the cancelation data for the specified domain.
+*/
+func (a *Client) DomainCancelationInfo(params *DomainCancelationInfoParams, opts ...ClientOption) (*DomainCancelationInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainCancelationInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainCancelationInfo",
 		Method:             "GET",
 		PathPattern:        "/domain/{name}/cancelation",
@@ -386,7 +812,12 @@ func (a *Client) DomainCancelationInfo(params *DomainCancelationInfoParams) (*Do
 		Reader:             &DomainCancelationInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -401,17 +832,16 @@ func (a *Client) DomainCancelationInfo(params *DomainCancelationInfoParams) (*Do
 }
 
 /*
-  DomainCancelationList domains cancelation list
+DomainCancelationList cancelations list 0103104
 
-  Inquiring a list of cancelations with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: disconnect, execdate, ctid, created, registryStatus, sld, type, tld, subtld, gainingRegistrar, updated.
+Inquiring a list of cancelations with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: disconnect, execdate, ctid, created, registryStatus, sld, type, tld, subtld, gainingRegistrar, updated.
 */
-func (a *Client) DomainCancelationList(params *DomainCancelationListParams) (*DomainCancelationListOK, error) {
+func (a *Client) DomainCancelationList(params *DomainCancelationListParams, opts ...ClientOption) (*DomainCancelationListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainCancelationListParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainCancelationList",
 		Method:             "POST",
 		PathPattern:        "/domain/cancelation/_search",
@@ -422,7 +852,12 @@ func (a *Client) DomainCancelationList(params *DomainCancelationListParams) (*Do
 		Reader:             &DomainCancelationListReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -437,17 +872,56 @@ func (a *Client) DomainCancelationList(params *DomainCancelationListParams) (*Do
 }
 
 /*
-  DomainCancelationUpdate domains cancelation update
+DomainCancelationPatches cancelations update bulk 0103102
 
-  Updating an existing cancelation for the specified domain.
+Updating several domain cancelations with one request.
 */
-func (a *Client) DomainCancelationUpdate(params *DomainCancelationUpdateParams) (*DomainCancelationUpdateOK, error) {
+func (a *Client) DomainCancelationPatches(params *DomainCancelationPatchesParams, opts ...ClientOption) (*DomainCancelationPatchesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainCancelationPatchesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainCancelationPatches",
+		Method:             "PATCH",
+		PathPattern:        "/bulk/domain/cancelation",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainCancelationPatchesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainCancelationPatchesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainCancelationPatches: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainCancelationUpdate cancelations update 0103102
+
+Updating an existing cancelation for the specified domain.
+*/
+func (a *Client) DomainCancelationUpdate(params *DomainCancelationUpdateParams, opts ...ClientOption) (*DomainCancelationUpdateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainCancelationUpdateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainCancelationUpdate",
 		Method:             "PUT",
 		PathPattern:        "/domain/{name}/cancelation",
@@ -458,7 +932,12 @@ func (a *Client) DomainCancelationUpdate(params *DomainCancelationUpdateParams) 
 		Reader:             &DomainCancelationUpdateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -473,17 +952,16 @@ func (a *Client) DomainCancelationUpdate(params *DomainCancelationUpdateParams) 
 }
 
 /*
-  DomainCommentUpdate domains comment update
+DomainCommentUpdate domains comment update 0102004
 
-  Updating a comment for an existing domain.
+Updating a comment for an existing domain.
 */
-func (a *Client) DomainCommentUpdate(params *DomainCommentUpdateParams) (*DomainCommentUpdateOK, error) {
+func (a *Client) DomainCommentUpdate(params *DomainCommentUpdateParams, opts ...ClientOption) (*DomainCommentUpdateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainCommentUpdateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainCommentUpdate",
 		Method:             "PUT",
 		PathPattern:        "/domain/{name}/_comment",
@@ -494,7 +972,12 @@ func (a *Client) DomainCommentUpdate(params *DomainCommentUpdateParams) (*Domain
 		Reader:             &DomainCommentUpdateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -509,17 +992,16 @@ func (a *Client) DomainCommentUpdate(params *DomainCommentUpdateParams) (*Domain
 }
 
 /*
-  DomainCreate domains create
+DomainCreate domains create 0101
 
-  Ordering a new domain. The operation is asynchronous and creates a job.
+Ordering a new domain. The operation is asynchronous and creates a job.
 */
-func (a *Client) DomainCreate(params *DomainCreateParams) (*DomainCreateOK, error) {
+func (a *Client) DomainCreate(params *DomainCreateParams, opts ...ClientOption) (*DomainCreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainCreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainCreate",
 		Method:             "POST",
 		PathPattern:        "/domain",
@@ -530,7 +1012,12 @@ func (a *Client) DomainCreate(params *DomainCreateParams) (*DomainCreateOK, erro
 		Reader:             &DomainCreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -545,17 +1032,96 @@ func (a *Client) DomainCreate(params *DomainCreateParams) (*DomainCreateOK, erro
 }
 
 /*
-  DomainInfo domains info
+DomainCreates domains create bulk 0101
 
-  Inquiring the data for the specified domain.
+Creating several domains with one request.
 */
-func (a *Client) DomainInfo(params *DomainInfoParams) (*DomainInfoOK, error) {
+func (a *Client) DomainCreates(params *DomainCreatesParams, opts ...ClientOption) (*DomainCreatesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainCreatesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainCreates",
+		Method:             "POST",
+		PathPattern:        "/bulk/domain",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainCreatesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainCreatesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainCreates: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainDeleteDomainSafe saves object delete 0603
+
+Deleting the domain from the domain safe
+*/
+func (a *Client) DomainDeleteDomainSafe(params *DomainDeleteDomainSafeParams, opts ...ClientOption) (*DomainDeleteDomainSafeOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainDeleteDomainSafeParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainDeleteDomainSafe",
+		Method:             "DELETE",
+		PathPattern:        "/domain/{name}/_domainSafe",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainDeleteDomainSafeReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainDeleteDomainSafeOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainDeleteDomainSafe: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainInfo domains info 0105
+
+Inquiring the data for the specified domain.
+*/
+func (a *Client) DomainInfo(params *DomainInfoParams, opts ...ClientOption) (*DomainInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainInfo",
 		Method:             "GET",
 		PathPattern:        "/domain/{name}",
@@ -566,7 +1132,12 @@ func (a *Client) DomainInfo(params *DomainInfoParams) (*DomainInfoOK, error) {
 		Reader:             &DomainInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -581,17 +1152,16 @@ func (a *Client) DomainInfo(params *DomainInfoParams) (*DomainInfoOK, error) {
 }
 
 /*
-  DomainList domains list
+DomainList domains list 0105
 
-  Inquiring a list of domains with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: sld, subtld, tld, status, authinfo, expire, comment, ownerc, updated, zonec, nserver, techc, adminc,  certificate, created, autorenew.
+Inquiring a list of domains with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: sld, subtld, tld, status, authinfo, expire, comment, ownerc, updated, zonec, nserver, techc, adminc,  certificate, created, autorenew, cancelationStatus.
 */
-func (a *Client) DomainList(params *DomainListParams) (*DomainListOK, error) {
+func (a *Client) DomainList(params *DomainListParams, opts ...ClientOption) (*DomainListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainListParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainList",
 		Method:             "POST",
 		PathPattern:        "/domain/_search",
@@ -602,7 +1172,12 @@ func (a *Client) DomainList(params *DomainListParams) (*DomainListOK, error) {
 		Reader:             &DomainListReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -617,17 +1192,16 @@ func (a *Client) DomainList(params *DomainListParams) (*DomainListOK, error) {
 }
 
 /*
-  DomainOwnerChange domains owner change
+DomainOwnerChange domains owner change 0104010 deprecated will be removed in future releases please use trade instead
 
-  Changing the ownerc of an existing domain.
+Changing the ownerc of an existing domain.
 */
-func (a *Client) DomainOwnerChange(params *DomainOwnerChangeParams) (*DomainOwnerChangeOK, error) {
+func (a *Client) DomainOwnerChange(params *DomainOwnerChangeParams, opts ...ClientOption) (*DomainOwnerChangeOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainOwnerChangeParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainOwnerChange",
 		Method:             "POST",
 		PathPattern:        "/domain/_ownerChange",
@@ -638,7 +1212,12 @@ func (a *Client) DomainOwnerChange(params *DomainOwnerChangeParams) (*DomainOwne
 		Reader:             &DomainOwnerChangeReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -653,17 +1232,56 @@ func (a *Client) DomainOwnerChange(params *DomainOwnerChangeParams) (*DomainOwne
 }
 
 /*
-  DomainRenew domains renew
+DomainPatches domains update bulk 0102
 
-  Renewing an existing domain. The operation is asynchronous and creates a job.
+Updating several domains with one request.
 */
-func (a *Client) DomainRenew(params *DomainRenewParams) (*DomainRenewOK, error) {
+func (a *Client) DomainPatches(params *DomainPatchesParams, opts ...ClientOption) (*DomainPatchesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainPatchesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainPatches",
+		Method:             "PATCH",
+		PathPattern:        "/bulk/domain",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainPatchesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainPatchesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainPatches: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainRenew domains renew 0101003
+
+Renewing an existing domain. The operation is asynchronous and creates a job.
+*/
+func (a *Client) DomainRenew(params *DomainRenewParams, opts ...ClientOption) (*DomainRenewOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainRenewParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainRenew",
 		Method:             "PUT",
 		PathPattern:        "/domain/{name}/_renew",
@@ -674,7 +1292,12 @@ func (a *Client) DomainRenew(params *DomainRenewParams) (*DomainRenewOK, error) 
 		Reader:             &DomainRenewReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -689,17 +1312,56 @@ func (a *Client) DomainRenew(params *DomainRenewParams) (*DomainRenewOK, error) 
 }
 
 /*
-  DomainRestore domains restore
+DomainRenews domains renew bulk 0101003
 
-  Restoring an existing domain.
+Renewing several domains with one request.
 */
-func (a *Client) DomainRestore(params *DomainRestoreParams) (*DomainRestoreOK, error) {
+func (a *Client) DomainRenews(params *DomainRenewsParams, opts ...ClientOption) (*DomainRenewsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainRenewsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainRenews",
+		Method:             "PUT",
+		PathPattern:        "/bulk/domain/_renew",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainRenewsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainRenewsOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainRenews: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainRestore domains restore 0101005
+
+Restoring an existing domain.
+*/
+func (a *Client) DomainRestore(params *DomainRestoreParams, opts ...ClientOption) (*DomainRestoreOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainRestoreParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainRestore",
 		Method:             "PUT",
 		PathPattern:        "/domain/{name}/_restore",
@@ -710,7 +1372,12 @@ func (a *Client) DomainRestore(params *DomainRestoreParams) (*DomainRestoreOK, e
 		Reader:             &DomainRestoreReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -725,17 +1392,16 @@ func (a *Client) DomainRestore(params *DomainRestoreParams) (*DomainRestoreOK, e
 }
 
 /*
-  DomainRestoreList domains restore list
+DomainRestoreList domains restore list 0105005
 
-  Inquiring a list of restorable domains with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: parking, certificate, adminc, cancelation, action, zonec, nserver, techc, nsentry, dnssec, period, created, sld, tld, subtld, deleted, autorenew, expire, domainsafe, comment, ownerc, updated, remarks, authinfo, status.
+Inquiring a list of restorable domains with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: parking, certificate, adminc, cancelation, action, zonec, nserver, techc, nsentry, dnssec, period, created, sld, tld, subtld, deleted, autorenew, expire, domainsafe, comment, ownerc, updated, remarks, authinfo, status.
 */
-func (a *Client) DomainRestoreList(params *DomainRestoreListParams) (*DomainRestoreListOK, error) {
+func (a *Client) DomainRestoreList(params *DomainRestoreListParams, opts ...ClientOption) (*DomainRestoreListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainRestoreListParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainRestoreList",
 		Method:             "POST",
 		PathPattern:        "/domain/restore/_search",
@@ -746,7 +1412,12 @@ func (a *Client) DomainRestoreList(params *DomainRestoreListParams) (*DomainRest
 		Reader:             &DomainRestoreListReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -761,17 +1432,56 @@ func (a *Client) DomainRestoreList(params *DomainRestoreListParams) (*DomainRest
 }
 
 /*
-  DomainServicesUpdate domains services update
+DomainRestores domains restore bulk 0101005
 
-  Updating the services of a domain.
+Restoring several domains with one request.
 */
-func (a *Client) DomainServicesUpdate(params *DomainServicesUpdateParams) (*DomainServicesUpdateOK, error) {
+func (a *Client) DomainRestores(params *DomainRestoresParams, opts ...ClientOption) (*DomainRestoresOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainRestoresParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainRestores",
+		Method:             "PUT",
+		PathPattern:        "/bulk/domain/_restore",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainRestoresReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainRestoresOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainRestores: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainServicesUpdate domains services update
+
+Updating the services of a domain.
+*/
+func (a *Client) DomainServicesUpdate(params *DomainServicesUpdateParams, opts ...ClientOption) (*DomainServicesUpdateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainServicesUpdateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainServicesUpdate",
 		Method:             "PUT",
 		PathPattern:        "/domain/_services",
@@ -782,7 +1492,12 @@ func (a *Client) DomainServicesUpdate(params *DomainServicesUpdateParams) (*Doma
 		Reader:             &DomainServicesUpdateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -797,17 +1512,16 @@ func (a *Client) DomainServicesUpdate(params *DomainServicesUpdateParams) (*Doma
 }
 
 /*
-  DomainStatusUpdate domains status update
+DomainStatusUpdate domains status update 0102002
 
-  Updating the registry status for an existing domain.
+Updating the registry status for an existing domain.
 */
-func (a *Client) DomainStatusUpdate(params *DomainStatusUpdateParams) (*DomainStatusUpdateOK, error) {
+func (a *Client) DomainStatusUpdate(params *DomainStatusUpdateParams, opts ...ClientOption) (*DomainStatusUpdateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainStatusUpdateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainStatusUpdate",
 		Method:             "PUT",
 		PathPattern:        "/domain/{name}/_statusUpdate",
@@ -818,7 +1532,12 @@ func (a *Client) DomainStatusUpdate(params *DomainStatusUpdateParams) (*DomainSt
 		Reader:             &DomainStatusUpdateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -833,17 +1552,56 @@ func (a *Client) DomainStatusUpdate(params *DomainStatusUpdateParams) (*DomainSt
 }
 
 /*
-  DomainTransfer domains transfer
+DomainTrade domains trade 0104010
 
-  Transfering a domain. The operation is asynchronous and creates a job.
+Changing the ownerc of an existing domain.
 */
-func (a *Client) DomainTransfer(params *DomainTransferParams) (*DomainTransferOK, error) {
+func (a *Client) DomainTrade(params *DomainTradeParams, opts ...ClientOption) (*DomainTradeOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainTradeParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainTrade",
+		Method:             "POST",
+		PathPattern:        "/domain/_trade",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainTradeReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainTradeOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainTrade: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainTransfer domains transfer 0104
+
+Transfering a domain. The operation is asynchronous and creates a job.
+*/
+func (a *Client) DomainTransfer(params *DomainTransferParams, opts ...ClientOption) (*DomainTransferOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainTransferParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainTransfer",
 		Method:             "POST",
 		PathPattern:        "/domain/_transfer",
@@ -854,7 +1612,12 @@ func (a *Client) DomainTransfer(params *DomainTransferParams) (*DomainTransferOK
 		Reader:             &DomainTransferReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -869,17 +1632,56 @@ func (a *Client) DomainTransfer(params *DomainTransferParams) (*DomainTransferOK
 }
 
 /*
-  DomainUpdate domains update
+DomainTransfers domains transfer bulk 0104
 
-  Updating an existing domain. The operation is asynchronous and creates a job.
+Transferring several domains with one request.
 */
-func (a *Client) DomainUpdate(params *DomainUpdateParams) (*DomainUpdateOK, error) {
+func (a *Client) DomainTransfers(params *DomainTransfersParams, opts ...ClientOption) (*DomainTransfersOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainTransfersParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainTransfers",
+		Method:             "POST",
+		PathPattern:        "/bulk/domain/_transfer",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainTransfersReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainTransfersOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainTransfers: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainUpdate domains update 0102
+
+Updating an existing domain. The operation is asynchronous and creates a job.
+*/
+func (a *Client) DomainUpdate(params *DomainUpdateParams, opts ...ClientOption) (*DomainUpdateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainUpdateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainUpdate",
 		Method:             "PUT",
 		PathPattern:        "/domain/{name}",
@@ -890,7 +1692,12 @@ func (a *Client) DomainUpdate(params *DomainUpdateParams) (*DomainUpdateOK, erro
 		Reader:             &DomainUpdateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -901,6 +1708,286 @@ func (a *Client) DomainUpdate(params *DomainUpdateParams) (*DomainUpdateOK, erro
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for domainUpdate: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainUpdateComments domains comments update bulk 0102004
+
+Updating several domain comments with one request.
+*/
+func (a *Client) DomainUpdateComments(params *DomainUpdateCommentsParams, opts ...ClientOption) (*DomainUpdateCommentsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainUpdateCommentsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainUpdateComments",
+		Method:             "PUT",
+		PathPattern:        "/bulk/domain/_comment",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainUpdateCommentsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainUpdateCommentsOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainUpdateComments: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainUpdateDNSSec domains update 0102007
+
+Updating only the dnssec information for an existing domain. The operation is asynchronous and creates a job.
+*/
+func (a *Client) DomainUpdateDNSSec(params *DomainUpdateDNSSecParams, opts ...ClientOption) (*DomainUpdateDNSSecOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainUpdateDNSSecParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainUpdateDnsSec",
+		Method:             "PUT",
+		PathPattern:        "/domain/{name}/_dnssec",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainUpdateDNSSecReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainUpdateDNSSecOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainUpdateDnsSec: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainsAddDomainSafe saves object create bulk 0601
+
+Adding several domains in the DomainSafe with one request.
+*/
+func (a *Client) DomainsAddDomainSafe(params *DomainsAddDomainSafeParams, opts ...ClientOption) (*DomainsAddDomainSafeOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainsAddDomainSafeParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainsAddDomainSafe",
+		Method:             "PUT",
+		PathPattern:        "/bulk/domain/_domainSafe",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainsAddDomainSafeReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainsAddDomainSafeOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainsAddDomainSafe: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainsAddDomainSafeZone saves object zone create bulk 0601
+
+Adding several zones in the DomainSafe with one request.
+*/
+func (a *Client) DomainsAddDomainSafeZone(params *DomainsAddDomainSafeZoneParams, opts ...ClientOption) (*DomainsAddDomainSafeZoneOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainsAddDomainSafeZoneParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainsAddDomainSafeZone",
+		Method:             "PUT",
+		PathPattern:        "/bulk/zone/_domainSafe",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainsAddDomainSafeZoneReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainsAddDomainSafeZoneOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainsAddDomainSafeZone: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainsDeleteDomainSafe saves object delete bulk 0603
+
+Deleting several domains from the DomainSafe with one request.
+*/
+func (a *Client) DomainsDeleteDomainSafe(params *DomainsDeleteDomainSafeParams, opts ...ClientOption) (*DomainsDeleteDomainSafeOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainsDeleteDomainSafeParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainsDeleteDomainSafe",
+		Method:             "DELETE",
+		PathPattern:        "/bulk/domain/_domainSafe",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainsDeleteDomainSafeReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainsDeleteDomainSafeOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainsDeleteDomainSafe: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainsDeleteDomainSafeZone saves object zone delete bulk 0603
+
+Deleting several zones from the DomainSafe with one request.
+*/
+func (a *Client) DomainsDeleteDomainSafeZone(params *DomainsDeleteDomainSafeZoneParams, opts ...ClientOption) (*DomainsDeleteDomainSafeZoneOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainsDeleteDomainSafeZoneParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainsDeleteDomainSafeZone",
+		Method:             "DELETE",
+		PathPattern:        "/bulk/zone/_domainSafe",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainsDeleteDomainSafeZoneReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainsDeleteDomainSafeZoneOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainsDeleteDomainSafeZone: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+OwnercChange domains owner change 0104010
+
+Changing the ownerc of an existing domain.
+*/
+func (a *Client) OwnercChange(params *OwnercChangeParams, opts ...ClientOption) (*OwnercChangeOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewOwnercChangeParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "ownercChange",
+		Method:             "PUT",
+		PathPattern:        "/domain/{name}/_ownerChange",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &OwnercChangeReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*OwnercChangeOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for ownercChange: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

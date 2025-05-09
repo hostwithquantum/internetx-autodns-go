@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,24 +19,46 @@ import (
 // swagger:model SpamPolicy
 type SpamPolicy struct {
 
-	// kill
+	// At what value an email should be quarantined for the selected task
+	// Minimum: -999.9
+	// Maximum: 999.9
 	// Maximum: 999.9
 	// Minimum: -999.9
 	Kill *float64 `json:"kill,omitempty"`
 
-	// modify subject
+	// Allows to enable checking by policy and choose how it should be handled if it does not comply with policy.
+	// Example: virus check
+	Mode PolicyMode `json:"mode,omitempty"`
+
+	// Setting for the flag in the subject:
+	// false = The emails should not be marked in the subject
+	// true = The emails should receive the label in the subject.
+	// Default= false
+	// For XML, 0 (false) and 1 (true) can also be used.
 	ModifySubject bool `json:"modifySubject,omitempty"`
 
-	// quarantine digest interval
+	// "Specify how long an email should be kept in quarantine.
+	// Time unit: minutes
+	// Default: 1440 min
+	// Minimum: 1440 min"
 	// Minimum: 1440
 	QuarantineDigestInterval int32 `json:"quarantineDigestInterval,omitempty"`
 
-	// spam
+	// Enter a score from which an email should be classified as spam.
+	// The header X-Spam-Flag will be added to emails that reach this score.
+	// Minimum: -999.9
+	// Maximum: 999.9
 	// Maximum: 999.9
 	// Minimum: -999.9
 	Spam *float64 `json:"spam,omitempty"`
 
-	// tag header
+	// Enter a score. If an incoming email reaches this value, the email will
+	// be marked as spam in the header. (Header X-Spam Status
+	// and X-Spam Level).
+	// Recommendation:
+	// Value between -999 and 1
+	// Minimum: -999.9
+	// Maximum: 999.9
 	// Maximum: 999.9
 	// Minimum: -999.9
 	TagHeader *float64 `json:"tagHeader,omitempty"`
@@ -45,6 +69,10 @@ func (m *SpamPolicy) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateKill(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateMode(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -67,16 +95,32 @@ func (m *SpamPolicy) Validate(formats strfmt.Registry) error {
 }
 
 func (m *SpamPolicy) validateKill(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Kill) { // not required
 		return nil
 	}
 
-	if err := validate.Minimum("kill", "body", float64(*m.Kill), -999.9, false); err != nil {
+	if err := validate.Minimum("kill", "body", *m.Kill, -999.9, false); err != nil {
 		return err
 	}
 
-	if err := validate.Maximum("kill", "body", float64(*m.Kill), 999.9, false); err != nil {
+	if err := validate.Maximum("kill", "body", *m.Kill, 999.9, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *SpamPolicy) validateMode(formats strfmt.Registry) error {
+	if swag.IsZero(m.Mode) { // not required
+		return nil
+	}
+
+	if err := m.Mode.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("mode")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("mode")
+		}
 		return err
 	}
 
@@ -84,7 +128,6 @@ func (m *SpamPolicy) validateKill(formats strfmt.Registry) error {
 }
 
 func (m *SpamPolicy) validateQuarantineDigestInterval(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.QuarantineDigestInterval) { // not required
 		return nil
 	}
@@ -97,16 +140,15 @@ func (m *SpamPolicy) validateQuarantineDigestInterval(formats strfmt.Registry) e
 }
 
 func (m *SpamPolicy) validateSpam(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Spam) { // not required
 		return nil
 	}
 
-	if err := validate.Minimum("spam", "body", float64(*m.Spam), -999.9, false); err != nil {
+	if err := validate.Minimum("spam", "body", *m.Spam, -999.9, false); err != nil {
 		return err
 	}
 
-	if err := validate.Maximum("spam", "body", float64(*m.Spam), 999.9, false); err != nil {
+	if err := validate.Maximum("spam", "body", *m.Spam, 999.9, false); err != nil {
 		return err
 	}
 
@@ -114,16 +156,47 @@ func (m *SpamPolicy) validateSpam(formats strfmt.Registry) error {
 }
 
 func (m *SpamPolicy) validateTagHeader(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.TagHeader) { // not required
 		return nil
 	}
 
-	if err := validate.Minimum("tagHeader", "body", float64(*m.TagHeader), -999.9, false); err != nil {
+	if err := validate.Minimum("tagHeader", "body", *m.TagHeader, -999.9, false); err != nil {
 		return err
 	}
 
-	if err := validate.Maximum("tagHeader", "body", float64(*m.TagHeader), 999.9, false); err != nil {
+	if err := validate.Maximum("tagHeader", "body", *m.TagHeader, 999.9, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this spam policy based on the context it is used
+func (m *SpamPolicy) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateMode(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *SpamPolicy) contextValidateMode(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Mode) { // not required
+		return nil
+	}
+
+	if err := m.Mode.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("mode")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("mode")
+		}
 		return err
 	}
 

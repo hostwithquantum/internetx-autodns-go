@@ -6,6 +6,7 @@ package mail_proxy_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *MailProxyDeleteReader) ReadResponse(response runtime.ClientResponse, co
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[DELETE /mailProxy/{domain}] mailProxyDelete", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewMailProxyDeleteOK() *MailProxyDeleteOK {
 	return &MailProxyDeleteOK{}
 }
 
-/*MailProxyDeleteOK handles this case with default header values.
+/*
+MailProxyDeleteOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type MailProxyDeleteOK struct {
 	Payload *models.JSONResponseDataJSONNoData
 }
 
+// IsSuccess returns true when this mail proxy delete o k response has a 2xx status code
+func (o *MailProxyDeleteOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this mail proxy delete o k response has a 3xx status code
+func (o *MailProxyDeleteOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this mail proxy delete o k response has a 4xx status code
+func (o *MailProxyDeleteOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this mail proxy delete o k response has a 5xx status code
+func (o *MailProxyDeleteOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this mail proxy delete o k response a status code equal to that given
+func (o *MailProxyDeleteOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the mail proxy delete o k response
+func (o *MailProxyDeleteOK) Code() int {
+	return 200
+}
+
 func (o *MailProxyDeleteOK) Error() string {
-	return fmt.Sprintf("[DELETE /mailProxy/{domain}][%d] mailProxyDeleteOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /mailProxy/{domain}][%d] mailProxyDeleteOK %s", 200, payload)
+}
+
+func (o *MailProxyDeleteOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /mailProxy/{domain}][%d] mailProxyDeleteOK %s", 200, payload)
 }
 
 func (o *MailProxyDeleteOK) GetPayload() *models.JSONResponseDataJSONNoData {

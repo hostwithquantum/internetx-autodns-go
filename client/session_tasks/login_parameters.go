@@ -19,116 +19,169 @@ import (
 	"github.com/hostwithquantum/internetx-autodns-go/models"
 )
 
-// NewLoginParams creates a new LoginParams object
-// with the default values initialized.
+// NewLoginParams creates a new LoginParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewLoginParams() *LoginParams {
-	var ()
 	return &LoginParams{
-
 		requestTimeout: cr.DefaultTimeout,
 	}
 }
 
 // NewLoginParamsWithTimeout creates a new LoginParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewLoginParamsWithTimeout(timeout time.Duration) *LoginParams {
-	var ()
 	return &LoginParams{
-
 		requestTimeout: timeout,
 	}
 }
 
 // NewLoginParamsWithContext creates a new LoginParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewLoginParamsWithContext(ctx context.Context) *LoginParams {
-	var ()
 	return &LoginParams{
-
 		Context: ctx,
 	}
 }
 
 // NewLoginParamsWithHTTPClient creates a new LoginParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewLoginParamsWithHTTPClient(client *http.Client) *LoginParams {
-	var ()
 	return &LoginParams{
 		HTTPClient: client,
 	}
 }
 
-/*LoginParams contains all the parameters to send to the API endpoint
-for the login operation typically these are written to a http.Request
+/*
+LoginParams contains all the parameters to send to the API endpoint
+
+	for the login operation.
+
+	Typically these are written to a http.Request.
 */
 type LoginParams struct {
 
-	/*XDomainrobotBulkLimit*/
-	XDomainrobotBulkLimit *int32
-	/*XDomainrobotContext*/
-	XDomainrobotContext *int32
-	/*XDomainrobotDemo*/
-	XDomainrobotDemo *bool
-	/*XDomainrobotDomainSafePin*/
-	XDomainrobotDomainSafePin *string
-	/*XDomainrobotDomainSafeTan*/
-	XDomainrobotDomainSafeTan *string
-	/*XDomainrobotDomainSafeTransaction*/
-	XDomainrobotDomainSafeTransaction *string
-	/*XDomainrobotDomainSafeTransactionExpire*/
-	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
-	/*XDomainrobotOwnerContext*/
-	XDomainrobotOwnerContext *int32
-	/*XDomainrobotOwnerUser*/
-	XDomainrobotOwnerUser *string
-	/*XDomainrobotSessionID*/
-	XDomainrobotSessionID *string
-	/*XDomainrobotWS*/
-	XDomainrobotWS *string
-	/*ACL
-	  Specifies whether the acls are returned in the response. Returns extra data if parameter is set. Example : ?acl
+	// XDomainrobot2FAToken.
+	//
+	// Format: int32
+	XDomainrobot2FAToken *int32
 
+	// XDomainrobotBulkLimit.
+	//
+	// Format: int32
+	XDomainrobotBulkLimit *int32
+
+	// XDomainrobotContext.
+	//
+	// Format: int32
+	XDomainrobotContext *int32
+
+	// XDomainrobotDemo.
+	XDomainrobotDemo *bool
+
+	// XDomainrobotDomainSafePin.
+	XDomainrobotDomainSafePin *string
+
+	// XDomainrobotDomainSafeTan.
+	XDomainrobotDomainSafeTan *string
+
+	// XDomainrobotDomainSafeTransaction.
+	XDomainrobotDomainSafeTransaction *string
+
+	// XDomainrobotDomainSafeTransactionExpire.
+	//
+	// Format: date-time
+	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
+
+	// XDomainrobotOwnerContext.
+	//
+	// Format: int32
+	XDomainrobotOwnerContext *int32
+
+	// XDomainrobotOwnerUser.
+	XDomainrobotOwnerUser *string
+
+	// XDomainrobotSessionID.
+	XDomainrobotSessionID *string
+
+	// XDomainrobotWS.
+	XDomainrobotWS *string
+
+	/* ACL.
+
+	   Specifies whether the acls are returned in the response. Returns extra data if parameter is set. Example : ?acl
 	*/
 	ACL *string
-	/*Body
-	  user
 
+	/* Body.
+
+	   user
 	*/
 	Body *models.LoginData
-	/*Customer
-	  Specifies whether the customer data is returned in the response. Returns extra data if parameter is set. Example : ?customer
 
+	/* ClientAccount.
+
+	   Specifies wether the client account data is returned in the response. Returns extra data if parameter is set. Example : ?clientAccount=domainrobot
+	*/
+	ClientAccount *string
+
+	/* Customer.
+
+	   Specifies whether the customer data is returned in the response. Returns extra data if parameter is set. Example : ?customer
 	*/
 	Customer *string
-	/*NameServerGroup
-	  Specifies whether the nameserver groups are returned in the response. Returns extra data if parameter is set. Example : ?nameServerGroup
 
+	/* NameServerGroup.
+
+	   Specifies whether the nameserver groups are returned in the response. Returns extra data if parameter is set. Example : ?nameServerGroup
 	*/
 	NameServerGroup *string
-	/*Profiles
-	  Specifies whether the user profile is returned in the response. Returns extra data if parameter is set. Example : ?profiles
 
+	/* Profiles.
+
+	   Specifies whether the user profile is returned in the response. Returns extra data if parameter is set. Example : ?profiles
 	*/
 	Profiles *string
-	/*ServiceProfiles
-	  Specifies whether the service user profile is returned in the response. Returns extra data if parameter is set. Example : ?serviceProfiles
 
+	/* ServiceProfiles.
+
+	   Specifies whether the service user profile is returned in the response. Returns extra data if parameter is set. Example : ?serviceProfiles
 	*/
 	ServiceProfiles *string
-	/*Subscription
-	  Specifies whether the subscriptions are returned in the response. Returns extra data if parameter is set. Example : ?subscription
 
+	/* Subscription.
+
+	   Specifies whether the subscriptions are returned in the response. Returns extra data if parameter is set. Example : ?subscription
 	*/
 	Subscription *string
-	/*Timeout
-	  Defines the timeout of the session in minutes. Default is 10 minutes. Example : timeout=60
 
+	/* Timeout.
+
+	   Defines the timeout of the session in minutes. Min: 10 minutes, Max: 300 minutes. Default is 10 minutes. Example : timeout=60
 	*/
 	Timeout *string
 
 	requestTimeout time.Duration
 	Context        context.Context
 	HTTPClient     *http.Client
+}
+
+// WithDefaults hydrates default values in the login params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *LoginParams) WithDefaults() *LoginParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the login params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *LoginParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithRequestTimeout adds the timeout to the login params
@@ -162,6 +215,17 @@ func (o *LoginParams) WithHTTPClient(client *http.Client) *LoginParams {
 // SetHTTPClient adds the HTTPClient to the login params
 func (o *LoginParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithXDomainrobot2FAToken adds the xDomainrobot2FAToken to the login params
+func (o *LoginParams) WithXDomainrobot2FAToken(xDomainrobot2FAToken *int32) *LoginParams {
+	o.SetXDomainrobot2FAToken(xDomainrobot2FAToken)
+	return o
+}
+
+// SetXDomainrobot2FAToken adds the xDomainrobot2FAToken to the login params
+func (o *LoginParams) SetXDomainrobot2FAToken(xDomainrobot2FAToken *int32) {
+	o.XDomainrobot2FAToken = xDomainrobot2FAToken
 }
 
 // WithXDomainrobotBulkLimit adds the xDomainrobotBulkLimit to the login params
@@ -307,6 +371,17 @@ func (o *LoginParams) SetBody(body *models.LoginData) {
 	o.Body = body
 }
 
+// WithClientAccount adds the clientAccount to the login params
+func (o *LoginParams) WithClientAccount(clientAccount *string) *LoginParams {
+	o.SetClientAccount(clientAccount)
+	return o
+}
+
+// SetClientAccount adds the clientAccount to the login params
+func (o *LoginParams) SetClientAccount(clientAccount *string) {
+	o.ClientAccount = clientAccount
+}
+
 // WithCustomer adds the customer to the login params
 func (o *LoginParams) WithCustomer(customer *string) *LoginParams {
 	o.SetCustomer(customer)
@@ -381,13 +456,20 @@ func (o *LoginParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registr
 	}
 	var res []error
 
+	if o.XDomainrobot2FAToken != nil {
+
+		// header param X-Domainrobot-2FA-Token
+		if err := r.SetHeaderParam("X-Domainrobot-2FA-Token", swag.FormatInt32(*o.XDomainrobot2FAToken)); err != nil {
+			return err
+		}
+	}
+
 	if o.XDomainrobotBulkLimit != nil {
 
 		// header param X-Domainrobot-Bulk-Limit
 		if err := r.SetHeaderParam("X-Domainrobot-Bulk-Limit", swag.FormatInt32(*o.XDomainrobotBulkLimit)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotContext != nil {
@@ -396,7 +478,6 @@ func (o *LoginParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registr
 		if err := r.SetHeaderParam("X-Domainrobot-Context", swag.FormatInt32(*o.XDomainrobotContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDemo != nil {
@@ -405,7 +486,6 @@ func (o *LoginParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registr
 		if err := r.SetHeaderParam("X-Domainrobot-Demo", swag.FormatBool(*o.XDomainrobotDemo)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafePin != nil {
@@ -414,7 +494,6 @@ func (o *LoginParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registr
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Pin", *o.XDomainrobotDomainSafePin); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTan != nil {
@@ -423,7 +502,6 @@ func (o *LoginParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registr
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Tan", *o.XDomainrobotDomainSafeTan); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransaction != nil {
@@ -432,7 +510,6 @@ func (o *LoginParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registr
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction", *o.XDomainrobotDomainSafeTransaction); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransactionExpire != nil {
@@ -441,7 +518,6 @@ func (o *LoginParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registr
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction-Expire", o.XDomainrobotDomainSafeTransactionExpire.String()); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerContext != nil {
@@ -450,7 +526,6 @@ func (o *LoginParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registr
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-Context", swag.FormatInt32(*o.XDomainrobotOwnerContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerUser != nil {
@@ -459,7 +534,6 @@ func (o *LoginParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registr
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-User", *o.XDomainrobotOwnerUser); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotSessionID != nil {
@@ -468,7 +542,6 @@ func (o *LoginParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registr
 		if err := r.SetHeaderParam("X-Domainrobot-SessionId", *o.XDomainrobotSessionID); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotWS != nil {
@@ -477,28 +550,44 @@ func (o *LoginParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registr
 		if err := r.SetHeaderParam("X-Domainrobot-WS", *o.XDomainrobotWS); err != nil {
 			return err
 		}
-
 	}
 
 	if o.ACL != nil {
 
 		// query param acl
 		var qrACL string
+
 		if o.ACL != nil {
 			qrACL = *o.ACL
 		}
 		qACL := qrACL
 		if qACL != "" {
+
 			if err := r.SetQueryParam("acl", qACL); err != nil {
 				return err
 			}
 		}
-
 	}
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err
+		}
+	}
+
+	if o.ClientAccount != nil {
+
+		// query param clientAccount
+		var qrClientAccount string
+
+		if o.ClientAccount != nil {
+			qrClientAccount = *o.ClientAccount
+		}
+		qClientAccount := qrClientAccount
+		if qClientAccount != "" {
+
+			if err := r.SetQueryParam("clientAccount", qClientAccount); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -506,96 +595,102 @@ func (o *LoginParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registr
 
 		// query param customer
 		var qrCustomer string
+
 		if o.Customer != nil {
 			qrCustomer = *o.Customer
 		}
 		qCustomer := qrCustomer
 		if qCustomer != "" {
+
 			if err := r.SetQueryParam("customer", qCustomer); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.NameServerGroup != nil {
 
 		// query param nameServerGroup
 		var qrNameServerGroup string
+
 		if o.NameServerGroup != nil {
 			qrNameServerGroup = *o.NameServerGroup
 		}
 		qNameServerGroup := qrNameServerGroup
 		if qNameServerGroup != "" {
+
 			if err := r.SetQueryParam("nameServerGroup", qNameServerGroup); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.Profiles != nil {
 
 		// query param profiles
 		var qrProfiles string
+
 		if o.Profiles != nil {
 			qrProfiles = *o.Profiles
 		}
 		qProfiles := qrProfiles
 		if qProfiles != "" {
+
 			if err := r.SetQueryParam("profiles", qProfiles); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.ServiceProfiles != nil {
 
 		// query param serviceProfiles
 		var qrServiceProfiles string
+
 		if o.ServiceProfiles != nil {
 			qrServiceProfiles = *o.ServiceProfiles
 		}
 		qServiceProfiles := qrServiceProfiles
 		if qServiceProfiles != "" {
+
 			if err := r.SetQueryParam("serviceProfiles", qServiceProfiles); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.Subscription != nil {
 
 		// query param subscription
 		var qrSubscription string
+
 		if o.Subscription != nil {
 			qrSubscription = *o.Subscription
 		}
 		qSubscription := qrSubscription
 		if qSubscription != "" {
+
 			if err := r.SetQueryParam("subscription", qSubscription); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.Timeout != nil {
 
 		// query param timeout
 		var qrTimeout string
+
 		if o.Timeout != nil {
 			qrTimeout = *o.Timeout
 		}
 		qTimeout := qrTimeout
 		if qTimeout != "" {
+
 			if err := r.SetQueryParam("timeout", qTimeout); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if len(res) > 0 {

@@ -17,105 +17,153 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// NewUserInfoParams creates a new UserInfoParams object
-// with the default values initialized.
+// NewUserInfoParams creates a new UserInfoParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewUserInfoParams() *UserInfoParams {
-	var ()
 	return &UserInfoParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewUserInfoParamsWithTimeout creates a new UserInfoParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewUserInfoParamsWithTimeout(timeout time.Duration) *UserInfoParams {
-	var ()
 	return &UserInfoParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewUserInfoParamsWithContext creates a new UserInfoParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewUserInfoParamsWithContext(ctx context.Context) *UserInfoParams {
-	var ()
 	return &UserInfoParams{
-
 		Context: ctx,
 	}
 }
 
 // NewUserInfoParamsWithHTTPClient creates a new UserInfoParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewUserInfoParamsWithHTTPClient(client *http.Client) *UserInfoParams {
-	var ()
 	return &UserInfoParams{
 		HTTPClient: client,
 	}
 }
 
-/*UserInfoParams contains all the parameters to send to the API endpoint
-for the user info operation typically these are written to a http.Request
+/*
+UserInfoParams contains all the parameters to send to the API endpoint
+
+	for the user info operation.
+
+	Typically these are written to a http.Request.
 */
 type UserInfoParams struct {
 
-	/*XDomainrobotBulkLimit*/
-	XDomainrobotBulkLimit *int32
-	/*XDomainrobotContext*/
-	XDomainrobotContext *int32
-	/*XDomainrobotDemo*/
-	XDomainrobotDemo *bool
-	/*XDomainrobotDomainSafePin*/
-	XDomainrobotDomainSafePin *string
-	/*XDomainrobotDomainSafeTan*/
-	XDomainrobotDomainSafeTan *string
-	/*XDomainrobotDomainSafeTransaction*/
-	XDomainrobotDomainSafeTransaction *string
-	/*XDomainrobotDomainSafeTransactionExpire*/
-	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
-	/*XDomainrobotOwnerContext*/
-	XDomainrobotOwnerContext *int32
-	/*XDomainrobotOwnerUser*/
-	XDomainrobotOwnerUser *string
-	/*XDomainrobotSessionID*/
-	XDomainrobotSessionID *string
-	/*XDomainrobotWS*/
-	XDomainrobotWS *string
-	/*ACL
-	  Specifies whether the acls are returned in the response. Returns extra data if parameter is set. Example : ?acl
+	// XDomainrobot2FAToken.
+	//
+	// Format: int32
+	XDomainrobot2FAToken *int32
 
+	// XDomainrobotBulkLimit.
+	//
+	// Format: int32
+	XDomainrobotBulkLimit *int32
+
+	// XDomainrobotContext.
+	//
+	// Format: int32
+	XDomainrobotContext *int32
+
+	// XDomainrobotDemo.
+	XDomainrobotDemo *bool
+
+	// XDomainrobotDomainSafePin.
+	XDomainrobotDomainSafePin *string
+
+	// XDomainrobotDomainSafeTan.
+	XDomainrobotDomainSafeTan *string
+
+	// XDomainrobotDomainSafeTransaction.
+	XDomainrobotDomainSafeTransaction *string
+
+	// XDomainrobotDomainSafeTransactionExpire.
+	//
+	// Format: date-time
+	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
+
+	// XDomainrobotOwnerContext.
+	//
+	// Format: int32
+	XDomainrobotOwnerContext *int32
+
+	// XDomainrobotOwnerUser.
+	XDomainrobotOwnerUser *string
+
+	// XDomainrobotSessionID.
+	XDomainrobotSessionID *string
+
+	// XDomainrobotWS.
+	XDomainrobotWS *string
+
+	/* ACL.
+
+	   Specifies whether the acls are returned in the response. Returns extra data if parameter is set. Example : ?acl
 	*/
 	ACL *string
-	/*Context*/
-	Context string
-	/*Customer
-	  Specifies whether the customer data is returned in the response. Returns extra data if parameter is set. Example : ?customer
 
+	// Context.
+	//
+	// Format: int32
+	Context int32
+
+	/* Customer.
+
+	   Specifies whether the customer data is returned in the response. Returns extra data if parameter is set. Example : ?customer
 	*/
 	Customer *string
-	/*Name*/
-	Name string
-	/*NameServerGroup
-	  Specifies whether the nameserver groups are returned in the response. Returns extra data if parameter is set. Example : ?nameServerGroup
 
+	// Name.
+	Name string
+
+	/* NameServerGroup.
+
+	   Specifies whether the nameserver groups are returned in the response. Returns extra data if parameter is set. Example : ?nameServerGroup
 	*/
 	NameServerGroup *string
-	/*Profiles
-	  Specifies whether the user profile is returned in the response. Returns extra data if parameter is set. Example : ?profiles
 
+	/* Profiles.
+
+	   Specifies whether the user profile is returned in the response. Returns extra data if parameter is set. Example : ?profiles
 	*/
 	Profiles *string
-	/*Subscription
-	  Specifies whether the used applications are returned in the response. Returns extra data if parameter is set. Example : ?application
 
+	/* Subscription.
+
+	   Specifies whether the used applications are returned in the response. Returns extra data if parameter is set. Example : ?application
 	*/
 	Subscription *string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the user info params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UserInfoParams) WithDefaults() *UserInfoParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the user info params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UserInfoParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the user info params
@@ -149,6 +197,17 @@ func (o *UserInfoParams) WithHTTPClient(client *http.Client) *UserInfoParams {
 // SetHTTPClient adds the HTTPClient to the user info params
 func (o *UserInfoParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithXDomainrobot2FAToken adds the xDomainrobot2FAToken to the user info params
+func (o *UserInfoParams) WithXDomainrobot2FAToken(xDomainrobot2FAToken *int32) *UserInfoParams {
+	o.SetXDomainrobot2FAToken(xDomainrobot2FAToken)
+	return o
+}
+
+// SetXDomainrobot2FAToken adds the xDomainrobot2FAToken to the user info params
+func (o *UserInfoParams) SetXDomainrobot2FAToken(xDomainrobot2FAToken *int32) {
+	o.XDomainrobot2FAToken = xDomainrobot2FAToken
 }
 
 // WithXDomainrobotBulkLimit adds the xDomainrobotBulkLimit to the user info params
@@ -284,13 +343,13 @@ func (o *UserInfoParams) SetACL(acl *string) {
 }
 
 // WithContext adds the context to the user info params
-func (o *UserInfoParams) WithContext(context string) *UserInfoParams {
+func (o *UserInfoParams) WithContext(context int32) *UserInfoParams {
 	o.SetContext(context)
 	return o
 }
 
 // SetContext adds the context to the user info params
-func (o *UserInfoParams) SetContext(context string) {
+func (o *UserInfoParams) SetContext(context int32) {
 	o.Context = context
 }
 
@@ -357,13 +416,20 @@ func (o *UserInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 	}
 	var res []error
 
+	if o.XDomainrobot2FAToken != nil {
+
+		// header param X-Domainrobot-2FA-Token
+		if err := r.SetHeaderParam("X-Domainrobot-2FA-Token", swag.FormatInt32(*o.XDomainrobot2FAToken)); err != nil {
+			return err
+		}
+	}
+
 	if o.XDomainrobotBulkLimit != nil {
 
 		// header param X-Domainrobot-Bulk-Limit
 		if err := r.SetHeaderParam("X-Domainrobot-Bulk-Limit", swag.FormatInt32(*o.XDomainrobotBulkLimit)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotContext != nil {
@@ -372,7 +438,6 @@ func (o *UserInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 		if err := r.SetHeaderParam("X-Domainrobot-Context", swag.FormatInt32(*o.XDomainrobotContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDemo != nil {
@@ -381,7 +446,6 @@ func (o *UserInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 		if err := r.SetHeaderParam("X-Domainrobot-Demo", swag.FormatBool(*o.XDomainrobotDemo)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafePin != nil {
@@ -390,7 +454,6 @@ func (o *UserInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Pin", *o.XDomainrobotDomainSafePin); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTan != nil {
@@ -399,7 +462,6 @@ func (o *UserInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Tan", *o.XDomainrobotDomainSafeTan); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransaction != nil {
@@ -408,7 +470,6 @@ func (o *UserInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction", *o.XDomainrobotDomainSafeTransaction); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransactionExpire != nil {
@@ -417,7 +478,6 @@ func (o *UserInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction-Expire", o.XDomainrobotDomainSafeTransactionExpire.String()); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerContext != nil {
@@ -426,7 +486,6 @@ func (o *UserInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-Context", swag.FormatInt32(*o.XDomainrobotOwnerContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerUser != nil {
@@ -435,7 +494,6 @@ func (o *UserInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-User", *o.XDomainrobotOwnerUser); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotSessionID != nil {
@@ -444,7 +502,6 @@ func (o *UserInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 		if err := r.SetHeaderParam("X-Domainrobot-SessionId", *o.XDomainrobotSessionID); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotWS != nil {
@@ -453,27 +510,27 @@ func (o *UserInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 		if err := r.SetHeaderParam("X-Domainrobot-WS", *o.XDomainrobotWS); err != nil {
 			return err
 		}
-
 	}
 
 	if o.ACL != nil {
 
 		// query param acl
 		var qrACL string
+
 		if o.ACL != nil {
 			qrACL = *o.ACL
 		}
 		qACL := qrACL
 		if qACL != "" {
+
 			if err := r.SetQueryParam("acl", qACL); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	// path param context
-	if err := r.SetPathParam("context", o.Context); err != nil {
+	if err := r.SetPathParam("context", swag.FormatInt32(o.Context)); err != nil {
 		return err
 	}
 
@@ -481,16 +538,17 @@ func (o *UserInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 
 		// query param customer
 		var qrCustomer string
+
 		if o.Customer != nil {
 			qrCustomer = *o.Customer
 		}
 		qCustomer := qrCustomer
 		if qCustomer != "" {
+
 			if err := r.SetQueryParam("customer", qCustomer); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	// path param name
@@ -502,48 +560,51 @@ func (o *UserInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regi
 
 		// query param nameServerGroup
 		var qrNameServerGroup string
+
 		if o.NameServerGroup != nil {
 			qrNameServerGroup = *o.NameServerGroup
 		}
 		qNameServerGroup := qrNameServerGroup
 		if qNameServerGroup != "" {
+
 			if err := r.SetQueryParam("nameServerGroup", qNameServerGroup); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.Profiles != nil {
 
 		// query param profiles
 		var qrProfiles string
+
 		if o.Profiles != nil {
 			qrProfiles = *o.Profiles
 		}
 		qProfiles := qrProfiles
 		if qProfiles != "" {
+
 			if err := r.SetQueryParam("profiles", qProfiles); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.Subscription != nil {
 
 		// query param subscription
 		var qrSubscription string
+
 		if o.Subscription != nil {
 			qrSubscription = *o.Subscription
 		}
 		qSubscription := qrSubscription
 		if qSubscription != "" {
+
 			if err := r.SetQueryParam("subscription", qSubscription); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if len(res) > 0 {

@@ -17,76 +17,115 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// NewOtpAuthInfoParams creates a new OtpAuthInfoParams object
-// with the default values initialized.
+// NewOtpAuthInfoParams creates a new OtpAuthInfoParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewOtpAuthInfoParams() *OtpAuthInfoParams {
-	var ()
 	return &OtpAuthInfoParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewOtpAuthInfoParamsWithTimeout creates a new OtpAuthInfoParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewOtpAuthInfoParamsWithTimeout(timeout time.Duration) *OtpAuthInfoParams {
-	var ()
 	return &OtpAuthInfoParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewOtpAuthInfoParamsWithContext creates a new OtpAuthInfoParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewOtpAuthInfoParamsWithContext(ctx context.Context) *OtpAuthInfoParams {
-	var ()
 	return &OtpAuthInfoParams{
-
 		Context: ctx,
 	}
 }
 
 // NewOtpAuthInfoParamsWithHTTPClient creates a new OtpAuthInfoParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewOtpAuthInfoParamsWithHTTPClient(client *http.Client) *OtpAuthInfoParams {
-	var ()
 	return &OtpAuthInfoParams{
 		HTTPClient: client,
 	}
 }
 
-/*OtpAuthInfoParams contains all the parameters to send to the API endpoint
-for the otp auth info operation typically these are written to a http.Request
+/*
+OtpAuthInfoParams contains all the parameters to send to the API endpoint
+
+	for the otp auth info operation.
+
+	Typically these are written to a http.Request.
 */
 type OtpAuthInfoParams struct {
 
-	/*XDomainrobotBulkLimit*/
+	// XDomainrobot2FAToken.
+	//
+	// Format: int32
+	XDomainrobot2FAToken *int32
+
+	// XDomainrobotBulkLimit.
+	//
+	// Format: int32
 	XDomainrobotBulkLimit *int32
-	/*XDomainrobotContext*/
+
+	// XDomainrobotContext.
+	//
+	// Format: int32
 	XDomainrobotContext *int32
-	/*XDomainrobotDemo*/
+
+	// XDomainrobotDemo.
 	XDomainrobotDemo *bool
-	/*XDomainrobotDomainSafePin*/
+
+	// XDomainrobotDomainSafePin.
 	XDomainrobotDomainSafePin *string
-	/*XDomainrobotDomainSafeTan*/
+
+	// XDomainrobotDomainSafeTan.
 	XDomainrobotDomainSafeTan *string
-	/*XDomainrobotDomainSafeTransaction*/
+
+	// XDomainrobotDomainSafeTransaction.
 	XDomainrobotDomainSafeTransaction *string
-	/*XDomainrobotDomainSafeTransactionExpire*/
+
+	// XDomainrobotDomainSafeTransactionExpire.
+	//
+	// Format: date-time
 	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
-	/*XDomainrobotOwnerContext*/
+
+	// XDomainrobotOwnerContext.
+	//
+	// Format: int32
 	XDomainrobotOwnerContext *int32
-	/*XDomainrobotOwnerUser*/
+
+	// XDomainrobotOwnerUser.
 	XDomainrobotOwnerUser *string
-	/*XDomainrobotSessionID*/
+
+	// XDomainrobotSessionID.
 	XDomainrobotSessionID *string
-	/*XDomainrobotWS*/
+
+	// XDomainrobotWS.
 	XDomainrobotWS *string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the otp auth info params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *OtpAuthInfoParams) WithDefaults() *OtpAuthInfoParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the otp auth info params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *OtpAuthInfoParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the otp auth info params
@@ -120,6 +159,17 @@ func (o *OtpAuthInfoParams) WithHTTPClient(client *http.Client) *OtpAuthInfoPara
 // SetHTTPClient adds the HTTPClient to the otp auth info params
 func (o *OtpAuthInfoParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithXDomainrobot2FAToken adds the xDomainrobot2FAToken to the otp auth info params
+func (o *OtpAuthInfoParams) WithXDomainrobot2FAToken(xDomainrobot2FAToken *int32) *OtpAuthInfoParams {
+	o.SetXDomainrobot2FAToken(xDomainrobot2FAToken)
+	return o
+}
+
+// SetXDomainrobot2FAToken adds the xDomainrobot2FAToken to the otp auth info params
+func (o *OtpAuthInfoParams) SetXDomainrobot2FAToken(xDomainrobot2FAToken *int32) {
+	o.XDomainrobot2FAToken = xDomainrobot2FAToken
 }
 
 // WithXDomainrobotBulkLimit adds the xDomainrobotBulkLimit to the otp auth info params
@@ -251,13 +301,20 @@ func (o *OtpAuthInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 	}
 	var res []error
 
+	if o.XDomainrobot2FAToken != nil {
+
+		// header param X-Domainrobot-2FA-Token
+		if err := r.SetHeaderParam("X-Domainrobot-2FA-Token", swag.FormatInt32(*o.XDomainrobot2FAToken)); err != nil {
+			return err
+		}
+	}
+
 	if o.XDomainrobotBulkLimit != nil {
 
 		// header param X-Domainrobot-Bulk-Limit
 		if err := r.SetHeaderParam("X-Domainrobot-Bulk-Limit", swag.FormatInt32(*o.XDomainrobotBulkLimit)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotContext != nil {
@@ -266,7 +323,6 @@ func (o *OtpAuthInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 		if err := r.SetHeaderParam("X-Domainrobot-Context", swag.FormatInt32(*o.XDomainrobotContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDemo != nil {
@@ -275,7 +331,6 @@ func (o *OtpAuthInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 		if err := r.SetHeaderParam("X-Domainrobot-Demo", swag.FormatBool(*o.XDomainrobotDemo)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafePin != nil {
@@ -284,7 +339,6 @@ func (o *OtpAuthInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Pin", *o.XDomainrobotDomainSafePin); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTan != nil {
@@ -293,7 +347,6 @@ func (o *OtpAuthInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Tan", *o.XDomainrobotDomainSafeTan); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransaction != nil {
@@ -302,7 +355,6 @@ func (o *OtpAuthInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction", *o.XDomainrobotDomainSafeTransaction); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransactionExpire != nil {
@@ -311,7 +363,6 @@ func (o *OtpAuthInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction-Expire", o.XDomainrobotDomainSafeTransactionExpire.String()); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerContext != nil {
@@ -320,7 +371,6 @@ func (o *OtpAuthInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-Context", swag.FormatInt32(*o.XDomainrobotOwnerContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerUser != nil {
@@ -329,7 +379,6 @@ func (o *OtpAuthInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-User", *o.XDomainrobotOwnerUser); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotSessionID != nil {
@@ -338,7 +387,6 @@ func (o *OtpAuthInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 		if err := r.SetHeaderParam("X-Domainrobot-SessionId", *o.XDomainrobotSessionID); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotWS != nil {
@@ -347,7 +395,6 @@ func (o *OtpAuthInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 		if err := r.SetHeaderParam("X-Domainrobot-WS", *o.XDomainrobotWS); err != nil {
 			return err
 		}
-
 	}
 
 	if len(res) > 0 {

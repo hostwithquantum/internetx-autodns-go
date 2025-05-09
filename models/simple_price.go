@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -26,6 +27,7 @@ type SimplePrice struct {
 	BusinessCase string `json:"businessCase,omitempty"`
 
 	// The billing currency
+	// Example: EUR
 	Currency string `json:"currency,omitempty"`
 
 	// Custom values,such as price class
@@ -75,7 +77,6 @@ func (m *SimplePrice) Validate(formats strfmt.Registry) error {
 }
 
 func (m *SimplePrice) validateCustoms(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Customs) { // not required
 		return nil
 	}
@@ -93,6 +94,8 @@ func (m *SimplePrice) validateCustoms(formats strfmt.Registry) error {
 			if err := m.Customs[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("customs" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("customs" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -104,7 +107,6 @@ func (m *SimplePrice) validateCustoms(formats strfmt.Registry) error {
 }
 
 func (m *SimplePrice) validatePeriod(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Period) { // not required
 		return nil
 	}
@@ -113,6 +115,8 @@ func (m *SimplePrice) validatePeriod(formats strfmt.Registry) error {
 		if err := m.Period.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("period")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("period")
 			}
 			return err
 		}
@@ -122,7 +126,6 @@ func (m *SimplePrice) validatePeriod(formats strfmt.Registry) error {
 }
 
 func (m *SimplePrice) validatePrice(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Price) { // not required
 		return nil
 	}
@@ -131,6 +134,8 @@ func (m *SimplePrice) validatePrice(formats strfmt.Registry) error {
 		if err := m.Price.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("price")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("price")
 			}
 			return err
 		}
@@ -140,7 +145,6 @@ func (m *SimplePrice) validatePrice(formats strfmt.Registry) error {
 }
 
 func (m *SimplePrice) validateView(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.View) { // not required
 		return nil
 	}
@@ -149,6 +153,122 @@ func (m *SimplePrice) validateView(formats strfmt.Registry) error {
 		if err := m.View.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("view")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("view")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this simple price based on the context it is used
+func (m *SimplePrice) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateCustoms(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePeriod(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePrice(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateView(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *SimplePrice) contextValidateCustoms(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Customs); i++ {
+
+		if m.Customs[i] != nil {
+
+			if swag.IsZero(m.Customs[i]) { // not required
+				return nil
+			}
+
+			if err := m.Customs[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("customs" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("customs" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *SimplePrice) contextValidatePeriod(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Period != nil {
+
+		if swag.IsZero(m.Period) { // not required
+			return nil
+		}
+
+		if err := m.Period.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("period")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("period")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SimplePrice) contextValidatePrice(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Price != nil {
+
+		if swag.IsZero(m.Price) { // not required
+			return nil
+		}
+
+		if err := m.Price.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("price")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("price")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SimplePrice) contextValidateView(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.View != nil {
+
+		if swag.IsZero(m.View) { // not required
+			return nil
+		}
+
+		if err := m.View.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("view")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("view")
 			}
 			return err
 		}

@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -37,7 +38,6 @@ func (m *IPRestrictions) Validate(formats strfmt.Registry) error {
 }
 
 func (m *IPRestrictions) validateAcls(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Acls) { // not required
 		return nil
 	}
@@ -51,6 +51,47 @@ func (m *IPRestrictions) validateAcls(formats strfmt.Registry) error {
 			if err := m.Acls[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("acls" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("acls" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this Ip restrictions based on the context it is used
+func (m *IPRestrictions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateAcls(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *IPRestrictions) contextValidateAcls(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Acls); i++ {
+
+		if m.Acls[i] != nil {
+
+			if swag.IsZero(m.Acls[i]) { // not required
+				return nil
+			}
+
+			if err := m.Acls[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("acls" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("acls" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

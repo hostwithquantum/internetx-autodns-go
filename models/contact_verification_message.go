@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,17 +19,20 @@ import (
 // swagger:model ContactVerificationMessage
 type ContactVerificationMessage struct {
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// the email of the VerificationMessage
+	// The last response of the mail server
+	LastResponse string `json:"lastResponse,omitempty"`
+
+	// The notification that was sent for verification
 	Mail *MailServiceMessage `json:"mail,omitempty"`
 
-	// the status of the VerificationMessage
+	// The status of the verification mail
 	Status GenericStatusConstants `json:"status,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 }
@@ -59,7 +64,6 @@ func (m *ContactVerificationMessage) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ContactVerificationMessage) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -72,7 +76,6 @@ func (m *ContactVerificationMessage) validateCreated(formats strfmt.Registry) er
 }
 
 func (m *ContactVerificationMessage) validateMail(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Mail) { // not required
 		return nil
 	}
@@ -81,6 +84,8 @@ func (m *ContactVerificationMessage) validateMail(formats strfmt.Registry) error
 		if err := m.Mail.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("mail")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("mail")
 			}
 			return err
 		}
@@ -90,7 +95,6 @@ func (m *ContactVerificationMessage) validateMail(formats strfmt.Registry) error
 }
 
 func (m *ContactVerificationMessage) validateStatus(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Status) { // not required
 		return nil
 	}
@@ -98,6 +102,8 @@ func (m *ContactVerificationMessage) validateStatus(formats strfmt.Registry) err
 	if err := m.Status.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
 		}
 		return err
 	}
@@ -106,12 +112,68 @@ func (m *ContactVerificationMessage) validateStatus(formats strfmt.Registry) err
 }
 
 func (m *ContactVerificationMessage) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
 
 	if err := validate.FormatOf("updated", "body", "date-time", m.Updated.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this contact verification message based on the context it is used
+func (m *ContactVerificationMessage) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateMail(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ContactVerificationMessage) contextValidateMail(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Mail != nil {
+
+		if swag.IsZero(m.Mail) { // not required
+			return nil
+		}
+
+		if err := m.Mail.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("mail")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("mail")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactVerificationMessage) contextValidateStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	if err := m.Status.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
+		}
 		return err
 	}
 

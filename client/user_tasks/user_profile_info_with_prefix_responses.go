@@ -6,6 +6,7 @@ package user_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *UserProfileInfoWithPrefixReader) ReadResponse(response runtime.ClientRe
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[GET /user/{name}/{context}/profile/{prefix}] userProfileInfoWithPrefix", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewUserProfileInfoWithPrefixOK() *UserProfileInfoWithPrefixOK {
 	return &UserProfileInfoWithPrefixOK{}
 }
 
-/*UserProfileInfoWithPrefixOK handles this case with default header values.
+/*
+UserProfileInfoWithPrefixOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type UserProfileInfoWithPrefixOK struct {
 	Payload *models.JSONResponseDataBasicUser
 }
 
+// IsSuccess returns true when this user profile info with prefix o k response has a 2xx status code
+func (o *UserProfileInfoWithPrefixOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this user profile info with prefix o k response has a 3xx status code
+func (o *UserProfileInfoWithPrefixOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this user profile info with prefix o k response has a 4xx status code
+func (o *UserProfileInfoWithPrefixOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this user profile info with prefix o k response has a 5xx status code
+func (o *UserProfileInfoWithPrefixOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this user profile info with prefix o k response a status code equal to that given
+func (o *UserProfileInfoWithPrefixOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the user profile info with prefix o k response
+func (o *UserProfileInfoWithPrefixOK) Code() int {
+	return 200
+}
+
 func (o *UserProfileInfoWithPrefixOK) Error() string {
-	return fmt.Sprintf("[GET /user/{name}/{context}/profile/{prefix}][%d] userProfileInfoWithPrefixOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user/{name}/{context}/profile/{prefix}][%d] userProfileInfoWithPrefixOK %s", 200, payload)
+}
+
+func (o *UserProfileInfoWithPrefixOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user/{name}/{context}/profile/{prefix}][%d] userProfileInfoWithPrefixOK %s", 200, payload)
 }
 
 func (o *UserProfileInfoWithPrefixOK) GetPayload() *models.JSONResponseDataBasicUser {

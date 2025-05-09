@@ -6,8 +6,12 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // UserDetails user details
@@ -15,30 +19,62 @@ import (
 // swagger:model UserDetails
 type UserDetails struct {
 
-	// The first name.
+	// The first name of the user.
 	Fname string `json:"fname,omitempty"`
 
-	// The last name.
+	// Date of the last password reminder email
+	// Format: date-time
+	LastPasswordReminderEmail strfmt.DateTime `json:"lastPasswordReminderEmail,omitempty"`
+
+	// The last name of the user.
 	Lname string `json:"lname,omitempty"`
 
-	// The organization.
+	// The company name of the user.
 	Organization string `json:"organization,omitempty"`
 
-	// The email address for the password reset tan.
+	// Email address to which the TAN is sent.
 	PasswordResetEmail string `json:"passwordResetEmail,omitempty"`
 
-	// The mobile phone number.
+	// Mobile phone number to which the TAN is sent.
+	// Example: +49-123-12345
 	PasswordResetMobile string `json:"passwordResetMobile,omitempty"`
 
-	// The email address for the verification of the password reset process.
+	// Email address used for verification when resetting the password.
 	PasswordResetVerifyEmail string `json:"passwordResetVerifyEmail,omitempty"`
 
-	// The phone number of the guest user
+	// The phone number of the user.
+	// Example: +49-123-12345
 	Phone string `json:"phone,omitempty"`
 }
 
 // Validate validates this user details
 func (m *UserDetails) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateLastPasswordReminderEmail(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *UserDetails) validateLastPasswordReminderEmail(formats strfmt.Registry) error {
+	if swag.IsZero(m.LastPasswordReminderEmail) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("lastPasswordReminderEmail", "body", "date-time", m.LastPasswordReminderEmail.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this user details based on context it is used
+func (m *UserDetails) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

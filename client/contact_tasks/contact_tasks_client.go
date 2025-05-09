@@ -9,12 +9,38 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime"
+	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new contact tasks API client.
 func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new contact tasks API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new contact tasks API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -25,51 +51,99 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
 // ClientService is the interface for Client methods
 type ClientService interface {
-	ContactCreate(params *ContactCreateParams) (*ContactCreateOK, error)
+	ContactAddDomainSafe(params *ContactAddDomainSafeParams, opts ...ClientOption) (*ContactAddDomainSafeOK, error)
 
-	ContactDelete(params *ContactDeleteParams) (*ContactDeleteOK, error)
+	ContactCreate(params *ContactCreateParams, opts ...ClientOption) (*ContactCreateOK, error)
 
-	ContactInfo(params *ContactInfoParams) (*ContactInfoOK, error)
+	ContactDelete(params *ContactDeleteParams, opts ...ClientOption) (*ContactDeleteOK, error)
 
-	ContactList(params *ContactListParams) (*ContactListOK, error)
+	ContactDeleteDomainSafe(params *ContactDeleteDomainSafeParams, opts ...ClientOption) (*ContactDeleteDomainSafeOK, error)
 
-	ContactUpdate(params *ContactUpdateParams) (*ContactUpdateOK, error)
+	ContactDeletes(params *ContactDeletesParams, opts ...ClientOption) (*ContactDeletesOK, error)
 
-	ContcatCommentUpdate(params *ContcatCommentUpdateParams) (*ContcatCommentUpdateOK, error)
+	ContactInfo(params *ContactInfoParams, opts ...ClientOption) (*ContactInfoOK, error)
 
-	VerificationConfirm(params *VerificationConfirmParams) (*VerificationConfirmOK, error)
+	ContactList(params *ContactListParams, opts ...ClientOption) (*ContactListOK, error)
 
-	VerificationCreate(params *VerificationCreateParams) (*VerificationCreateOK, error)
+	ContactUpdate(params *ContactUpdateParams, opts ...ClientOption) (*ContactUpdateOK, error)
 
-	VerificationHistoryInfo(params *VerificationHistoryInfoParams) (*VerificationHistoryInfoOK, error)
+	ContcatCommentUpdate(params *ContcatCommentUpdateParams, opts ...ClientOption) (*ContcatCommentUpdateOK, error)
 
-	VerificationHistoryList(params *VerificationHistoryListParams) (*VerificationHistoryListOK, error)
+	VerificationConfirm(params *VerificationConfirmParams, opts ...ClientOption) (*VerificationConfirmOK, error)
 
-	VerificationInfo(params *VerificationInfoParams) (*VerificationInfoOK, error)
+	VerificationCreate(params *VerificationCreateParams, opts ...ClientOption) (*VerificationCreateOK, error)
 
-	VerificationInfoWithReference(params *VerificationInfoWithReferenceParams) (*VerificationInfoWithReferenceOK, error)
+	VerificationHistoryInfo(params *VerificationHistoryInfoParams, opts ...ClientOption) (*VerificationHistoryInfoOK, error)
 
-	VerificationList(params *VerificationListParams) (*VerificationListOK, error)
+	VerificationHistoryList(params *VerificationHistoryListParams, opts ...ClientOption) (*VerificationHistoryListOK, error)
 
-	VerificationResendEmail(params *VerificationResendEmailParams) (*VerificationResendEmailOK, error)
+	VerificationInfo(params *VerificationInfoParams, opts ...ClientOption) (*VerificationInfoOK, error)
+
+	VerificationInfoWithReference(params *VerificationInfoWithReferenceParams, opts ...ClientOption) (*VerificationInfoWithReferenceOK, error)
+
+	VerificationList(params *VerificationListParams, opts ...ClientOption) (*VerificationListOK, error)
+
+	VerificationResendEmail(params *VerificationResendEmailParams, opts ...ClientOption) (*VerificationResendEmailOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
 
 /*
-  ContactCreate contacts create
+ContactAddDomainSafe saves object create 0601
 
-  Creating a new domain contact.
+Adding the contact to the domain safe
 */
-func (a *Client) ContactCreate(params *ContactCreateParams) (*ContactCreateOK, error) {
+func (a *Client) ContactAddDomainSafe(params *ContactAddDomainSafeParams, opts ...ClientOption) (*ContactAddDomainSafeOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewContactAddDomainSafeParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "contactAddDomainSafe",
+		Method:             "PUT",
+		PathPattern:        "/contact/{id}/_domainSafe",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ContactAddDomainSafeReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*ContactAddDomainSafeOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for contactAddDomainSafe: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+ContactCreate contacts create 0301
+
+Creating a new domain contact.
+*/
+func (a *Client) ContactCreate(params *ContactCreateParams, opts ...ClientOption) (*ContactCreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewContactCreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "contactCreate",
 		Method:             "POST",
 		PathPattern:        "/contact",
@@ -80,7 +154,12 @@ func (a *Client) ContactCreate(params *ContactCreateParams) (*ContactCreateOK, e
 		Reader:             &ContactCreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -95,17 +174,16 @@ func (a *Client) ContactCreate(params *ContactCreateParams) (*ContactCreateOK, e
 }
 
 /*
-  ContactDelete contacts delete
+ContactDelete contacts delete 0303
 
-  Deleting an existing domain contact.
+Deleting an existing domain contact.
 */
-func (a *Client) ContactDelete(params *ContactDeleteParams) (*ContactDeleteOK, error) {
+func (a *Client) ContactDelete(params *ContactDeleteParams, opts ...ClientOption) (*ContactDeleteOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewContactDeleteParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "contactDelete",
 		Method:             "DELETE",
 		PathPattern:        "/contact/{id}",
@@ -116,7 +194,12 @@ func (a *Client) ContactDelete(params *ContactDeleteParams) (*ContactDeleteOK, e
 		Reader:             &ContactDeleteReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -131,17 +214,96 @@ func (a *Client) ContactDelete(params *ContactDeleteParams) (*ContactDeleteOK, e
 }
 
 /*
-  ContactInfo contacts info
+ContactDeleteDomainSafe saves object create 0603
 
-  Inquiring data of a specified domain contact.
+Deleting the contact from the domain safe
 */
-func (a *Client) ContactInfo(params *ContactInfoParams) (*ContactInfoOK, error) {
+func (a *Client) ContactDeleteDomainSafe(params *ContactDeleteDomainSafeParams, opts ...ClientOption) (*ContactDeleteDomainSafeOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewContactDeleteDomainSafeParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "contactDeleteDomainSafe",
+		Method:             "DELETE",
+		PathPattern:        "/contact/{id}/_domainSafe",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ContactDeleteDomainSafeReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*ContactDeleteDomainSafeOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for contactDeleteDomainSafe: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+ContactDeletes contacts delete bulk 0303
+
+Deleting several contacts with one request.
+*/
+func (a *Client) ContactDeletes(params *ContactDeletesParams, opts ...ClientOption) (*ContactDeletesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewContactDeletesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "contactDeletes",
+		Method:             "DELETE",
+		PathPattern:        "/bulk/contact",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ContactDeletesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*ContactDeletesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for contactDeletes: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+ContactInfo contacts info 0304
+
+Inquiring data of a specified domain contact.
+*/
+func (a *Client) ContactInfo(params *ContactInfoParams, opts ...ClientOption) (*ContactInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewContactInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "contactInfo",
 		Method:             "GET",
 		PathPattern:        "/contact/{id}",
@@ -152,7 +314,12 @@ func (a *Client) ContactInfo(params *ContactInfoParams) (*ContactInfoOK, error) 
 		Reader:             &ContactInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -167,17 +334,16 @@ func (a *Client) ContactInfo(params *ContactInfoParams) (*ContactInfoOK, error) 
 }
 
 /*
-  ContactList contacts list
+ContactList contacts list 0304
 
-  Inquiring a list of contacts with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: country, pcode, city, type, title, lname, alias, state, id, sip, fax, verification, email, fname, address, created, phone, organization, domainsafe, comment, updated.
+Inquiring a list of contacts with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: country, pcode, city, type, title, lname, alias, state, id, sip, fax, verification, email, fname, address, created, phone, organization, domainsafe, comment, updated.
 */
-func (a *Client) ContactList(params *ContactListParams) (*ContactListOK, error) {
+func (a *Client) ContactList(params *ContactListParams, opts ...ClientOption) (*ContactListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewContactListParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "contactList",
 		Method:             "POST",
 		PathPattern:        "/contact/_search",
@@ -188,7 +354,12 @@ func (a *Client) ContactList(params *ContactListParams) (*ContactListOK, error) 
 		Reader:             &ContactListReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -203,17 +374,16 @@ func (a *Client) ContactList(params *ContactListParams) (*ContactListOK, error) 
 }
 
 /*
-  ContactUpdate contacts update
+ContactUpdate contacts update 0302
 
-  Updating an existing domain contact.
+Updating an existing domain contact.
 */
-func (a *Client) ContactUpdate(params *ContactUpdateParams) (*ContactUpdateOK, error) {
+func (a *Client) ContactUpdate(params *ContactUpdateParams, opts ...ClientOption) (*ContactUpdateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewContactUpdateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "contactUpdate",
 		Method:             "PUT",
 		PathPattern:        "/contact/{id}",
@@ -224,7 +394,12 @@ func (a *Client) ContactUpdate(params *ContactUpdateParams) (*ContactUpdateOK, e
 		Reader:             &ContactUpdateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -239,17 +414,16 @@ func (a *Client) ContactUpdate(params *ContactUpdateParams) (*ContactUpdateOK, e
 }
 
 /*
-  ContcatCommentUpdate contacts comment update
+ContcatCommentUpdate contacts comment update 0302004
 
-  Updating a comment for an existing contact.
+Updating a comment for an existing contact.
 */
-func (a *Client) ContcatCommentUpdate(params *ContcatCommentUpdateParams) (*ContcatCommentUpdateOK, error) {
+func (a *Client) ContcatCommentUpdate(params *ContcatCommentUpdateParams, opts ...ClientOption) (*ContcatCommentUpdateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewContcatCommentUpdateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "contcatCommentUpdate",
 		Method:             "PUT",
 		PathPattern:        "/contact/{id}/_comment",
@@ -260,7 +434,12 @@ func (a *Client) ContcatCommentUpdate(params *ContcatCommentUpdateParams) (*Cont
 		Reader:             &ContcatCommentUpdateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -275,17 +454,16 @@ func (a *Client) ContcatCommentUpdate(params *ContcatCommentUpdateParams) (*Cont
 }
 
 /*
-  VerificationConfirm contacts verification confirm
+VerificationConfirm contacts verification confirm 0346
 
-  Confirming an existing verification with a given hash.
+Confirming an existing verification with a given hash.
 */
-func (a *Client) VerificationConfirm(params *VerificationConfirmParams) (*VerificationConfirmOK, error) {
+func (a *Client) VerificationConfirm(params *VerificationConfirmParams, opts ...ClientOption) (*VerificationConfirmOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewVerificationConfirmParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "verificationConfirm",
 		Method:             "PUT",
 		PathPattern:        "/contact/verification/_confirm",
@@ -296,7 +474,12 @@ func (a *Client) VerificationConfirm(params *VerificationConfirmParams) (*Verifi
 		Reader:             &VerificationConfirmReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -311,17 +494,16 @@ func (a *Client) VerificationConfirm(params *VerificationConfirmParams) (*Verifi
 }
 
 /*
-  VerificationCreate contacts verification create
+VerificationCreate contacts verification create 0341
 
-  Creating a new contact verification.
+Creating a new contact verification.
 */
-func (a *Client) VerificationCreate(params *VerificationCreateParams) (*VerificationCreateOK, error) {
+func (a *Client) VerificationCreate(params *VerificationCreateParams, opts ...ClientOption) (*VerificationCreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewVerificationCreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "verificationCreate",
 		Method:             "POST",
 		PathPattern:        "/contact/{id}/verification",
@@ -332,7 +514,12 @@ func (a *Client) VerificationCreate(params *VerificationCreateParams) (*Verifica
 		Reader:             &VerificationCreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -347,17 +534,16 @@ func (a *Client) VerificationCreate(params *VerificationCreateParams) (*Verifica
 }
 
 /*
-  VerificationHistoryInfo contacts verification history info
+VerificationHistoryInfo contacts verification history info 0354
 
-  Inquiring the data of a specified verification.
+Inquiring the data of a specified verification.
 */
-func (a *Client) VerificationHistoryInfo(params *VerificationHistoryInfoParams) (*VerificationHistoryInfoOK, error) {
+func (a *Client) VerificationHistoryInfo(params *VerificationHistoryInfoParams, opts ...ClientOption) (*VerificationHistoryInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewVerificationHistoryInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "verificationHistoryInfo",
 		Method:             "GET",
 		PathPattern:        "/contact/verification/history",
@@ -368,7 +554,12 @@ func (a *Client) VerificationHistoryInfo(params *VerificationHistoryInfoParams) 
 		Reader:             &VerificationHistoryInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -383,17 +574,16 @@ func (a *Client) VerificationHistoryInfo(params *VerificationHistoryInfoParams) 
 }
 
 /*
-  VerificationHistoryList contacts verification history list
+VerificationHistoryList contacts verification history list 0355
 
-  Inquiring a list of history verifications with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: confirmed, action, deactivation, created, failed, name, comment, updated, status
+Inquiring a list of history verifications with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: confirmed, action, deactivation, created, failed, name, comment, updated, status
 */
-func (a *Client) VerificationHistoryList(params *VerificationHistoryListParams) (*VerificationHistoryListOK, error) {
+func (a *Client) VerificationHistoryList(params *VerificationHistoryListParams, opts ...ClientOption) (*VerificationHistoryListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewVerificationHistoryListParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "verificationHistoryList",
 		Method:             "POST",
 		PathPattern:        "/contact/verification/history/_search",
@@ -404,7 +594,12 @@ func (a *Client) VerificationHistoryList(params *VerificationHistoryListParams) 
 		Reader:             &VerificationHistoryListReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -419,17 +614,16 @@ func (a *Client) VerificationHistoryList(params *VerificationHistoryListParams) 
 }
 
 /*
-  VerificationInfo contacts verification info
+VerificationInfo contacts verification info 0344
 
-  Inquiring the data for the specified verification.
+Inquiring the data for the specified verification.
 */
-func (a *Client) VerificationInfo(params *VerificationInfoParams) (*VerificationInfoOK, error) {
+func (a *Client) VerificationInfo(params *VerificationInfoParams, opts ...ClientOption) (*VerificationInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewVerificationInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "verificationInfo",
 		Method:             "GET",
 		PathPattern:        "/contact/{id}/verification",
@@ -440,7 +634,12 @@ func (a *Client) VerificationInfo(params *VerificationInfoParams) (*Verification
 		Reader:             &VerificationInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -455,17 +654,16 @@ func (a *Client) VerificationInfo(params *VerificationInfoParams) (*Verification
 }
 
 /*
-  VerificationInfoWithReference contacts verification info
+VerificationInfoWithReference contacts verification info 0344
 
-  Inquiring the data for the specified verification.
+Inquiring the data for the specified verification.
 */
-func (a *Client) VerificationInfoWithReference(params *VerificationInfoWithReferenceParams) (*VerificationInfoWithReferenceOK, error) {
+func (a *Client) VerificationInfoWithReference(params *VerificationInfoWithReferenceParams, opts ...ClientOption) (*VerificationInfoWithReferenceOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewVerificationInfoWithReferenceParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "verificationInfoWithReference",
 		Method:             "GET",
 		PathPattern:        "/contact/verification",
@@ -476,7 +674,12 @@ func (a *Client) VerificationInfoWithReference(params *VerificationInfoWithRefer
 		Reader:             &VerificationInfoWithReferenceReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -491,17 +694,16 @@ func (a *Client) VerificationInfoWithReference(params *VerificationInfoWithRefer
 }
 
 /*
-  VerificationList contacts verification list
+VerificationList contacts verification list 0345
 
-  Inquiring a list of contact vrifications with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: confirmed, action, deactivation, created, failed, name, comment, updated, status.
+Inquiring a list of contact verifications with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: confirmed, action, deactivation, created, failed, name, comment, updated, status.
 */
-func (a *Client) VerificationList(params *VerificationListParams) (*VerificationListOK, error) {
+func (a *Client) VerificationList(params *VerificationListParams, opts ...ClientOption) (*VerificationListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewVerificationListParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "verificationList",
 		Method:             "POST",
 		PathPattern:        "/contact/verification/_search",
@@ -512,7 +714,12 @@ func (a *Client) VerificationList(params *VerificationListParams) (*Verification
 		Reader:             &VerificationListReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -527,17 +734,16 @@ func (a *Client) VerificationList(params *VerificationListParams) (*Verification
 }
 
 /*
-  VerificationResendEmail contacts verification resend email
+VerificationResendEmail contacts verification resend email 0349
 
-  Resending the email for an existing verification.
+Resending the email for an existing verification.
 */
-func (a *Client) VerificationResendEmail(params *VerificationResendEmailParams) (*VerificationResendEmailOK, error) {
+func (a *Client) VerificationResendEmail(params *VerificationResendEmailParams, opts ...ClientOption) (*VerificationResendEmailOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewVerificationResendEmailParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "verificationResendEmail",
 		Method:             "PUT",
 		PathPattern:        "/contact/{id}/verification/_resendEmail",
@@ -548,7 +754,12 @@ func (a *Client) VerificationResendEmail(params *VerificationResendEmailParams) 
 		Reader:             &VerificationResendEmailReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}

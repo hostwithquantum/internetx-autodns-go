@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -19,31 +20,34 @@ import (
 // swagger:model VirtualNameServerGroup
 type VirtualNameServerGroup struct {
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// The custom label for the group
+	// The unique id of the nsVirtualGroup
+	ID int32 `json:"id,omitempty"`
+
+	// Custom name of the name server group.
 	Name string `json:"name,omitempty"`
 
-	// The name servers of the group.
+	// The nameservers that belong to the group.
 	NameServers []*VirtualNameServer `json:"nameServers"`
 
-	// The owner of the object.
+	// The object owner.
 	Owner *BasicUser `json:"owner,omitempty"`
 
-	// The custom label for the group
-	// Required: true
-	SystemNameServerGroup *PhysicalNameServerGroup `json:"systemNameServerGroup"`
+	// The group of physical name servers responsible for this virtual name server group.
+	SystemNameServerGroup *PhysicalNameServerGroup `json:"systemNameServerGroup,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The updating user of the object.
+	// User who performed the last update.
 	Updater *BasicUser `json:"updater,omitempty"`
 
-	// The useDefaultIps
+	// Use default ip addresses. Default value = false
+	// Example: false
 	UseDefaultIps bool `json:"useDefaultIps,omitempty"`
 }
 
@@ -82,7 +86,6 @@ func (m *VirtualNameServerGroup) Validate(formats strfmt.Registry) error {
 }
 
 func (m *VirtualNameServerGroup) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -95,7 +98,6 @@ func (m *VirtualNameServerGroup) validateCreated(formats strfmt.Registry) error 
 }
 
 func (m *VirtualNameServerGroup) validateNameServers(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.NameServers) { // not required
 		return nil
 	}
@@ -109,6 +111,8 @@ func (m *VirtualNameServerGroup) validateNameServers(formats strfmt.Registry) er
 			if err := m.NameServers[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("nameServers" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nameServers" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -120,7 +124,6 @@ func (m *VirtualNameServerGroup) validateNameServers(formats strfmt.Registry) er
 }
 
 func (m *VirtualNameServerGroup) validateOwner(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -129,6 +132,8 @@ func (m *VirtualNameServerGroup) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -138,15 +143,16 @@ func (m *VirtualNameServerGroup) validateOwner(formats strfmt.Registry) error {
 }
 
 func (m *VirtualNameServerGroup) validateSystemNameServerGroup(formats strfmt.Registry) error {
-
-	if err := validate.Required("systemNameServerGroup", "body", m.SystemNameServerGroup); err != nil {
-		return err
+	if swag.IsZero(m.SystemNameServerGroup) { // not required
+		return nil
 	}
 
 	if m.SystemNameServerGroup != nil {
 		if err := m.SystemNameServerGroup.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("systemNameServerGroup")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("systemNameServerGroup")
 			}
 			return err
 		}
@@ -156,7 +162,6 @@ func (m *VirtualNameServerGroup) validateSystemNameServerGroup(formats strfmt.Re
 }
 
 func (m *VirtualNameServerGroup) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -169,7 +174,6 @@ func (m *VirtualNameServerGroup) validateUpdated(formats strfmt.Registry) error 
 }
 
 func (m *VirtualNameServerGroup) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -178,6 +182,122 @@ func (m *VirtualNameServerGroup) validateUpdater(formats strfmt.Registry) error 
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this virtual name server group based on the context it is used
+func (m *VirtualNameServerGroup) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateNameServers(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSystemNameServerGroup(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *VirtualNameServerGroup) contextValidateNameServers(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.NameServers); i++ {
+
+		if m.NameServers[i] != nil {
+
+			if swag.IsZero(m.NameServers[i]) { // not required
+				return nil
+			}
+
+			if err := m.NameServers[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("nameServers" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nameServers" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *VirtualNameServerGroup) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *VirtualNameServerGroup) contextValidateSystemNameServerGroup(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.SystemNameServerGroup != nil {
+
+		if swag.IsZero(m.SystemNameServerGroup) { // not required
+			return nil
+		}
+
+		if err := m.SystemNameServerGroup.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("systemNameServerGroup")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("systemNameServerGroup")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *VirtualNameServerGroup) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}

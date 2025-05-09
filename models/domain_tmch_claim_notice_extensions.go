@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -51,7 +53,6 @@ func (m *DomainTmchClaimNoticeExtensions) Validate(formats strfmt.Registry) erro
 }
 
 func (m *DomainTmchClaimNoticeExtensions) validateConfirmed(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Confirmed) { // not required
 		return nil
 	}
@@ -64,7 +65,6 @@ func (m *DomainTmchClaimNoticeExtensions) validateConfirmed(formats strfmt.Regis
 }
 
 func (m *DomainTmchClaimNoticeExtensions) validateNotAfter(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.NotAfter) { // not required
 		return nil
 	}
@@ -73,6 +73,11 @@ func (m *DomainTmchClaimNoticeExtensions) validateNotAfter(formats strfmt.Regist
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this domain tmch claim notice extensions based on context it is used
+func (m *DomainTmchClaimNoticeExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

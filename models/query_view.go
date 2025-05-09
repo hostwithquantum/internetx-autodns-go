@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,20 +19,23 @@ import (
 // swagger:model QueryView
 type QueryView struct {
 
-	// children
+	// Query subusers. Default value=false
+	// Example: false
 	Children bool `json:"children,omitempty"`
 
-	// from
+	// End Date - Required for Historical Task
+	// Example: 2021-01-01 00:00:00
 	// Format: date-time
 	From strfmt.DateTime `json:"from,omitempty"`
 
-	// limit
+	// Maximum number of objects to be displayed.
 	Limit int32 `json:"limit,omitempty"`
 
-	// offset
+	// Defines the starting position of the returned result.
 	Offset int32 `json:"offset,omitempty"`
 
-	// to
+	// Start Date - Required for Historical Task.
+	// Example: 2022-01-01 00:00:00
 	// Format: date-time
 	To strfmt.DateTime `json:"to,omitempty"`
 }
@@ -54,7 +59,6 @@ func (m *QueryView) Validate(formats strfmt.Registry) error {
 }
 
 func (m *QueryView) validateFrom(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.From) { // not required
 		return nil
 	}
@@ -67,7 +71,6 @@ func (m *QueryView) validateFrom(formats strfmt.Registry) error {
 }
 
 func (m *QueryView) validateTo(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.To) { // not required
 		return nil
 	}
@@ -76,6 +79,11 @@ func (m *QueryView) validateTo(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this query view based on context it is used
+func (m *QueryView) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

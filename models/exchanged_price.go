@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -19,64 +20,88 @@ import (
 // swagger:model ExchangedPrice
 type ExchangedPrice struct {
 
-	// Lorem Ipum
+	// Amount
 	Amount float64 `json:"amount,omitempty"`
 
-	// Lorem Ipum
+	// Comments
 	Comment string `json:"comment,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// Lorem Ipsum
-	// Required: true
-	Currency *string `json:"currency"`
+	// Used currency
+	// Example: EUR
+	Currency string `json:"currency,omitempty"`
 
-	// Lorem Ipum
-	Customer *Customer `json:"customer,omitempty"`
+	// Customer
+	Customer *GenericCustomer `json:"customer,omitempty"`
 
-	// Lorem Ipum
+	// Indicates if price discountable is possible
 	Discountable bool `json:"discountable,omitempty"`
 
 	// The exchange fee if the price currency does not match the billing currency
 	ExchangeFee float32 `json:"exchangeFee,omitempty"`
 
-	// Lorem Ipum
+	// from
+	// Format: date-time
+	From strfmt.DateTime `json:"from,omitempty"`
+
+	// The unique identifier of the price
+	// Example: 1
+	ID int32 `json:"id,omitempty"`
+
+	// Id of the created log
 	LogID int64 `json:"logId,omitempty"`
 
-	// Lorem Ipum
+	// new price
+	NewPrice *ExchangedPrice `json:"newPrice,omitempty"`
+
+	// Normal price
 	NormalPrice *ExchangedPrice `json:"normalPrice,omitempty"`
 
-	// The owner of the object.
+	// The object owner.
 	Owner *BasicUser `json:"owner,omitempty"`
 
-	// Lorem Ipum
+	// The activity period of a product
 	Period *TimePeriod `json:"period,omitempty"`
 
-	// Lorem Ipum
+	// The price change
+	PriceChange *PriceChange `json:"priceChange,omitempty"`
+
+	// Price condition
 	PriceConditions []*PriceServiceEntity `json:"priceConditions"`
 
-	// Lorem Ipum
+	// The related priceList label
+	PriceList *PriceList `json:"priceList,omitempty"`
+
+	// Priority
 	Priority PriorityConstants `json:"priority,omitempty"`
 
 	// The exchange rate between account and price
 	Rate float64 `json:"rate,omitempty"`
 
-	// Lorem Ipum
+	// Refund
 	Refund int32 `json:"refund,omitempty"`
 
-	// Lorem Ipum
+	// TaskComment
+	TaskComment string `json:"taskComment,omitempty"`
+
+	// The price type
 	Type PriceTypeConstants `json:"type,omitempty"`
 
-	// The updated date.
+	// until
+	// Format: date-time
+	Until strfmt.DateTime `json:"until,omitempty"`
+
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The updating user of the object.
+	// User who performed the last update.
 	Updater *BasicUser `json:"updater,omitempty"`
 
-	// Lorem Ipum
+	// Date until the price is valid
 	// Format: date-time
 	Valid strfmt.DateTime `json:"valid,omitempty"`
 
@@ -95,11 +120,15 @@ func (m *ExchangedPrice) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateCurrency(formats); err != nil {
+	if err := m.validateCustomer(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateCustomer(formats); err != nil {
+	if err := m.validateFrom(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateNewPrice(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -115,7 +144,15 @@ func (m *ExchangedPrice) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validatePriceChange(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validatePriceConditions(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePriceList(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -124,6 +161,10 @@ func (m *ExchangedPrice) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateUntil(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -146,7 +187,6 @@ func (m *ExchangedPrice) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ExchangedPrice) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -158,17 +198,7 @@ func (m *ExchangedPrice) validateCreated(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ExchangedPrice) validateCurrency(formats strfmt.Registry) error {
-
-	if err := validate.Required("currency", "body", m.Currency); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *ExchangedPrice) validateCustomer(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Customer) { // not required
 		return nil
 	}
@@ -177,6 +207,39 @@ func (m *ExchangedPrice) validateCustomer(formats strfmt.Registry) error {
 		if err := m.Customer.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("customer")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("customer")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ExchangedPrice) validateFrom(formats strfmt.Registry) error {
+	if swag.IsZero(m.From) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("from", "body", "date-time", m.From.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ExchangedPrice) validateNewPrice(formats strfmt.Registry) error {
+	if swag.IsZero(m.NewPrice) { // not required
+		return nil
+	}
+
+	if m.NewPrice != nil {
+		if err := m.NewPrice.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("newPrice")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("newPrice")
 			}
 			return err
 		}
@@ -186,7 +249,6 @@ func (m *ExchangedPrice) validateCustomer(formats strfmt.Registry) error {
 }
 
 func (m *ExchangedPrice) validateNormalPrice(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.NormalPrice) { // not required
 		return nil
 	}
@@ -195,6 +257,8 @@ func (m *ExchangedPrice) validateNormalPrice(formats strfmt.Registry) error {
 		if err := m.NormalPrice.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("normalPrice")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("normalPrice")
 			}
 			return err
 		}
@@ -204,7 +268,6 @@ func (m *ExchangedPrice) validateNormalPrice(formats strfmt.Registry) error {
 }
 
 func (m *ExchangedPrice) validateOwner(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -213,6 +276,8 @@ func (m *ExchangedPrice) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -222,7 +287,6 @@ func (m *ExchangedPrice) validateOwner(formats strfmt.Registry) error {
 }
 
 func (m *ExchangedPrice) validatePeriod(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Period) { // not required
 		return nil
 	}
@@ -231,6 +295,27 @@ func (m *ExchangedPrice) validatePeriod(formats strfmt.Registry) error {
 		if err := m.Period.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("period")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("period")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ExchangedPrice) validatePriceChange(formats strfmt.Registry) error {
+	if swag.IsZero(m.PriceChange) { // not required
+		return nil
+	}
+
+	if m.PriceChange != nil {
+		if err := m.PriceChange.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("priceChange")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("priceChange")
 			}
 			return err
 		}
@@ -240,7 +325,6 @@ func (m *ExchangedPrice) validatePeriod(formats strfmt.Registry) error {
 }
 
 func (m *ExchangedPrice) validatePriceConditions(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.PriceConditions) { // not required
 		return nil
 	}
@@ -254,6 +338,8 @@ func (m *ExchangedPrice) validatePriceConditions(formats strfmt.Registry) error 
 			if err := m.PriceConditions[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("priceConditions" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("priceConditions" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -264,8 +350,26 @@ func (m *ExchangedPrice) validatePriceConditions(formats strfmt.Registry) error 
 	return nil
 }
 
-func (m *ExchangedPrice) validatePriority(formats strfmt.Registry) error {
+func (m *ExchangedPrice) validatePriceList(formats strfmt.Registry) error {
+	if swag.IsZero(m.PriceList) { // not required
+		return nil
+	}
 
+	if m.PriceList != nil {
+		if err := m.PriceList.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("priceList")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("priceList")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ExchangedPrice) validatePriority(formats strfmt.Registry) error {
 	if swag.IsZero(m.Priority) { // not required
 		return nil
 	}
@@ -273,6 +377,8 @@ func (m *ExchangedPrice) validatePriority(formats strfmt.Registry) error {
 	if err := m.Priority.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("priority")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("priority")
 		}
 		return err
 	}
@@ -281,7 +387,6 @@ func (m *ExchangedPrice) validatePriority(formats strfmt.Registry) error {
 }
 
 func (m *ExchangedPrice) validateType(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Type) { // not required
 		return nil
 	}
@@ -289,6 +394,8 @@ func (m *ExchangedPrice) validateType(formats strfmt.Registry) error {
 	if err := m.Type.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
 		}
 		return err
 	}
@@ -296,8 +403,19 @@ func (m *ExchangedPrice) validateType(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ExchangedPrice) validateUpdated(formats strfmt.Registry) error {
+func (m *ExchangedPrice) validateUntil(formats strfmt.Registry) error {
+	if swag.IsZero(m.Until) { // not required
+		return nil
+	}
 
+	if err := validate.FormatOf("until", "body", "date-time", m.Until.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ExchangedPrice) validateUpdated(formats strfmt.Registry) error {
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -310,7 +428,6 @@ func (m *ExchangedPrice) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *ExchangedPrice) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -319,6 +436,8 @@ func (m *ExchangedPrice) validateUpdater(formats strfmt.Registry) error {
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}
@@ -328,13 +447,295 @@ func (m *ExchangedPrice) validateUpdater(formats strfmt.Registry) error {
 }
 
 func (m *ExchangedPrice) validateValid(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Valid) { // not required
 		return nil
 	}
 
 	if err := validate.FormatOf("valid", "body", "date-time", m.Valid.String(), formats); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this exchanged price based on the context it is used
+func (m *ExchangedPrice) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateCustomer(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateNewPrice(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateNormalPrice(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePeriod(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePriceChange(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePriceConditions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePriceList(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePriority(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ExchangedPrice) contextValidateCustomer(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Customer != nil {
+
+		if swag.IsZero(m.Customer) { // not required
+			return nil
+		}
+
+		if err := m.Customer.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("customer")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("customer")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ExchangedPrice) contextValidateNewPrice(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.NewPrice != nil {
+
+		if swag.IsZero(m.NewPrice) { // not required
+			return nil
+		}
+
+		if err := m.NewPrice.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("newPrice")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("newPrice")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ExchangedPrice) contextValidateNormalPrice(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.NormalPrice != nil {
+
+		if swag.IsZero(m.NormalPrice) { // not required
+			return nil
+		}
+
+		if err := m.NormalPrice.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("normalPrice")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("normalPrice")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ExchangedPrice) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ExchangedPrice) contextValidatePeriod(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Period != nil {
+
+		if swag.IsZero(m.Period) { // not required
+			return nil
+		}
+
+		if err := m.Period.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("period")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("period")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ExchangedPrice) contextValidatePriceChange(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.PriceChange != nil {
+
+		if swag.IsZero(m.PriceChange) { // not required
+			return nil
+		}
+
+		if err := m.PriceChange.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("priceChange")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("priceChange")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ExchangedPrice) contextValidatePriceConditions(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.PriceConditions); i++ {
+
+		if m.PriceConditions[i] != nil {
+
+			if swag.IsZero(m.PriceConditions[i]) { // not required
+				return nil
+			}
+
+			if err := m.PriceConditions[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("priceConditions" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("priceConditions" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ExchangedPrice) contextValidatePriceList(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.PriceList != nil {
+
+		if swag.IsZero(m.PriceList) { // not required
+			return nil
+		}
+
+		if err := m.PriceList.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("priceList")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("priceList")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ExchangedPrice) contextValidatePriority(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Priority) { // not required
+		return nil
+	}
+
+	if err := m.Priority.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("priority")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("priority")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *ExchangedPrice) contextValidateType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	if err := m.Type.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *ExchangedPrice) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
 	}
 
 	return nil

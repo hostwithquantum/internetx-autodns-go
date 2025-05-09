@@ -6,10 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"github.com/go-openapi/errors"
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // Custom custom
@@ -18,30 +18,16 @@ import (
 type Custom struct {
 
 	// The key of the additional data of a booking item
-	// Required: true
-	Key *string `json:"key"`
+	Key string `json:"key,omitempty"`
 }
 
 // Validate validates this custom
 func (m *Custom) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateKey(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 
-func (m *Custom) validateKey(formats strfmt.Registry) error {
-
-	if err := validate.Required("key", "body", m.Key); err != nil {
-		return err
-	}
-
+// ContextValidate validates this custom based on context it is used
+func (m *Custom) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

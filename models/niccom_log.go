@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -18,26 +20,30 @@ import (
 type NiccomLog struct {
 
 	// The created date of the niccom log.
-	// Format: date-time
-	Created strfmt.DateTime `json:"created,omitempty"`
+	// Required: true
+	Created *int64 `json:"created"`
 
 	// The jobId of the niccom log.
 	JobID int64 `json:"jobId,omitempty"`
 
 	// The name of the niccom log.
-	Name string `json:"name,omitempty"`
+	// Required: true
+	Name *string `json:"name"`
 
 	// The nicTransactionId of the niccom log.
 	NicTransactionID string `json:"nicTransactionId,omitempty"`
 
 	// The source of the niccom log.
-	Source NiccomSourceConstants `json:"source,omitempty"`
+	// Required: true
+	Source *NiccomSourceConstants `json:"source"`
 
 	// The task of the niccom log.
-	Task string `json:"task,omitempty"`
+	// Required: true
+	Task *string `json:"task"`
 
 	// The text of the niccom log.
-	Text string `json:"text,omitempty"`
+	// Required: true
+	Text *string `json:"text"`
 
 	// The vertexId of the niccom log.
 	VertexID int32 `json:"vertexId,omitempty"`
@@ -51,7 +57,19 @@ func (m *NiccomLog) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateSource(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTask(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateText(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -63,11 +81,16 @@ func (m *NiccomLog) Validate(formats strfmt.Registry) error {
 
 func (m *NiccomLog) validateCreated(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Created) { // not required
-		return nil
+	if err := validate.Required("created", "body", m.Created); err != nil {
+		return err
 	}
 
-	if err := validate.FormatOf("created", "body", "date-time", m.Created.String(), formats); err != nil {
+	return nil
+}
+
+func (m *NiccomLog) validateName(formats strfmt.Registry) error {
+
+	if err := validate.Required("name", "body", m.Name); err != nil {
 		return err
 	}
 
@@ -76,15 +99,72 @@ func (m *NiccomLog) validateCreated(formats strfmt.Registry) error {
 
 func (m *NiccomLog) validateSource(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Source) { // not required
-		return nil
+	if err := validate.Required("source", "body", m.Source); err != nil {
+		return err
 	}
 
-	if err := m.Source.Validate(formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("source")
-		}
+	if err := validate.Required("source", "body", m.Source); err != nil {
 		return err
+	}
+
+	if m.Source != nil {
+		if err := m.Source.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("source")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("source")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *NiccomLog) validateTask(formats strfmt.Registry) error {
+
+	if err := validate.Required("task", "body", m.Task); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *NiccomLog) validateText(formats strfmt.Registry) error {
+
+	if err := validate.Required("text", "body", m.Text); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this niccom log based on the context it is used
+func (m *NiccomLog) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateSource(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *NiccomLog) contextValidateSource(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Source != nil {
+
+		if err := m.Source.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("source")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("source")
+			}
+			return err
+		}
 	}
 
 	return nil

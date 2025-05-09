@@ -9,12 +9,38 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime"
+	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new zone tasks API client.
 func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new zone tasks API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new zone tasks API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -25,127 +51,111 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
 // ClientService is the interface for Client methods
 type ClientService interface {
-	DomainAddDomainSafe(params *DomainAddDomainSafeParams) (*DomainAddDomainSafeOK, error)
+	ZoneAddDomainSafe(params *ZoneAddDomainSafeParams, opts ...ClientOption) (*ZoneAddDomainSafeOK, error)
 
-	DomainDeleteDomainSafe(params *DomainDeleteDomainSafeParams) (*DomainDeleteDomainSafeOK, error)
+	ZoneAxfr(params *ZoneAxfrParams, opts ...ClientOption) (*ZoneAxfrOK, error)
 
-	ZoneAxfr(params *ZoneAxfrParams) (*ZoneAxfrOK, error)
+	ZoneBulkPatches(params *ZoneBulkPatchesParams, opts ...ClientOption) (*ZoneBulkPatchesOK, error)
 
-	ZoneCopy(params *ZoneCopyParams) (*ZoneCopyOK, error)
+	ZoneCopy(params *ZoneCopyParams, opts ...ClientOption) (*ZoneCopyOK, error)
 
-	ZoneCreate(params *ZoneCreateParams) (*ZoneCreateOK, error)
+	ZoneCreate(params *ZoneCreateParams, opts ...ClientOption) (*ZoneCreateOK, error)
 
-	ZoneDelete(params *ZoneDeleteParams) (*ZoneDeleteOK, error)
+	ZoneCreates(params *ZoneCreatesParams, opts ...ClientOption) (*ZoneCreatesOK, error)
 
-	ZoneHistoryInfo(params *ZoneHistoryInfoParams) (*ZoneHistoryInfoOK, error)
+	ZoneDelete(params *ZoneDeleteParams, opts ...ClientOption) (*ZoneDeleteOK, error)
 
-	ZoneHistoryList(params *ZoneHistoryListParams) (*ZoneHistoryListOK, error)
+	ZoneDeleteDomainSafe(params *ZoneDeleteDomainSafeParams, opts ...ClientOption) (*ZoneDeleteDomainSafeOK, error)
 
-	ZoneImport(params *ZoneImportParams) (*ZoneImportOK, error)
+	ZoneDeletes(params *ZoneDeletesParams, opts ...ClientOption) (*ZoneDeletesOK, error)
 
-	ZoneInfo(params *ZoneInfoParams) (*ZoneInfoOK, error)
+	ZoneHistoryInfo(params *ZoneHistoryInfoParams, opts ...ClientOption) (*ZoneHistoryInfoOK, error)
 
-	ZoneList(params *ZoneListParams) (*ZoneListOK, error)
+	ZoneHistoryList(params *ZoneHistoryListParams, opts ...ClientOption) (*ZoneHistoryListOK, error)
 
-	ZoneMigrate(params *ZoneMigrateParams) (*ZoneMigrateOK, error)
+	ZoneImport(params *ZoneImportParams, opts ...ClientOption) (*ZoneImportOK, error)
 
-	ZonePatch(params *ZonePatchParams) (*ZonePatchOK, error)
+	ZoneImports(params *ZoneImportsParams, opts ...ClientOption) (*ZoneImportsOK, error)
 
-	ZoneStream(params *ZoneStreamParams) (*ZoneStreamOK, error)
+	ZoneInfo(params *ZoneInfoParams, opts ...ClientOption) (*ZoneInfoOK, error)
 
-	ZoneUpdate(params *ZoneUpdateParams) (*ZoneUpdateOK, error)
+	ZoneList(params *ZoneListParams, opts ...ClientOption) (*ZoneListOK, error)
 
-	ZoneUpdateComment(params *ZoneUpdateCommentParams) (*ZoneUpdateCommentOK, error)
+	ZoneMigrate(params *ZoneMigrateParams, opts ...ClientOption) (*ZoneMigrateOK, error)
+
+	ZonePatch(params *ZonePatchParams, opts ...ClientOption) (*ZonePatchOK, error)
+
+	ZoneRestore(params *ZoneRestoreParams, opts ...ClientOption) (*ZoneRestoreOK, error)
+
+	ZoneRestores(params *ZoneRestoresParams, opts ...ClientOption) (*ZoneRestoresOK, error)
+
+	ZoneStream(params *ZoneStreamParams, opts ...ClientOption) (*ZoneStreamOK, error)
+
+	ZoneUpdate(params *ZoneUpdateParams, opts ...ClientOption) (*ZoneUpdateOK, error)
+
+	ZoneUpdateComment(params *ZoneUpdateCommentParams, opts ...ClientOption) (*ZoneUpdateCommentOK, error)
+
+	ZoneUpdateComments(params *ZoneUpdateCommentsParams, opts ...ClientOption) (*ZoneUpdateCommentsOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
 
 /*
-  DomainAddDomainSafe saves object create
+ZoneAddDomainSafe saves object create 0601
 
-  Adding the zone to the domain safe
+Adding the zone to the domain safe
 */
-func (a *Client) DomainAddDomainSafe(params *DomainAddDomainSafeParams) (*DomainAddDomainSafeOK, error) {
+func (a *Client) ZoneAddDomainSafe(params *ZoneAddDomainSafeParams, opts ...ClientOption) (*ZoneAddDomainSafeOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewDomainAddDomainSafeParams()
+		params = NewZoneAddDomainSafeParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "domainAddDomainSafe",
+	op := &runtime.ClientOperation{
+		ID:                 "zoneAddDomainSafe",
 		Method:             "PUT",
 		PathPattern:        "/zone/{name}/{systemNameServer}/_domainSafe",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &DomainAddDomainSafeReader{formats: a.formats},
+		Reader:             &ZoneAddDomainSafeReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*DomainAddDomainSafeOK)
+	success, ok := result.(*ZoneAddDomainSafeOK)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for domainAddDomainSafe: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	msg := fmt.Sprintf("unexpected success response for zoneAddDomainSafe: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
 /*
-  DomainDeleteDomainSafe saves object delete
+ZoneAxfr zones axfr 0210
 
-  Deleting the zone from the domain safe
+Inquiring the AXFR data for the specified zone.
 */
-func (a *Client) DomainDeleteDomainSafe(params *DomainDeleteDomainSafeParams) (*DomainDeleteDomainSafeOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewDomainDeleteDomainSafeParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "domainDeleteDomainSafe",
-		Method:             "DELETE",
-		PathPattern:        "/zone/{name}/{systemNameServer}/_domainSafe",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &DomainDeleteDomainSafeReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*DomainDeleteDomainSafeOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for domainDeleteDomainSafe: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-  ZoneAxfr zones axfr
-
-  Inquiring the AXFR data for the specified zone.
-*/
-func (a *Client) ZoneAxfr(params *ZoneAxfrParams) (*ZoneAxfrOK, error) {
+func (a *Client) ZoneAxfr(params *ZoneAxfrParams, opts ...ClientOption) (*ZoneAxfrOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewZoneAxfrParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "zoneAxfr",
 		Method:             "GET",
 		PathPattern:        "/zone/{name}/{systemNameServer}/_axfr",
@@ -156,7 +166,12 @@ func (a *Client) ZoneAxfr(params *ZoneAxfrParams) (*ZoneAxfrOK, error) {
 		Reader:             &ZoneAxfrReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -171,17 +186,56 @@ func (a *Client) ZoneAxfr(params *ZoneAxfrParams) (*ZoneAxfrOK, error) {
 }
 
 /*
-  ZoneCopy zones update
+ZoneBulkPatches updates zones 0202001
 
-  Copying an existing zone.
+Updating several existing zones with one request.
 */
-func (a *Client) ZoneCopy(params *ZoneCopyParams) (*ZoneCopyOK, error) {
+func (a *Client) ZoneBulkPatches(params *ZoneBulkPatchesParams, opts ...ClientOption) (*ZoneBulkPatchesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewZoneBulkPatchesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "zoneBulkPatches",
+		Method:             "PATCH",
+		PathPattern:        "/bulk/zone",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ZoneBulkPatchesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*ZoneBulkPatchesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for zoneBulkPatches: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+ZoneCopy zones update 0212
+
+Copying an existing zone.
+*/
+func (a *Client) ZoneCopy(params *ZoneCopyParams, opts ...ClientOption) (*ZoneCopyOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewZoneCopyParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "zoneCopy",
 		Method:             "PUT",
 		PathPattern:        "/zone/{name}/{systemNameServer}/_copy",
@@ -192,7 +246,12 @@ func (a *Client) ZoneCopy(params *ZoneCopyParams) (*ZoneCopyOK, error) {
 		Reader:             &ZoneCopyReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -207,17 +266,16 @@ func (a *Client) ZoneCopy(params *ZoneCopyParams) (*ZoneCopyOK, error) {
 }
 
 /*
-  ZoneCreate zones create
+ZoneCreate zones create 0201
 
-  Creating a zone.
+Creating a zone.
 */
-func (a *Client) ZoneCreate(params *ZoneCreateParams) (*ZoneCreateOK, error) {
+func (a *Client) ZoneCreate(params *ZoneCreateParams, opts ...ClientOption) (*ZoneCreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewZoneCreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "zoneCreate",
 		Method:             "POST",
 		PathPattern:        "/zone",
@@ -228,7 +286,12 @@ func (a *Client) ZoneCreate(params *ZoneCreateParams) (*ZoneCreateOK, error) {
 		Reader:             &ZoneCreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -243,17 +306,56 @@ func (a *Client) ZoneCreate(params *ZoneCreateParams) (*ZoneCreateOK, error) {
 }
 
 /*
-  ZoneDelete zones delete
+ZoneCreates creates zones 0201
 
-  Deleting an existing zone.
+Creating several zones with one request.
 */
-func (a *Client) ZoneDelete(params *ZoneDeleteParams) (*ZoneDeleteOK, error) {
+func (a *Client) ZoneCreates(params *ZoneCreatesParams, opts ...ClientOption) (*ZoneCreatesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewZoneCreatesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "zoneCreates",
+		Method:             "POST",
+		PathPattern:        "/bulk/zone",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ZoneCreatesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*ZoneCreatesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for zoneCreates: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+ZoneDelete zones delete 0203
+
+Deleting an existing zone.
+*/
+func (a *Client) ZoneDelete(params *ZoneDeleteParams, opts ...ClientOption) (*ZoneDeleteOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewZoneDeleteParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "zoneDelete",
 		Method:             "DELETE",
 		PathPattern:        "/zone/{name}/{systemNameServer}",
@@ -264,7 +366,12 @@ func (a *Client) ZoneDelete(params *ZoneDeleteParams) (*ZoneDeleteOK, error) {
 		Reader:             &ZoneDeleteReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -279,17 +386,96 @@ func (a *Client) ZoneDelete(params *ZoneDeleteParams) (*ZoneDeleteOK, error) {
 }
 
 /*
-  ZoneHistoryInfo zones history info
+ZoneDeleteDomainSafe saves object delete 0603
 
-  Inquiring the data for the specified log.
+Deleting the zone from the domain safe
 */
-func (a *Client) ZoneHistoryInfo(params *ZoneHistoryInfoParams) (*ZoneHistoryInfoOK, error) {
+func (a *Client) ZoneDeleteDomainSafe(params *ZoneDeleteDomainSafeParams, opts ...ClientOption) (*ZoneDeleteDomainSafeOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewZoneDeleteDomainSafeParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "zoneDeleteDomainSafe",
+		Method:             "DELETE",
+		PathPattern:        "/zone/{name}/{systemNameServer}/_domainSafe",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ZoneDeleteDomainSafeReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*ZoneDeleteDomainSafeOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for zoneDeleteDomainSafe: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+ZoneDeletes deletes zones 0203
+
+Deleting several existing zones with one request.
+*/
+func (a *Client) ZoneDeletes(params *ZoneDeletesParams, opts ...ClientOption) (*ZoneDeletesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewZoneDeletesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "zoneDeletes",
+		Method:             "DELETE",
+		PathPattern:        "/bulk/zone",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ZoneDeletesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*ZoneDeletesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for zoneDeletes: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+ZoneHistoryInfo zones history info 0224
+
+Inquiring the data for the specified log.
+*/
+func (a *Client) ZoneHistoryInfo(params *ZoneHistoryInfoParams, opts ...ClientOption) (*ZoneHistoryInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewZoneHistoryInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "zoneHistoryInfo",
 		Method:             "GET",
 		PathPattern:        "/zone/history/{logId}",
@@ -300,7 +486,12 @@ func (a *Client) ZoneHistoryInfo(params *ZoneHistoryInfoParams) (*ZoneHistoryInf
 		Reader:             &ZoneHistoryInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -315,17 +506,16 @@ func (a *Client) ZoneHistoryInfo(params *ZoneHistoryInfoParams) (*ZoneHistoryInf
 }
 
 /*
-  ZoneHistoryList zones history list
+ZoneHistoryList zones history list 0225
 
-  Inquiring a list of zones history entries with certain details. The following keys can be used for filtering, ordering and inquiring additional data via query parameter: dnssec, created, mainip, secondary1, secondary2, secondary3, secondary4, secondary5, secondary6, secondary7, virtualNameServer, domainsafe, name, comment, updated, action, primary, changed.
+Inquiring a list of zones history entries with certain details. The following keys can be used for filtering, ordering and inquiring additional data via query parameter: dnssec, created, mainip, secondary1, secondary2, secondary3, secondary4, secondary5, secondary6, secondary7, virtualNameServer, domainsafe, name, comment, updated, action, primary, changed.
 */
-func (a *Client) ZoneHistoryList(params *ZoneHistoryListParams) (*ZoneHistoryListOK, error) {
+func (a *Client) ZoneHistoryList(params *ZoneHistoryListParams, opts ...ClientOption) (*ZoneHistoryListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewZoneHistoryListParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "zoneHistoryList",
 		Method:             "POST",
 		PathPattern:        "/zone/history/_search",
@@ -336,7 +526,12 @@ func (a *Client) ZoneHistoryList(params *ZoneHistoryListParams) (*ZoneHistoryLis
 		Reader:             &ZoneHistoryListReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -351,17 +546,16 @@ func (a *Client) ZoneHistoryList(params *ZoneHistoryListParams) (*ZoneHistoryLis
 }
 
 /*
-  ZoneImport zones import
+ZoneImport zones import 0204
 
-  Importing the specified zone.
+Importing the specified zone.
 */
-func (a *Client) ZoneImport(params *ZoneImportParams) (*ZoneImportOK, error) {
+func (a *Client) ZoneImport(params *ZoneImportParams, opts ...ClientOption) (*ZoneImportOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewZoneImportParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "zoneImport",
 		Method:             "POST",
 		PathPattern:        "/zone/{name}/{systemNameServer}/_import",
@@ -372,7 +566,12 @@ func (a *Client) ZoneImport(params *ZoneImportParams) (*ZoneImportOK, error) {
 		Reader:             &ZoneImportReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -387,17 +586,56 @@ func (a *Client) ZoneImport(params *ZoneImportParams) (*ZoneImportOK, error) {
 }
 
 /*
-  ZoneInfo zones info
+ZoneImports imports zones 0204
 
-  Inquiring the data for the specified zone.
+Importing several specified zones with one request.
 */
-func (a *Client) ZoneInfo(params *ZoneInfoParams) (*ZoneInfoOK, error) {
+func (a *Client) ZoneImports(params *ZoneImportsParams, opts ...ClientOption) (*ZoneImportsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewZoneImportsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "zoneImports",
+		Method:             "POST",
+		PathPattern:        "/bulk/zone/_import",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ZoneImportsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*ZoneImportsOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for zoneImports: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+ZoneInfo zones info 0205
+
+Inquiring the data for the specified zone.
+*/
+func (a *Client) ZoneInfo(params *ZoneInfoParams, opts ...ClientOption) (*ZoneInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewZoneInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "zoneInfo",
 		Method:             "GET",
 		PathPattern:        "/zone/{name}/{systemNameServer}",
@@ -408,7 +646,12 @@ func (a *Client) ZoneInfo(params *ZoneInfoParams) (*ZoneInfoOK, error) {
 		Reader:             &ZoneInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -423,17 +666,16 @@ func (a *Client) ZoneInfo(params *ZoneInfoParams) (*ZoneInfoOK, error) {
 }
 
 /*
-  ZoneList zones list
+ZoneList zones list 0205
 
-  Inquiring a list of zones with certain details. The following keys can be used for filtering, ordering and inquiring additional data via query parameter: dnssec, created, mainip, secondary1, secondary2, secondary3, secondary4, secondary5, secondary6, secondary7, virtualNameServer, domainsafe, name, comment, updated, action, primary, changed.
+Inquiring a list of zones with certain details. The following keys can be used for filtering, ordering and inquiring additional data via query parameter: dnssec, created, mainip, secondary1, secondary2, secondary3, secondary4, secondary5, secondary6, secondary7, virtualNameServer, domainsafe, name, comment, updated, action, primary, changed.
 */
-func (a *Client) ZoneList(params *ZoneListParams) (*ZoneListOK, error) {
+func (a *Client) ZoneList(params *ZoneListParams, opts ...ClientOption) (*ZoneListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewZoneListParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "zoneList",
 		Method:             "POST",
 		PathPattern:        "/zone/_search",
@@ -444,7 +686,12 @@ func (a *Client) ZoneList(params *ZoneListParams) (*ZoneListOK, error) {
 		Reader:             &ZoneListReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -459,17 +706,16 @@ func (a *Client) ZoneList(params *ZoneListParams) (*ZoneListOK, error) {
 }
 
 /*
-  ZoneMigrate zones update
+ZoneMigrate zones update 0212
 
-  Copying an existing zone and updating the domain with the new name servers.
+Copying an existing zone and updating the domain with the new name servers.
 */
-func (a *Client) ZoneMigrate(params *ZoneMigrateParams) (*ZoneMigrateOK, error) {
+func (a *Client) ZoneMigrate(params *ZoneMigrateParams, opts ...ClientOption) (*ZoneMigrateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewZoneMigrateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "zoneMigrate",
 		Method:             "PUT",
 		PathPattern:        "/zone/{name}/{systemNameServer}/_migrate",
@@ -480,7 +726,12 @@ func (a *Client) ZoneMigrate(params *ZoneMigrateParams) (*ZoneMigrateOK, error) 
 		Reader:             &ZoneMigrateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -495,17 +746,16 @@ func (a *Client) ZoneMigrate(params *ZoneMigrateParams) (*ZoneMigrateOK, error) 
 }
 
 /*
-  ZonePatch zones update
+ZonePatch zones update 0202001
 
-  Updating an existing zone.
+Updating an existing zone.
 */
-func (a *Client) ZonePatch(params *ZonePatchParams) (*ZonePatchOK, error) {
+func (a *Client) ZonePatch(params *ZonePatchParams, opts ...ClientOption) (*ZonePatchOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewZonePatchParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "zonePatch",
 		Method:             "PATCH",
 		PathPattern:        "/zone/{name}/{systemNameServer}",
@@ -516,7 +766,12 @@ func (a *Client) ZonePatch(params *ZonePatchParams) (*ZonePatchOK, error) {
 		Reader:             &ZonePatchReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -531,17 +786,96 @@ func (a *Client) ZonePatch(params *ZonePatchParams) (*ZonePatchOK, error) {
 }
 
 /*
-  ZoneStream zones stream update
+ZoneRestore zones restore 0226
 
-  Adding or removing records for any zone with the given name.
+Restoring the specified zone.
 */
-func (a *Client) ZoneStream(params *ZoneStreamParams) (*ZoneStreamOK, error) {
+func (a *Client) ZoneRestore(params *ZoneRestoreParams, opts ...ClientOption) (*ZoneRestoreOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewZoneRestoreParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "zoneRestore",
+		Method:             "POST",
+		PathPattern:        "/zone/{name}/{systemNameServer}/_restore",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ZoneRestoreReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*ZoneRestoreOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for zoneRestore: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+ZoneRestores restores zones 0226
+
+Restoring several specified zones with one request.
+*/
+func (a *Client) ZoneRestores(params *ZoneRestoresParams, opts ...ClientOption) (*ZoneRestoresOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewZoneRestoresParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "zoneRestores",
+		Method:             "POST",
+		PathPattern:        "/bulk/zone/_restore",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ZoneRestoresReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*ZoneRestoresOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for zoneRestores: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+ZoneStream zones stream update 0202002
+
+Adding or removing records for any zone with the given name.
+*/
+func (a *Client) ZoneStream(params *ZoneStreamParams, opts ...ClientOption) (*ZoneStreamOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewZoneStreamParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "zoneStream",
 		Method:             "POST",
 		PathPattern:        "/zone/{name}/_stream",
@@ -552,7 +886,12 @@ func (a *Client) ZoneStream(params *ZoneStreamParams) (*ZoneStreamOK, error) {
 		Reader:             &ZoneStreamReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -567,17 +906,16 @@ func (a *Client) ZoneStream(params *ZoneStreamParams) (*ZoneStreamOK, error) {
 }
 
 /*
-  ZoneUpdate zones update
+ZoneUpdate zones update 0202
 
-  Updating an existing zone.
+Updating an existing zone.
 */
-func (a *Client) ZoneUpdate(params *ZoneUpdateParams) (*ZoneUpdateOK, error) {
+func (a *Client) ZoneUpdate(params *ZoneUpdateParams, opts ...ClientOption) (*ZoneUpdateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewZoneUpdateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "zoneUpdate",
 		Method:             "PUT",
 		PathPattern:        "/zone/{name}/{systemNameServer}",
@@ -588,7 +926,12 @@ func (a *Client) ZoneUpdate(params *ZoneUpdateParams) (*ZoneUpdateOK, error) {
 		Reader:             &ZoneUpdateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -603,17 +946,16 @@ func (a *Client) ZoneUpdate(params *ZoneUpdateParams) (*ZoneUpdateOK, error) {
 }
 
 /*
-  ZoneUpdateComment zones comment update
+ZoneUpdateComment zones comment update 0202004
 
-  Updating an existing zone.
+Updating an existing zone.
 */
-func (a *Client) ZoneUpdateComment(params *ZoneUpdateCommentParams) (*ZoneUpdateCommentOK, error) {
+func (a *Client) ZoneUpdateComment(params *ZoneUpdateCommentParams, opts ...ClientOption) (*ZoneUpdateCommentOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewZoneUpdateCommentParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "zoneUpdateComment",
 		Method:             "PUT",
 		PathPattern:        "/zone/{name}/{systemNameServer}/_comment",
@@ -624,7 +966,12 @@ func (a *Client) ZoneUpdateComment(params *ZoneUpdateCommentParams) (*ZoneUpdate
 		Reader:             &ZoneUpdateCommentReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -635,6 +982,46 @@ func (a *Client) ZoneUpdateComment(params *ZoneUpdateCommentParams) (*ZoneUpdate
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for zoneUpdateComment: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+ZoneUpdateComments updates zone comments 0202004
+
+Updating several existing zone comments with one request.
+*/
+func (a *Client) ZoneUpdateComments(params *ZoneUpdateCommentsParams, opts ...ClientOption) (*ZoneUpdateCommentsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewZoneUpdateCommentsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "zoneUpdateComments",
+		Method:             "PUT",
+		PathPattern:        "/bulk/zone/_comment",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ZoneUpdateCommentsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*ZoneUpdateCommentsOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for zoneUpdateComments: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -15,15 +17,21 @@ import (
 // swagger:model CurrencyRate
 type CurrencyRate struct {
 
-	// The currency of the exchange
+	// Currency of the customer's prepayment account.
+	// Example: EUR
 	Currency string `json:"currency,omitempty"`
 
-	// the rate of the exchange
+	// Exchange rate.
 	Rate float64 `json:"rate,omitempty"`
 }
 
 // Validate validates this currency rate
 func (m *CurrencyRate) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this currency rate based on context it is used
+func (m *CurrencyRate) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

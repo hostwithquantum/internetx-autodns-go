@@ -9,12 +9,38 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime"
+	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new domain studio API client.
 func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new domain studio API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new domain studio API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -25,25 +51,31 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
 // ClientService is the interface for Client methods
 type ClientService interface {
-	DomainSearch(params *DomainSearchParams) (*DomainSearchOK, error)
+	DomainSearch(params *DomainSearchParams, opts ...ClientOption) (*DomainSearchOK, error)
+
+	DomainstudiaSocalMediaCheck(params *DomainstudiaSocalMediaCheckParams, opts ...ClientOption) (*DomainstudiaSocalMediaCheckOK, error)
+
+	DomainstudioClassify(params *DomainstudioClassifyParams, opts ...ClientOption) (*DomainstudioClassifyOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
 
 /*
-  DomainSearch powerfuls search api for free domains premium domains and alternate domain names
+DomainSearch powerfuls search api for free domains premium domains and alternate domain names 0108001
 
-  Configurable search results
+Configurable search results
 */
-func (a *Client) DomainSearch(params *DomainSearchParams) (*DomainSearchOK, error) {
+func (a *Client) DomainSearch(params *DomainSearchParams, opts ...ClientOption) (*DomainSearchOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainSearchParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainSearch",
 		Method:             "POST",
 		PathPattern:        "/domainstudio",
@@ -54,7 +86,12 @@ func (a *Client) DomainSearch(params *DomainSearchParams) (*DomainSearchOK, erro
 		Reader:             &DomainSearchReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -65,6 +102,86 @@ func (a *Client) DomainSearch(params *DomainSearchParams) (*DomainSearchOK, erro
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for domainSearch: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainstudiaSocalMediaCheck powerfuls search api for free domains premium domains and alternate domain names
+
+Configurable search results
+*/
+func (a *Client) DomainstudiaSocalMediaCheck(params *DomainstudiaSocalMediaCheckParams, opts ...ClientOption) (*DomainstudiaSocalMediaCheckOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainstudiaSocalMediaCheckParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainstudiaSocalMediaCheck",
+		Method:             "POST",
+		PathPattern:        "/domainstudio/socialmedia",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainstudiaSocalMediaCheckReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainstudiaSocalMediaCheckOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainstudiaSocalMediaCheck: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainstudioClassify powerfuls api to classify domain names
+
+Configurable search results
+*/
+func (a *Client) DomainstudioClassify(params *DomainstudioClassifyParams, opts ...ClientOption) (*DomainstudioClassifyOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainstudioClassifyParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainstudioClassify",
+		Method:             "POST",
+		PathPattern:        "/domainstudio/classify",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainstudioClassifyReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainstudioClassifyOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainstudioClassify: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

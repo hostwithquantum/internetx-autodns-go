@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,15 +19,14 @@ import (
 // swagger:model ServiceEntity
 type ServiceEntity struct {
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// Lorem Ipum
-	// Required: true
-	Label *string `json:"label"`
+	// The unique identifier
+	Label string `json:"label,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 }
@@ -35,10 +36,6 @@ func (m *ServiceEntity) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateCreated(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateLabel(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -53,7 +50,6 @@ func (m *ServiceEntity) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ServiceEntity) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -65,17 +61,7 @@ func (m *ServiceEntity) validateCreated(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ServiceEntity) validateLabel(formats strfmt.Registry) error {
-
-	if err := validate.Required("label", "body", m.Label); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *ServiceEntity) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -84,6 +70,11 @@ func (m *ServiceEntity) validateUpdated(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this service entity based on context it is used
+func (m *ServiceEntity) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

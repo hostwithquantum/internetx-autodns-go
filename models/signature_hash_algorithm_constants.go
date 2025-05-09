@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model SignatureHashAlgorithmConstants
 type SignatureHashAlgorithmConstants string
+
+func NewSignatureHashAlgorithmConstants(value SignatureHashAlgorithmConstants) *SignatureHashAlgorithmConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated SignatureHashAlgorithmConstants.
+func (m SignatureHashAlgorithmConstants) Pointer() *SignatureHashAlgorithmConstants {
+	return &m
+}
 
 const (
 
@@ -40,6 +50,33 @@ const (
 
 	// SignatureHashAlgorithmConstantsSHA256 captures enum value "SHA256"
 	SignatureHashAlgorithmConstantsSHA256 SignatureHashAlgorithmConstants = "SHA256"
+
+	// SignatureHashAlgorithmConstantsSHA256SHA1 captures enum value "SHA256_SHA1"
+	SignatureHashAlgorithmConstantsSHA256SHA1 SignatureHashAlgorithmConstants = "SHA256_SHA1"
+
+	// SignatureHashAlgorithmConstantsSHA384SHA1 captures enum value "SHA384_SHA1"
+	SignatureHashAlgorithmConstantsSHA384SHA1 SignatureHashAlgorithmConstants = "SHA384_SHA1"
+
+	// SignatureHashAlgorithmConstantsSHA256SHA256 captures enum value "SHA256_SHA256"
+	SignatureHashAlgorithmConstantsSHA256SHA256 SignatureHashAlgorithmConstants = "SHA256_SHA256"
+
+	// SignatureHashAlgorithmConstantsSHA256ECDSASHA1 captures enum value "SHA256ECDSA_SHA1"
+	SignatureHashAlgorithmConstantsSHA256ECDSASHA1 SignatureHashAlgorithmConstants = "SHA256ECDSA_SHA1"
+
+	// SignatureHashAlgorithmConstantsSHA384ECDSASHA1 captures enum value "SHA384ECDSA_SHA1"
+	SignatureHashAlgorithmConstantsSHA384ECDSASHA1 SignatureHashAlgorithmConstants = "SHA384ECDSA_SHA1"
+
+	// SignatureHashAlgorithmConstantsSHA256ECDSASHA384ECDSA captures enum value "SHA256ECDSA_SHA384ECDSA"
+	SignatureHashAlgorithmConstantsSHA256ECDSASHA384ECDSA SignatureHashAlgorithmConstants = "SHA256ECDSA_SHA384ECDSA"
+
+	// SignatureHashAlgorithmConstantsSHA384ECDSASHA384ECDSA captures enum value "SHA384ECDSA_SHA384ECDSA"
+	SignatureHashAlgorithmConstantsSHA384ECDSASHA384ECDSA SignatureHashAlgorithmConstants = "SHA384ECDSA_SHA384ECDSA"
+
+	// SignatureHashAlgorithmConstantsDEFAULT captures enum value "DEFAULT"
+	SignatureHashAlgorithmConstantsDEFAULT SignatureHashAlgorithmConstants = "DEFAULT"
+
+	// SignatureHashAlgorithmConstantsMD5WITHRSAENCRYPTION captures enum value "MD5_WITH_RSA_ENCRYPTION"
+	SignatureHashAlgorithmConstantsMD5WITHRSAENCRYPTION SignatureHashAlgorithmConstants = "MD5_WITH_RSA_ENCRYPTION"
 )
 
 // for schema
@@ -47,7 +84,7 @@ var signatureHashAlgorithmConstantsEnum []interface{}
 
 func init() {
 	var res []SignatureHashAlgorithmConstants
-	if err := json.Unmarshal([]byte(`["SHA1","SHA2","SHA2_FULL_CHAIN","UNKNOWN","SHA384","SHA512","SHA256"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["SHA1","SHA2","SHA2_FULL_CHAIN","UNKNOWN","SHA384","SHA512","SHA256","SHA256_SHA1","SHA384_SHA1","SHA256_SHA256","SHA256ECDSA_SHA1","SHA384ECDSA_SHA1","SHA256ECDSA_SHA384ECDSA","SHA384ECDSA_SHA384ECDSA","DEFAULT","MD5_WITH_RSA_ENCRYPTION"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -74,5 +111,10 @@ func (m SignatureHashAlgorithmConstants) Validate(formats strfmt.Registry) error
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this signature hash algorithm constants based on context it is used
+func (m SignatureHashAlgorithmConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

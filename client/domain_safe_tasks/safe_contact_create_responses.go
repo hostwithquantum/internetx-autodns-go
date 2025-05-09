@@ -6,6 +6,7 @@ package domain_safe_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *SafeContactCreateReader) ReadResponse(response runtime.ClientResponse, 
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[POST /domainSafeContact] safeContactCreate", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewSafeContactCreateOK() *SafeContactCreateOK {
 	return &SafeContactCreateOK{}
 }
 
-/*SafeContactCreateOK handles this case with default header values.
+/*
+SafeContactCreateOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type SafeContactCreateOK struct {
 	Payload *models.JSONResponseDataDomainSafeAccount
 }
 
+// IsSuccess returns true when this safe contact create o k response has a 2xx status code
+func (o *SafeContactCreateOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this safe contact create o k response has a 3xx status code
+func (o *SafeContactCreateOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this safe contact create o k response has a 4xx status code
+func (o *SafeContactCreateOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this safe contact create o k response has a 5xx status code
+func (o *SafeContactCreateOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this safe contact create o k response a status code equal to that given
+func (o *SafeContactCreateOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the safe contact create o k response
+func (o *SafeContactCreateOK) Code() int {
+	return 200
+}
+
 func (o *SafeContactCreateOK) Error() string {
-	return fmt.Sprintf("[POST /domainSafeContact][%d] safeContactCreateOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /domainSafeContact][%d] safeContactCreateOK %s", 200, payload)
+}
+
+func (o *SafeContactCreateOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /domainSafeContact][%d] safeContactCreateOK %s", 200, payload)
 }
 
 func (o *SafeContactCreateOK) GetPayload() *models.JSONResponseDataDomainSafeAccount {

@@ -9,12 +9,38 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime"
+	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new user tasks API client.
 func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new user tasks API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new user tasks API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -25,67 +51,97 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
+// This client is generated with a few options you might find useful for your swagger spec.
+//
+// Feel free to add you own set of options.
+
+// WithContentType allows the client to force the Content-Type header
+// to negotiate a specific Consumer from the server.
+//
+// You may use this option to set arbitrary extensions to your MIME media type.
+func WithContentType(mime string) ClientOption {
+	return func(r *runtime.ClientOperation) {
+		r.ConsumesMediaTypes = []string{mime}
+	}
+}
+
+// WithContentTypeApplicationJSON sets the Content-Type header to "application/json".
+func WithContentTypeApplicationJSON(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"application/json"}
+}
+
+// WithContentTypeMultipartFormData sets the Content-Type header to "multipart/form-data".
+func WithContentTypeMultipartFormData(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"multipart/form-data"}
+}
+
 // ClientService is the interface for Client methods
 type ClientService interface {
-	UserBillingObjectTermsInfo(params *UserBillingObjectTermsInfoParams) (*UserBillingObjectTermsInfoOK, error)
+	UserBillingObjectTermsInfo(params *UserBillingObjectTermsInfoParams, opts ...ClientOption) (*UserBillingObjectTermsInfoOK, error)
 
-	NewPassword(params *NewPasswordParams) (*NewPasswordOK, error)
+	EmailConfirmVerification(params *EmailConfirmVerificationParams, opts ...ClientOption) (*EmailConfirmVerificationOK, error)
 
-	NewPasswordVerify(params *NewPasswordVerifyParams) (*NewPasswordVerifyOK, error)
+	NewPassword(params *NewPasswordParams, opts ...ClientOption) (*NewPasswordOK, error)
 
-	ServiceUserProfilInfo(params *ServiceUserProfilInfoParams) (*ServiceUserProfilInfoOK, error)
+	NewPasswordVerify(params *NewPasswordVerifyParams, opts ...ClientOption) (*NewPasswordVerifyOK, error)
 
-	ServiceUserProfilInfoWithPrefix(params *ServiceUserProfilInfoWithPrefixParams) (*ServiceUserProfilInfoWithPrefixOK, error)
+	ServiceUserProfileUpdate(params *ServiceUserProfileUpdateParams, opts ...ClientOption) (*ServiceUserProfileUpdateOK, error)
 
-	ServiceUserProfileUpdate(params *ServiceUserProfileUpdateParams) (*ServiceUserProfileUpdateOK, error)
+	UserACLInfo(params *UserACLInfoParams, opts ...ClientOption) (*UserACLInfoOK, error)
 
-	UserACLInfo(params *UserACLInfoParams) (*UserACLInfoOK, error)
+	UserACLUpdate(params *UserACLUpdateParams, opts ...ClientOption) (*UserACLUpdateOK, error)
 
-	UserACLUpdate(params *UserACLUpdateParams) (*UserACLUpdateOK, error)
+	UserBillingLimitInfo(params *UserBillingLimitInfoParams, opts ...ClientOption) (*UserBillingLimitInfoOK, error)
 
-	UserBillingLimitInfo(params *UserBillingLimitInfoParams) (*UserBillingLimitInfoOK, error)
+	UserConfirmVerification(params *UserConfirmVerificationParams, opts ...ClientOption) (*UserConfirmVerificationOK, error)
 
-	UserConfirmVerification(params *UserConfirmVerificationParams) (*UserConfirmVerificationOK, error)
+	UserCopy(params *UserCopyParams, opts ...ClientOption) (*UserCopyOK, error)
 
-	UserCopy(params *UserCopyParams) (*UserCopyOK, error)
+	UserCreate(params *UserCreateParams, opts ...ClientOption) (*UserCreateOK, error)
 
-	UserCreate(params *UserCreateParams) (*UserCreateOK, error)
+	UserDelete(params *UserDeleteParams, opts ...ClientOption) (*UserDeleteOK, error)
 
-	UserDelete(params *UserDeleteParams) (*UserDeleteOK, error)
+	UserDocumentUpload(params *UserDocumentUploadParams, opts ...ClientOption) (*UserDocumentUploadOK, error)
 
-	UserInfo(params *UserInfoParams) (*UserInfoOK, error)
+	UserInfo(params *UserInfoParams, opts ...ClientOption) (*UserInfoOK, error)
 
-	UserList(params *UserListParams) (*UserListOK, error)
+	UserList(params *UserListParams, opts ...ClientOption) (*UserListOK, error)
 
-	UserProfileInfo(params *UserProfileInfoParams) (*UserProfileInfoOK, error)
+	UserProfileInfo(params *UserProfileInfoParams, opts ...ClientOption) (*UserProfileInfoOK, error)
 
-	UserProfileInfoWithPrefix(params *UserProfileInfoWithPrefixParams) (*UserProfileInfoWithPrefixOK, error)
+	UserProfileInfoWithPrefix(params *UserProfileInfoWithPrefixParams, opts ...ClientOption) (*UserProfileInfoWithPrefixOK, error)
 
-	UserProfileUpdate(params *UserProfileUpdateParams) (*UserProfileUpdateOK, error)
+	UserProfileUpdate(params *UserProfileUpdateParams, opts ...ClientOption) (*UserProfileUpdateOK, error)
 
-	UserSSOVerification(params *UserSSOVerificationParams) (*UserSSOVerificationOK, error)
+	UserSSOVerification(params *UserSSOVerificationParams, opts ...ClientOption) (*UserSSOVerificationOK, error)
 
-	UserUpdate(params *UserUpdateParams) (*UserUpdateOK, error)
+	UserUpdate(params *UserUpdateParams, opts ...ClientOption) (*UserUpdateOK, error)
 
-	UserUpdateLock(params *UserUpdateLockParams) (*UserUpdateLockOK, error)
+	UserUpdateLock(params *UserUpdateLockParams, opts ...ClientOption) (*UserUpdateLockOK, error)
 
-	UserUpdateUnlock(params *UserUpdateUnlockParams) (*UserUpdateUnlockOK, error)
+	UserUpdateResendInvite(params *UserUpdateResendInviteParams, opts ...ClientOption) (*UserUpdateResendInviteOK, error)
+
+	UserUpdateUnlock(params *UserUpdateUnlockParams, opts ...ClientOption) (*UserUpdateUnlockOK, error)
+
+	UserVerificationCreate(params *UserVerificationCreateParams, opts ...ClientOption) (*UserVerificationCreateOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
 
 /*
-  UserBillingObjectTermsInfo billings object terms info
+UserBillingObjectTermsInfo billings object terms info 09994
 
-  Inquiring the terms of the contact for the logged in user.
+Inquiring the terms of the contact for the logged in user.
 */
-func (a *Client) UserBillingObjectTermsInfo(params *UserBillingObjectTermsInfoParams) (*UserBillingObjectTermsInfoOK, error) {
+func (a *Client) UserBillingObjectTermsInfo(params *UserBillingObjectTermsInfoParams, opts ...ClientOption) (*UserBillingObjectTermsInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUserBillingObjectTermsInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "UserBillingObjectTermsInfo",
 		Method:             "GET",
 		PathPattern:        "/user/billingterm",
@@ -96,7 +152,12 @@ func (a *Client) UserBillingObjectTermsInfo(params *UserBillingObjectTermsInfoPa
 		Reader:             &UserBillingObjectTermsInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -111,28 +172,72 @@ func (a *Client) UserBillingObjectTermsInfo(params *UserBillingObjectTermsInfoPa
 }
 
 /*
-  NewPassword news password
+EmailConfirmVerification emails action verify
 
-  This route is for setting a new password for a user.
+Applying a verification code for an email address.
 */
-func (a *Client) NewPassword(params *NewPasswordParams) (*NewPasswordOK, error) {
+func (a *Client) EmailConfirmVerification(params *EmailConfirmVerificationParams, opts ...ClientOption) (*EmailConfirmVerificationOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewEmailConfirmVerificationParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "emailConfirmVerification",
+		Method:             "GET",
+		PathPattern:        "/email/_verify/{token}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &EmailConfirmVerificationReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*EmailConfirmVerificationOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for emailConfirmVerification: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+NewPassword news password
+
+This route is for setting a new password for a user.
+*/
+func (a *Client) NewPassword(params *NewPasswordParams, opts ...ClientOption) (*NewPasswordOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewNewPasswordParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "newPassword",
 		Method:             "PUT",
 		PathPattern:        "/user/_newPassword?token={token}",
-		ProducesMediaTypes: []string{"application/json", "application/xml"},
+		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &NewPasswordReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -147,28 +252,32 @@ func (a *Client) NewPassword(params *NewPasswordParams) (*NewPasswordOK, error) 
 }
 
 /*
-  NewPasswordVerify news password verify
+NewPasswordVerify news password verify
 
-  Verifying a passwort change request
+Verifying a passwort change request
 */
-func (a *Client) NewPasswordVerify(params *NewPasswordVerifyParams) (*NewPasswordVerifyOK, error) {
+func (a *Client) NewPasswordVerify(params *NewPasswordVerifyParams, opts ...ClientOption) (*NewPasswordVerifyOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewNewPasswordVerifyParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "newPasswordVerify",
 		Method:             "GET",
 		PathPattern:        "/user/_newPasswordVerify?token={token}",
-		ProducesMediaTypes: []string{"application/json", "application/xml"},
+		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &NewPasswordVerifyReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -183,89 +292,16 @@ func (a *Client) NewPasswordVerify(params *NewPasswordVerifyParams) (*NewPasswor
 }
 
 /*
-  ServiceUserProfilInfo services user profile info
+ServiceUserProfileUpdate services user profile update 1301052
 
-  Inquiring the service user profile for the specified user.
+Updating the service user profile for the specified user.
 */
-func (a *Client) ServiceUserProfilInfo(params *ServiceUserProfilInfoParams) (*ServiceUserProfilInfoOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewServiceUserProfilInfoParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "serviceUserProfilInfo",
-		Method:             "GET",
-		PathPattern:        "/user/{name}/{context}/serviceProfile",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &ServiceUserProfilInfoReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*ServiceUserProfilInfoOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for serviceUserProfilInfo: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-  ServiceUserProfilInfoWithPrefix services user profile
-
-  Inquiring the service user profile for the specified user.
-*/
-func (a *Client) ServiceUserProfilInfoWithPrefix(params *ServiceUserProfilInfoWithPrefixParams) (*ServiceUserProfilInfoWithPrefixOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewServiceUserProfilInfoWithPrefixParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "serviceUserProfilInfoWithPrefix",
-		Method:             "GET",
-		PathPattern:        "/user/{name}/{context}/serviceProfile/{prefix}",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &ServiceUserProfilInfoWithPrefixReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*ServiceUserProfilInfoWithPrefixOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for serviceUserProfilInfoWithPrefix: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-  ServiceUserProfileUpdate services user profile update
-
-  Updating the service user profile for the specified user.
-*/
-func (a *Client) ServiceUserProfileUpdate(params *ServiceUserProfileUpdateParams) (*ServiceUserProfileUpdateOK, error) {
+func (a *Client) ServiceUserProfileUpdate(params *ServiceUserProfileUpdateParams, opts ...ClientOption) (*ServiceUserProfileUpdateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewServiceUserProfileUpdateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "serviceUserProfileUpdate",
 		Method:             "PUT",
 		PathPattern:        "/user/{name}/{context}/serviceProfile",
@@ -276,7 +312,12 @@ func (a *Client) ServiceUserProfileUpdate(params *ServiceUserProfileUpdateParams
 		Reader:             &ServiceUserProfileUpdateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -291,17 +332,16 @@ func (a *Client) ServiceUserProfileUpdate(params *ServiceUserProfileUpdateParams
 }
 
 /*
-  UserACLInfo users ACL info
+UserACLInfo users ACL info 1301024
 
-  Inquiring the ACL data for the specified user.
+Inquiring the ACL data for the specified user.
 */
-func (a *Client) UserACLInfo(params *UserACLInfoParams) (*UserACLInfoOK, error) {
+func (a *Client) UserACLInfo(params *UserACLInfoParams, opts ...ClientOption) (*UserACLInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUserACLInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "userAclInfo",
 		Method:             "GET",
 		PathPattern:        "/user/{name}/{context}/acl",
@@ -312,7 +352,12 @@ func (a *Client) UserACLInfo(params *UserACLInfoParams) (*UserACLInfoOK, error) 
 		Reader:             &UserACLInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -327,17 +372,16 @@ func (a *Client) UserACLInfo(params *UserACLInfoParams) (*UserACLInfoOK, error) 
 }
 
 /*
-  UserACLUpdate ACLs update
+UserACLUpdate ACLs update 1301022
 
-  Updating the ACLs for the specified user.
+Updating the ACLs for the specified user.
 */
-func (a *Client) UserACLUpdate(params *UserACLUpdateParams) (*UserACLUpdateOK, error) {
+func (a *Client) UserACLUpdate(params *UserACLUpdateParams, opts ...ClientOption) (*UserACLUpdateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUserACLUpdateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "userAclUpdate",
 		Method:             "PUT",
 		PathPattern:        "/user/{name}/{context}/acl",
@@ -348,7 +392,12 @@ func (a *Client) UserACLUpdate(params *UserACLUpdateParams) (*UserACLUpdateOK, e
 		Reader:             &UserACLUpdateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -363,17 +412,16 @@ func (a *Client) UserACLUpdate(params *UserACLUpdateParams) (*UserACLUpdateOK, e
 }
 
 /*
-  UserBillingLimitInfo billings object limit info
+UserBillingLimitInfo billings object limit info 01144
 
-  Inquiring the billing limit data for the logged in user.
+Inquiring the billing limit data for the logged in user.
 */
-func (a *Client) UserBillingLimitInfo(params *UserBillingLimitInfoParams) (*UserBillingLimitInfoOK, error) {
+func (a *Client) UserBillingLimitInfo(params *UserBillingLimitInfoParams, opts ...ClientOption) (*UserBillingLimitInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUserBillingLimitInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "userBillingLimitInfo",
 		Method:             "GET",
 		PathPattern:        "/user/billinglimit",
@@ -384,7 +432,12 @@ func (a *Client) UserBillingLimitInfo(params *UserBillingLimitInfoParams) (*User
 		Reader:             &UserBillingLimitInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -399,17 +452,16 @@ func (a *Client) UserBillingLimitInfo(params *UserBillingLimitInfoParams) (*User
 }
 
 /*
-  UserConfirmVerification users action verify
+UserConfirmVerification users action verify
 
-  Applying a verification code for an user action.
+Applying a verification code for an user action.
 */
-func (a *Client) UserConfirmVerification(params *UserConfirmVerificationParams) (*UserConfirmVerificationOK, error) {
+func (a *Client) UserConfirmVerification(params *UserConfirmVerificationParams, opts ...ClientOption) (*UserConfirmVerificationOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUserConfirmVerificationParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "userConfirmVerification",
 		Method:             "GET",
 		PathPattern:        "/user/_verify/{token}",
@@ -420,7 +472,12 @@ func (a *Client) UserConfirmVerification(params *UserConfirmVerificationParams) 
 		Reader:             &UserConfirmVerificationReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -435,17 +492,16 @@ func (a *Client) UserConfirmVerification(params *UserConfirmVerificationParams) 
 }
 
 /*
-  UserCopy users copy
+UserCopy users copy 1301016
 
-  Copying an existing user.
+Copying an existing user.
 */
-func (a *Client) UserCopy(params *UserCopyParams) (*UserCopyOK, error) {
+func (a *Client) UserCopy(params *UserCopyParams, opts ...ClientOption) (*UserCopyOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUserCopyParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "userCopy",
 		Method:             "POST",
 		PathPattern:        "/user/{name}/{context}/copy",
@@ -456,7 +512,12 @@ func (a *Client) UserCopy(params *UserCopyParams) (*UserCopyOK, error) {
 		Reader:             &UserCopyReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -471,17 +532,16 @@ func (a *Client) UserCopy(params *UserCopyParams) (*UserCopyOK, error) {
 }
 
 /*
-  UserCreate users create
+UserCreate users create 1301001
 
-  Creating a new user.
+Creating a new user.
 */
-func (a *Client) UserCreate(params *UserCreateParams) (*UserCreateOK, error) {
+func (a *Client) UserCreate(params *UserCreateParams, opts ...ClientOption) (*UserCreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUserCreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "userCreate",
 		Method:             "POST",
 		PathPattern:        "/user",
@@ -492,7 +552,12 @@ func (a *Client) UserCreate(params *UserCreateParams) (*UserCreateOK, error) {
 		Reader:             &UserCreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -507,17 +572,16 @@ func (a *Client) UserCreate(params *UserCreateParams) (*UserCreateOK, error) {
 }
 
 /*
-  UserDelete users delete
+UserDelete users delete 1301003
 
-  Deleting an existing user.
+Deleting an existing user.
 */
-func (a *Client) UserDelete(params *UserDeleteParams) (*UserDeleteOK, error) {
+func (a *Client) UserDelete(params *UserDeleteParams, opts ...ClientOption) (*UserDeleteOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUserDeleteParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "userDelete",
 		Method:             "DELETE",
 		PathPattern:        "/user/{name}/{context}",
@@ -528,7 +592,12 @@ func (a *Client) UserDelete(params *UserDeleteParams) (*UserDeleteOK, error) {
 		Reader:             &UserDeleteReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -543,17 +612,56 @@ func (a *Client) UserDelete(params *UserDeleteParams) (*UserDeleteOK, error) {
 }
 
 /*
-  UserInfo users info
+UserDocumentUpload uploads image
 
-  Inquiring the data for the specified user.
+Uploading an image to the user profile as a specific key.
 */
-func (a *Client) UserInfo(params *UserInfoParams) (*UserInfoOK, error) {
+func (a *Client) UserDocumentUpload(params *UserDocumentUploadParams, opts ...ClientOption) (*UserDocumentUploadOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewUserDocumentUploadParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "userDocumentUpload",
+		Method:             "POST",
+		PathPattern:        "/user/{name}/{context}/document/{key}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"multipart/form-data"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &UserDocumentUploadReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*UserDocumentUploadOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for userDocumentUpload: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+UserInfo users info 1301004
+
+Inquiring the data for the specified user.
+*/
+func (a *Client) UserInfo(params *UserInfoParams, opts ...ClientOption) (*UserInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUserInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "userInfo",
 		Method:             "GET",
 		PathPattern:        "/user/{name}/{context}",
@@ -564,7 +672,12 @@ func (a *Client) UserInfo(params *UserInfoParams) (*UserInfoOK, error) {
 		Reader:             &UserInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -579,17 +692,16 @@ func (a *Client) UserInfo(params *UserInfoParams) (*UserInfoOK, error) {
 }
 
 /*
-  UserList users list
+UserList users list 1301004
 
-  Inquiring a list of users with certain details. The data to be displayed can be extended per url paremeter.
+Inquiring a list of users with certain details. The data to be displayed can be extended per url paremeter.
 */
-func (a *Client) UserList(params *UserListParams) (*UserListOK, error) {
+func (a *Client) UserList(params *UserListParams, opts ...ClientOption) (*UserListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUserListParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "userList",
 		Method:             "POST",
 		PathPattern:        "/user/_search",
@@ -600,7 +712,12 @@ func (a *Client) UserList(params *UserListParams) (*UserListOK, error) {
 		Reader:             &UserListReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -615,17 +732,16 @@ func (a *Client) UserList(params *UserListParams) (*UserListOK, error) {
 }
 
 /*
-  UserProfileInfo users profile info
+UserProfileInfo users profile info 1301017
 
-  Inquiring the user profile of the specified user.
+Inquiring the user profile of the specified user.
 */
-func (a *Client) UserProfileInfo(params *UserProfileInfoParams) (*UserProfileInfoOK, error) {
+func (a *Client) UserProfileInfo(params *UserProfileInfoParams, opts ...ClientOption) (*UserProfileInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUserProfileInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "userProfileInfo",
 		Method:             "GET",
 		PathPattern:        "/user/{name}/{context}/profile",
@@ -636,7 +752,12 @@ func (a *Client) UserProfileInfo(params *UserProfileInfoParams) (*UserProfileInf
 		Reader:             &UserProfileInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -651,17 +772,16 @@ func (a *Client) UserProfileInfo(params *UserProfileInfoParams) (*UserProfileInf
 }
 
 /*
-  UserProfileInfoWithPrefix users profile info
+UserProfileInfoWithPrefix users profile info 1301017
 
-  Inquiring the user profile of the specified user.
+Inquiring the user profile of the specified user.
 */
-func (a *Client) UserProfileInfoWithPrefix(params *UserProfileInfoWithPrefixParams) (*UserProfileInfoWithPrefixOK, error) {
+func (a *Client) UserProfileInfoWithPrefix(params *UserProfileInfoWithPrefixParams, opts ...ClientOption) (*UserProfileInfoWithPrefixOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUserProfileInfoWithPrefixParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "userProfileInfoWithPrefix",
 		Method:             "GET",
 		PathPattern:        "/user/{name}/{context}/profile/{prefix}",
@@ -672,7 +792,12 @@ func (a *Client) UserProfileInfoWithPrefix(params *UserProfileInfoWithPrefixPara
 		Reader:             &UserProfileInfoWithPrefixReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -687,17 +812,16 @@ func (a *Client) UserProfileInfoWithPrefix(params *UserProfileInfoWithPrefixPara
 }
 
 /*
-  UserProfileUpdate users profile update
+UserProfileUpdate users profile update 1301014
 
-  Updating the profile of the specified user.
+Updating the profile of the specified user.
 */
-func (a *Client) UserProfileUpdate(params *UserProfileUpdateParams) (*UserProfileUpdateOK, error) {
+func (a *Client) UserProfileUpdate(params *UserProfileUpdateParams, opts ...ClientOption) (*UserProfileUpdateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUserProfileUpdateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "userProfileUpdate",
 		Method:             "PUT",
 		PathPattern:        "/user/{name}/{context}/profile",
@@ -708,7 +832,12 @@ func (a *Client) UserProfileUpdate(params *UserProfileUpdateParams) (*UserProfil
 		Reader:             &UserProfileUpdateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -723,17 +852,16 @@ func (a *Client) UserProfileUpdate(params *UserProfileUpdateParams) (*UserProfil
 }
 
 /*
-  UserSSOVerification s s o action verify
+UserSSOVerification s s o action verify
 
-  Applying a verification code for a signle sign on.
+Applying a verification code for a signle sign on.
 */
-func (a *Client) UserSSOVerification(params *UserSSOVerificationParams) (*UserSSOVerificationOK, error) {
+func (a *Client) UserSSOVerification(params *UserSSOVerificationParams, opts ...ClientOption) (*UserSSOVerificationOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUserSSOVerificationParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "userSSOVerification",
 		Method:             "GET",
 		PathPattern:        "/user/_sso/{token}",
@@ -744,7 +872,12 @@ func (a *Client) UserSSOVerification(params *UserSSOVerificationParams) (*UserSS
 		Reader:             &UserSSOVerificationReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -759,17 +892,16 @@ func (a *Client) UserSSOVerification(params *UserSSOVerificationParams) (*UserSS
 }
 
 /*
-  UserUpdate users update
+UserUpdate users update 1301002
 
-  Updating an existing user.
+Updating an existing user.
 */
-func (a *Client) UserUpdate(params *UserUpdateParams) (*UserUpdateOK, error) {
+func (a *Client) UserUpdate(params *UserUpdateParams, opts ...ClientOption) (*UserUpdateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUserUpdateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "userUpdate",
 		Method:             "PUT",
 		PathPattern:        "/user/{name}/{context}",
@@ -780,7 +912,12 @@ func (a *Client) UserUpdate(params *UserUpdateParams) (*UserUpdateOK, error) {
 		Reader:             &UserUpdateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -795,17 +932,16 @@ func (a *Client) UserUpdate(params *UserUpdateParams) (*UserUpdateOK, error) {
 }
 
 /*
-  UserUpdateLock users update lock
+UserUpdateLock users update lock 1301002
 
-  Updating an existing user to lock him.
+Updating an existing user to lock him.
 */
-func (a *Client) UserUpdateLock(params *UserUpdateLockParams) (*UserUpdateLockOK, error) {
+func (a *Client) UserUpdateLock(params *UserUpdateLockParams, opts ...ClientOption) (*UserUpdateLockOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUserUpdateLockParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "userUpdateLock",
 		Method:             "PUT",
 		PathPattern:        "/user/{name}/{context}/_lock",
@@ -816,7 +952,12 @@ func (a *Client) UserUpdateLock(params *UserUpdateLockParams) (*UserUpdateLockOK
 		Reader:             &UserUpdateLockReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -831,17 +972,56 @@ func (a *Client) UserUpdateLock(params *UserUpdateLockParams) (*UserUpdateLockOK
 }
 
 /*
-  UserUpdateUnlock updates user unlock
+UserUpdateResendInvite users update resend invite 1301002
 
-  Updating an an existing user to unlock him.
+Invokes the resending of an invite for an invite user.
 */
-func (a *Client) UserUpdateUnlock(params *UserUpdateUnlockParams) (*UserUpdateUnlockOK, error) {
+func (a *Client) UserUpdateResendInvite(params *UserUpdateResendInviteParams, opts ...ClientOption) (*UserUpdateResendInviteOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewUserUpdateResendInviteParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "userUpdateResendInvite",
+		Method:             "PUT",
+		PathPattern:        "/user/{name}/{context}/_resendInvite",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &UserUpdateResendInviteReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*UserUpdateResendInviteOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for userUpdateResendInvite: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+UserUpdateUnlock updates user unlock 1301002
+
+Updating an an existing user to unlock him.
+*/
+func (a *Client) UserUpdateUnlock(params *UserUpdateUnlockParams, opts ...ClientOption) (*UserUpdateUnlockOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUserUpdateUnlockParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "userUpdateUnlock",
 		Method:             "PUT",
 		PathPattern:        "/user/{name}/{context}/_unlock",
@@ -852,7 +1032,12 @@ func (a *Client) UserUpdateUnlock(params *UserUpdateUnlockParams) (*UserUpdateUn
 		Reader:             &UserUpdateUnlockReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -863,6 +1048,44 @@ func (a *Client) UserUpdateUnlock(params *UserUpdateUnlockParams) (*UserUpdateUn
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for userUpdateUnlock: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+UserVerificationCreate users verification create 1321011
+*/
+func (a *Client) UserVerificationCreate(params *UserVerificationCreateParams, opts ...ClientOption) (*UserVerificationCreateOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewUserVerificationCreateParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "userVerificationCreate",
+		Method:             "POST",
+		PathPattern:        "/user/{name}/{context}/verification",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &UserVerificationCreateReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*UserVerificationCreateOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for userVerificationCreate: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model ModifierConstants
 type ModifierConstants string
+
+func NewModifierConstants(value ModifierConstants) *ModifierConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated ModifierConstants.
+func (m ModifierConstants) Pointer() *ModifierConstants {
+	return &m
+}
 
 const (
 
@@ -101,5 +111,10 @@ func (m ModifierConstants) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this modifier constants based on context it is used
+func (m ModifierConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

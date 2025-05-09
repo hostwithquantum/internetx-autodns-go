@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -26,7 +27,7 @@ type Recipient struct {
 	// The number of attempts
 	AttemptCount int32 `json:"attemptCount,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
@@ -46,7 +47,7 @@ type Recipient struct {
 	// The actual delivery status of the email
 	Status DeliveryStatus `json:"status,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 }
@@ -90,7 +91,6 @@ func (m *Recipient) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Recipient) validateAttempt(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Attempt) { // not required
 		return nil
 	}
@@ -103,7 +103,6 @@ func (m *Recipient) validateAttempt(formats strfmt.Registry) error {
 }
 
 func (m *Recipient) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -116,7 +115,6 @@ func (m *Recipient) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *Recipient) validateExpire(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Expire) { // not required
 		return nil
 	}
@@ -129,7 +127,6 @@ func (m *Recipient) validateExpire(formats strfmt.Registry) error {
 }
 
 func (m *Recipient) validateLogs(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Logs) { // not required
 		return nil
 	}
@@ -143,6 +140,8 @@ func (m *Recipient) validateLogs(formats strfmt.Registry) error {
 			if err := m.Logs[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("logs" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("logs" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -154,7 +153,6 @@ func (m *Recipient) validateLogs(formats strfmt.Registry) error {
 }
 
 func (m *Recipient) validateRole(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Role) { // not required
 		return nil
 	}
@@ -162,6 +160,8 @@ func (m *Recipient) validateRole(formats strfmt.Registry) error {
 	if err := m.Role.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("role")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("role")
 		}
 		return err
 	}
@@ -170,7 +170,6 @@ func (m *Recipient) validateRole(formats strfmt.Registry) error {
 }
 
 func (m *Recipient) validateStatus(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Status) { // not required
 		return nil
 	}
@@ -178,6 +177,8 @@ func (m *Recipient) validateStatus(formats strfmt.Registry) error {
 	if err := m.Status.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
 		}
 		return err
 	}
@@ -186,12 +187,94 @@ func (m *Recipient) validateStatus(formats strfmt.Registry) error {
 }
 
 func (m *Recipient) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
 
 	if err := validate.FormatOf("updated", "body", "date-time", m.Updated.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this recipient based on the context it is used
+func (m *Recipient) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateLogs(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRole(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Recipient) contextValidateLogs(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Logs); i++ {
+
+		if m.Logs[i] != nil {
+
+			if swag.IsZero(m.Logs[i]) { // not required
+				return nil
+			}
+
+			if err := m.Logs[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("logs" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("logs" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *Recipient) contextValidateRole(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Role) { // not required
+		return nil
+	}
+
+	if err := m.Role.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("role")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("role")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *Recipient) contextValidateStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	if err := m.Status.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
+		}
 		return err
 	}
 

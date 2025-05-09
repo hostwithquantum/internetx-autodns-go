@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -34,11 +36,17 @@ type ContactExtensions struct {
 	// The .cat contact extensions.
 	Cat *ContactCatExtensions `json:"cat,omitempty"`
 
+	// The .es contact extensions.
+	Es *ContactEsExtensions `json:"es,omitempty"`
+
 	// The general contact extensions.
 	General *ContactGeneralExtensions `json:"general,omitempty"`
 
 	// The .hk contact extensions.
 	Hk *ContactHkExtensions `json:"hk,omitempty"`
+
+	// The .ie contact extensions.
+	Ie *ContactIeExtensions `json:"ie,omitempty"`
 
 	// The .it contact extensions.
 	It *ContactItExtensions `json:"it,omitempty"`
@@ -64,6 +72,9 @@ type ContactExtensions struct {
 	// The .ru contact extensions.
 	Ru *ContactRuExtensions `json:"ru,omitempty"`
 
+	// The .scot contact extensions.
+	Scot *ContactScotExtensions `json:"scot,omitempty"`
+
 	// The .sport contact extensions.
 	Sport *ContactSportExtensions `json:"sport,omitempty"`
 
@@ -75,6 +86,9 @@ type ContactExtensions struct {
 
 	// The .xxx contact extensions.
 	Xxx *ContactXxxExtensions `json:"xxx,omitempty"`
+
+	// The .zuerich contact extensions.
+	Zuerich *ContactZuerichExtensions `json:"zuerich,omitempty"`
 }
 
 // Validate validates this contact extensions
@@ -105,11 +119,19 @@ func (m *ContactExtensions) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateEs(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateGeneral(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if err := m.validateHk(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateIe(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -145,6 +167,10 @@ func (m *ContactExtensions) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateScot(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateSport(formats); err != nil {
 		res = append(res, err)
 	}
@@ -161,6 +187,10 @@ func (m *ContactExtensions) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateZuerich(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -168,7 +198,6 @@ func (m *ContactExtensions) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ContactExtensions) validateAero(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Aero) { // not required
 		return nil
 	}
@@ -177,6 +206,8 @@ func (m *ContactExtensions) validateAero(formats strfmt.Registry) error {
 		if err := m.Aero.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("aero")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("aero")
 			}
 			return err
 		}
@@ -186,7 +217,6 @@ func (m *ContactExtensions) validateAero(formats strfmt.Registry) error {
 }
 
 func (m *ContactExtensions) validateAu(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Au) { // not required
 		return nil
 	}
@@ -195,6 +225,8 @@ func (m *ContactExtensions) validateAu(formats strfmt.Registry) error {
 		if err := m.Au.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("au")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("au")
 			}
 			return err
 		}
@@ -204,7 +236,6 @@ func (m *ContactExtensions) validateAu(formats strfmt.Registry) error {
 }
 
 func (m *ContactExtensions) validateBank(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Bank) { // not required
 		return nil
 	}
@@ -213,6 +244,8 @@ func (m *ContactExtensions) validateBank(formats strfmt.Registry) error {
 		if err := m.Bank.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("bank")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("bank")
 			}
 			return err
 		}
@@ -222,7 +255,6 @@ func (m *ContactExtensions) validateBank(formats strfmt.Registry) error {
 }
 
 func (m *ContactExtensions) validateBarcelona(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Barcelona) { // not required
 		return nil
 	}
@@ -231,6 +263,8 @@ func (m *ContactExtensions) validateBarcelona(formats strfmt.Registry) error {
 		if err := m.Barcelona.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("barcelona")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("barcelona")
 			}
 			return err
 		}
@@ -240,7 +274,6 @@ func (m *ContactExtensions) validateBarcelona(formats strfmt.Registry) error {
 }
 
 func (m *ContactExtensions) validateCa(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Ca) { // not required
 		return nil
 	}
@@ -249,6 +282,8 @@ func (m *ContactExtensions) validateCa(formats strfmt.Registry) error {
 		if err := m.Ca.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("ca")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("ca")
 			}
 			return err
 		}
@@ -258,7 +293,6 @@ func (m *ContactExtensions) validateCa(formats strfmt.Registry) error {
 }
 
 func (m *ContactExtensions) validateCat(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Cat) { // not required
 		return nil
 	}
@@ -267,6 +301,27 @@ func (m *ContactExtensions) validateCat(formats strfmt.Registry) error {
 		if err := m.Cat.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("cat")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("cat")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) validateEs(formats strfmt.Registry) error {
+	if swag.IsZero(m.Es) { // not required
+		return nil
+	}
+
+	if m.Es != nil {
+		if err := m.Es.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("es")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("es")
 			}
 			return err
 		}
@@ -276,7 +331,6 @@ func (m *ContactExtensions) validateCat(formats strfmt.Registry) error {
 }
 
 func (m *ContactExtensions) validateGeneral(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.General) { // not required
 		return nil
 	}
@@ -285,6 +339,8 @@ func (m *ContactExtensions) validateGeneral(formats strfmt.Registry) error {
 		if err := m.General.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("general")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("general")
 			}
 			return err
 		}
@@ -294,7 +350,6 @@ func (m *ContactExtensions) validateGeneral(formats strfmt.Registry) error {
 }
 
 func (m *ContactExtensions) validateHk(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Hk) { // not required
 		return nil
 	}
@@ -303,6 +358,27 @@ func (m *ContactExtensions) validateHk(formats strfmt.Registry) error {
 		if err := m.Hk.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("hk")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("hk")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) validateIe(formats strfmt.Registry) error {
+	if swag.IsZero(m.Ie) { // not required
+		return nil
+	}
+
+	if m.Ie != nil {
+		if err := m.Ie.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("ie")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("ie")
 			}
 			return err
 		}
@@ -312,7 +388,6 @@ func (m *ContactExtensions) validateHk(formats strfmt.Registry) error {
 }
 
 func (m *ContactExtensions) validateIt(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.It) { // not required
 		return nil
 	}
@@ -321,6 +396,8 @@ func (m *ContactExtensions) validateIt(formats strfmt.Registry) error {
 		if err := m.It.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("it")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("it")
 			}
 			return err
 		}
@@ -330,7 +407,6 @@ func (m *ContactExtensions) validateIt(formats strfmt.Registry) error {
 }
 
 func (m *ContactExtensions) validateJobs(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Jobs) { // not required
 		return nil
 	}
@@ -339,6 +415,8 @@ func (m *ContactExtensions) validateJobs(formats strfmt.Registry) error {
 		if err := m.Jobs.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("jobs")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("jobs")
 			}
 			return err
 		}
@@ -348,7 +426,6 @@ func (m *ContactExtensions) validateJobs(formats strfmt.Registry) error {
 }
 
 func (m *ContactExtensions) validateJp(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Jp) { // not required
 		return nil
 	}
@@ -357,6 +434,8 @@ func (m *ContactExtensions) validateJp(formats strfmt.Registry) error {
 		if err := m.Jp.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("jp")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("jp")
 			}
 			return err
 		}
@@ -366,7 +445,6 @@ func (m *ContactExtensions) validateJp(formats strfmt.Registry) error {
 }
 
 func (m *ContactExtensions) validateLuxe(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Luxe) { // not required
 		return nil
 	}
@@ -375,6 +453,8 @@ func (m *ContactExtensions) validateLuxe(formats strfmt.Registry) error {
 		if err := m.Luxe.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("luxe")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("luxe")
 			}
 			return err
 		}
@@ -384,7 +464,6 @@ func (m *ContactExtensions) validateLuxe(formats strfmt.Registry) error {
 }
 
 func (m *ContactExtensions) validateMadrid(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Madrid) { // not required
 		return nil
 	}
@@ -393,6 +472,8 @@ func (m *ContactExtensions) validateMadrid(formats strfmt.Registry) error {
 		if err := m.Madrid.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("madrid")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("madrid")
 			}
 			return err
 		}
@@ -402,7 +483,6 @@ func (m *ContactExtensions) validateMadrid(formats strfmt.Registry) error {
 }
 
 func (m *ContactExtensions) validateNz(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Nz) { // not required
 		return nil
 	}
@@ -411,6 +491,8 @@ func (m *ContactExtensions) validateNz(formats strfmt.Registry) error {
 		if err := m.Nz.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("nz")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("nz")
 			}
 			return err
 		}
@@ -420,7 +502,6 @@ func (m *ContactExtensions) validateNz(formats strfmt.Registry) error {
 }
 
 func (m *ContactExtensions) validateRo(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Ro) { // not required
 		return nil
 	}
@@ -429,6 +510,8 @@ func (m *ContactExtensions) validateRo(formats strfmt.Registry) error {
 		if err := m.Ro.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("ro")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("ro")
 			}
 			return err
 		}
@@ -438,7 +521,6 @@ func (m *ContactExtensions) validateRo(formats strfmt.Registry) error {
 }
 
 func (m *ContactExtensions) validateRu(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Ru) { // not required
 		return nil
 	}
@@ -447,6 +529,27 @@ func (m *ContactExtensions) validateRu(formats strfmt.Registry) error {
 		if err := m.Ru.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("ru")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("ru")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) validateScot(formats strfmt.Registry) error {
+	if swag.IsZero(m.Scot) { // not required
+		return nil
+	}
+
+	if m.Scot != nil {
+		if err := m.Scot.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("scot")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("scot")
 			}
 			return err
 		}
@@ -456,7 +559,6 @@ func (m *ContactExtensions) validateRu(formats strfmt.Registry) error {
 }
 
 func (m *ContactExtensions) validateSport(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Sport) { // not required
 		return nil
 	}
@@ -465,6 +567,8 @@ func (m *ContactExtensions) validateSport(formats strfmt.Registry) error {
 		if err := m.Sport.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("sport")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("sport")
 			}
 			return err
 		}
@@ -474,7 +578,6 @@ func (m *ContactExtensions) validateSport(formats strfmt.Registry) error {
 }
 
 func (m *ContactExtensions) validateSwiss(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Swiss) { // not required
 		return nil
 	}
@@ -483,6 +586,8 @@ func (m *ContactExtensions) validateSwiss(formats strfmt.Registry) error {
 		if err := m.Swiss.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("swiss")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("swiss")
 			}
 			return err
 		}
@@ -492,7 +597,6 @@ func (m *ContactExtensions) validateSwiss(formats strfmt.Registry) error {
 }
 
 func (m *ContactExtensions) validateUk(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Uk) { // not required
 		return nil
 	}
@@ -501,6 +605,8 @@ func (m *ContactExtensions) validateUk(formats strfmt.Registry) error {
 		if err := m.Uk.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("uk")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("uk")
 			}
 			return err
 		}
@@ -510,7 +616,6 @@ func (m *ContactExtensions) validateUk(formats strfmt.Registry) error {
 }
 
 func (m *ContactExtensions) validateXxx(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Xxx) { // not required
 		return nil
 	}
@@ -519,6 +624,637 @@ func (m *ContactExtensions) validateXxx(formats strfmt.Registry) error {
 		if err := m.Xxx.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("xxx")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("xxx")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) validateZuerich(formats strfmt.Registry) error {
+	if swag.IsZero(m.Zuerich) { // not required
+		return nil
+	}
+
+	if m.Zuerich != nil {
+		if err := m.Zuerich.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("zuerich")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("zuerich")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this contact extensions based on the context it is used
+func (m *ContactExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateAero(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateAu(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateBank(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateBarcelona(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateCa(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateCat(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateEs(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateGeneral(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateHk(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateIe(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateIt(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateJobs(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateJp(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateLuxe(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateMadrid(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateNz(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRo(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRu(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateScot(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSport(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSwiss(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUk(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateXxx(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateZuerich(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateAero(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Aero != nil {
+
+		if swag.IsZero(m.Aero) { // not required
+			return nil
+		}
+
+		if err := m.Aero.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("aero")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("aero")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateAu(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Au != nil {
+
+		if swag.IsZero(m.Au) { // not required
+			return nil
+		}
+
+		if err := m.Au.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("au")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("au")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateBank(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Bank != nil {
+
+		if swag.IsZero(m.Bank) { // not required
+			return nil
+		}
+
+		if err := m.Bank.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("bank")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("bank")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateBarcelona(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Barcelona != nil {
+
+		if swag.IsZero(m.Barcelona) { // not required
+			return nil
+		}
+
+		if err := m.Barcelona.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("barcelona")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("barcelona")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateCa(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Ca != nil {
+
+		if swag.IsZero(m.Ca) { // not required
+			return nil
+		}
+
+		if err := m.Ca.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("ca")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("ca")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateCat(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Cat != nil {
+
+		if swag.IsZero(m.Cat) { // not required
+			return nil
+		}
+
+		if err := m.Cat.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("cat")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("cat")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateEs(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Es != nil {
+
+		if swag.IsZero(m.Es) { // not required
+			return nil
+		}
+
+		if err := m.Es.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("es")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("es")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateGeneral(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.General != nil {
+
+		if swag.IsZero(m.General) { // not required
+			return nil
+		}
+
+		if err := m.General.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("general")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("general")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateHk(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Hk != nil {
+
+		if swag.IsZero(m.Hk) { // not required
+			return nil
+		}
+
+		if err := m.Hk.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("hk")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("hk")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateIe(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Ie != nil {
+
+		if swag.IsZero(m.Ie) { // not required
+			return nil
+		}
+
+		if err := m.Ie.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("ie")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("ie")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateIt(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.It != nil {
+
+		if swag.IsZero(m.It) { // not required
+			return nil
+		}
+
+		if err := m.It.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("it")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("it")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateJobs(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Jobs != nil {
+
+		if swag.IsZero(m.Jobs) { // not required
+			return nil
+		}
+
+		if err := m.Jobs.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("jobs")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("jobs")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateJp(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Jp != nil {
+
+		if swag.IsZero(m.Jp) { // not required
+			return nil
+		}
+
+		if err := m.Jp.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("jp")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("jp")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateLuxe(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Luxe != nil {
+
+		if swag.IsZero(m.Luxe) { // not required
+			return nil
+		}
+
+		if err := m.Luxe.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("luxe")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("luxe")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateMadrid(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Madrid != nil {
+
+		if swag.IsZero(m.Madrid) { // not required
+			return nil
+		}
+
+		if err := m.Madrid.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("madrid")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("madrid")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateNz(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Nz != nil {
+
+		if swag.IsZero(m.Nz) { // not required
+			return nil
+		}
+
+		if err := m.Nz.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("nz")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("nz")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateRo(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Ro != nil {
+
+		if swag.IsZero(m.Ro) { // not required
+			return nil
+		}
+
+		if err := m.Ro.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("ro")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("ro")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateRu(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Ru != nil {
+
+		if swag.IsZero(m.Ru) { // not required
+			return nil
+		}
+
+		if err := m.Ru.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("ru")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("ru")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateScot(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Scot != nil {
+
+		if swag.IsZero(m.Scot) { // not required
+			return nil
+		}
+
+		if err := m.Scot.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("scot")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("scot")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateSport(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Sport != nil {
+
+		if swag.IsZero(m.Sport) { // not required
+			return nil
+		}
+
+		if err := m.Sport.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("sport")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("sport")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateSwiss(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Swiss != nil {
+
+		if swag.IsZero(m.Swiss) { // not required
+			return nil
+		}
+
+		if err := m.Swiss.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("swiss")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("swiss")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateUk(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Uk != nil {
+
+		if swag.IsZero(m.Uk) { // not required
+			return nil
+		}
+
+		if err := m.Uk.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("uk")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("uk")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateXxx(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Xxx != nil {
+
+		if swag.IsZero(m.Xxx) { // not required
+			return nil
+		}
+
+		if err := m.Xxx.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("xxx")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("xxx")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactExtensions) contextValidateZuerich(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Zuerich != nil {
+
+		if swag.IsZero(m.Zuerich) { // not required
+			return nil
+		}
+
+		if err := m.Zuerich.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("zuerich")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("zuerich")
 			}
 			return err
 		}

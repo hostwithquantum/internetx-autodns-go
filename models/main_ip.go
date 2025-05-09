@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -15,15 +17,22 @@ import (
 // swagger:model MainIp
 type MainIP struct {
 
-	// address
+	// IP address used for the A-record of the zone's e-mail.
+	// Example: 127.0.0.1
 	Address string `json:"address,omitempty"`
 
-	// The ttl of main address to use
+	// Time to Live (TTL) Validity period for the IP address of the zone.
+	// Example: 86000
 	TTL int64 `json:"ttl,omitempty"`
 }
 
 // Validate validates this main Ip
 func (m *MainIP) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this main Ip based on context it is used
+func (m *MainIP) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

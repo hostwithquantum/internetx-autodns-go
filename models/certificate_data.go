@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -18,65 +19,92 @@ import (
 // swagger:model CertificateData
 type CertificateData struct {
 
-	// The csr algorithm.
+	// The algorithm used in the CSR key.
 	Algorithm CsrHashAlgorithmConstants `json:"algorithm,omitempty"`
 
-	// The authentication data.
+	// The generated authentication data.
 	Authentication []*CertAuthentication `json:"authentication"`
 
 	// Describes the business case (CREATE, RENEW, REISSUE, DELETE) for which preparation is to be performed.
 	BusinessCase string `json:"businessCase,omitempty"`
 
-	// The certificat. Only necessary if used before reissue, renew and delete.
+	// The certificate.
 	Certificate *Certificate `json:"certificate,omitempty"`
 
 	// The password defined in the csr.
 	ChallengePassword string `json:"challengePassword,omitempty"`
 
-	// Activates the caa record check.
+	// Activates the CAA record check.
+	// false = off
+	// true = on
+	// Default value = false
 	CheckCaa bool `json:"checkCaa,omitempty"`
 
-	// The city defined in the csr.
+	// The city contained within the CSR key.
 	City string `json:"city,omitempty"`
 
-	// The country code defined in the csr.
+	// The country code which is contained within the CSR key.
 	CountryCode string `json:"countryCode,omitempty"`
 
-	// The email defined in the csr.
+	// The ec curve of the public key.
+	EcCurve CsrHashAlgorithmConstants `json:"ecCurve,omitempty"`
+
+	// The email address contained within the CSR key.
 	Email string `json:"email,omitempty"`
 
-	// The certificate history.
+	// Describes whether the CSR contains multi value DN data
+	HasMultiValueDN bool `json:"hasMultiValueDN,omitempty"`
+
+	// The certificate history (old version).
 	Histories []*CertificateHistory `json:"histories"`
 
-	// The idn version of the common name.
+	// The common name written in punycode format.
 	Idn string `json:"idn,omitempty"`
 
-	// The size of the csr key.
+	// Included subject alternativ names for the current order
+	IncludedSans []string `json:"includedSans"`
+
+	// The key length of the CSR key.
 	KeySize int32 `json:"keySize,omitempty"`
 
-	// The common name.
+	// The name of the certificate which is contained within the CSR key.
 	Name string `json:"name,omitempty"`
 
-	// The organization defined in the csr.
+	// The organisation contained within the CSR key.
 	Organization string `json:"organization,omitempty"`
 
-	// The organization unit defined in the csr.
+	// The organisation contained within the CSR key.
 	OrganizationUnit string `json:"organizationUnit,omitempty"`
 
-	// The plain csr.
+	// The CSR key as a string.
 	Plain string `json:"plain,omitempty"`
 
-	// The ssl product.
+	// The SSL product.
 	Product string `json:"product,omitempty"`
 
-	// The subject alternative names, listed in the csr.
-	San []string `json:"san"`
+	// The DCV scope to use for generating the dcv data
+	Scope DcvValidationScope `json:"scope,omitempty"`
 
-	// The signature hash algorithm.
+	// The hash algorithm which was used for the CSR.
 	SignatureHashAlgorithm SignatureHashAlgorithmConstants `json:"signatureHashAlgorithm,omitempty"`
 
 	// The state defined in the csr.
 	State string `json:"state,omitempty"`
+
+	// The SubjectAlternativeNames contained within the CSR key.
+	SubjectAlternativeNames []*SubjectAlternativeName `json:"subjectAlternativeNames"`
+
+	// Describes whether the CSR contains a valid signature or not
+	ValidSignature bool `json:"validSignature,omitempty"`
+
+	// The base64 encoded SVG logo
+	VmcLogo string `json:"vmcLogo,omitempty"`
+
+	// Two-letter code for the country or region where the logo is trademarked
+	VmcTrademarkCountryOrRegion VmcTrademarkCountryOrRegion `json:"vmcTrademarkCountryOrRegion,omitempty"`
+
+	// The trademark registration number
+	VmcTrademarkRegistrationNumber string `json:"vmcTrademarkRegistrationNumber,omitempty"`
 }
 
 // Validate validates this certificate data
@@ -95,11 +123,27 @@ func (m *CertificateData) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateEcCurve(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateHistories(formats); err != nil {
 		res = append(res, err)
 	}
 
+	if err := m.validateScope(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateSignatureHashAlgorithm(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSubjectAlternativeNames(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateVmcTrademarkCountryOrRegion(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -110,7 +154,6 @@ func (m *CertificateData) Validate(formats strfmt.Registry) error {
 }
 
 func (m *CertificateData) validateAlgorithm(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Algorithm) { // not required
 		return nil
 	}
@@ -118,6 +161,8 @@ func (m *CertificateData) validateAlgorithm(formats strfmt.Registry) error {
 	if err := m.Algorithm.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("algorithm")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("algorithm")
 		}
 		return err
 	}
@@ -126,7 +171,6 @@ func (m *CertificateData) validateAlgorithm(formats strfmt.Registry) error {
 }
 
 func (m *CertificateData) validateAuthentication(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Authentication) { // not required
 		return nil
 	}
@@ -140,6 +184,8 @@ func (m *CertificateData) validateAuthentication(formats strfmt.Registry) error 
 			if err := m.Authentication[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("authentication" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("authentication" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -151,7 +197,6 @@ func (m *CertificateData) validateAuthentication(formats strfmt.Registry) error 
 }
 
 func (m *CertificateData) validateCertificate(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Certificate) { // not required
 		return nil
 	}
@@ -160,6 +205,8 @@ func (m *CertificateData) validateCertificate(formats strfmt.Registry) error {
 		if err := m.Certificate.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("certificate")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("certificate")
 			}
 			return err
 		}
@@ -168,8 +215,24 @@ func (m *CertificateData) validateCertificate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *CertificateData) validateHistories(formats strfmt.Registry) error {
+func (m *CertificateData) validateEcCurve(formats strfmt.Registry) error {
+	if swag.IsZero(m.EcCurve) { // not required
+		return nil
+	}
 
+	if err := m.EcCurve.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("ecCurve")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("ecCurve")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *CertificateData) validateHistories(formats strfmt.Registry) error {
 	if swag.IsZero(m.Histories) { // not required
 		return nil
 	}
@@ -183,6 +246,8 @@ func (m *CertificateData) validateHistories(formats strfmt.Registry) error {
 			if err := m.Histories[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("histories" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("histories" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -193,8 +258,24 @@ func (m *CertificateData) validateHistories(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *CertificateData) validateSignatureHashAlgorithm(formats strfmt.Registry) error {
+func (m *CertificateData) validateScope(formats strfmt.Registry) error {
+	if swag.IsZero(m.Scope) { // not required
+		return nil
+	}
 
+	if err := m.Scope.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("scope")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("scope")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *CertificateData) validateSignatureHashAlgorithm(formats strfmt.Registry) error {
 	if swag.IsZero(m.SignatureHashAlgorithm) { // not required
 		return nil
 	}
@@ -202,6 +283,283 @@ func (m *CertificateData) validateSignatureHashAlgorithm(formats strfmt.Registry
 	if err := m.SignatureHashAlgorithm.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("signatureHashAlgorithm")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("signatureHashAlgorithm")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *CertificateData) validateSubjectAlternativeNames(formats strfmt.Registry) error {
+	if swag.IsZero(m.SubjectAlternativeNames) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.SubjectAlternativeNames); i++ {
+		if swag.IsZero(m.SubjectAlternativeNames[i]) { // not required
+			continue
+		}
+
+		if m.SubjectAlternativeNames[i] != nil {
+			if err := m.SubjectAlternativeNames[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("subjectAlternativeNames" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("subjectAlternativeNames" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *CertificateData) validateVmcTrademarkCountryOrRegion(formats strfmt.Registry) error {
+	if swag.IsZero(m.VmcTrademarkCountryOrRegion) { // not required
+		return nil
+	}
+
+	if err := m.VmcTrademarkCountryOrRegion.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("vmcTrademarkCountryOrRegion")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("vmcTrademarkCountryOrRegion")
+		}
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this certificate data based on the context it is used
+func (m *CertificateData) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateAlgorithm(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateAuthentication(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateCertificate(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateEcCurve(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateHistories(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateScope(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSignatureHashAlgorithm(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSubjectAlternativeNames(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateVmcTrademarkCountryOrRegion(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *CertificateData) contextValidateAlgorithm(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Algorithm) { // not required
+		return nil
+	}
+
+	if err := m.Algorithm.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("algorithm")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("algorithm")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *CertificateData) contextValidateAuthentication(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Authentication); i++ {
+
+		if m.Authentication[i] != nil {
+
+			if swag.IsZero(m.Authentication[i]) { // not required
+				return nil
+			}
+
+			if err := m.Authentication[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("authentication" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("authentication" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *CertificateData) contextValidateCertificate(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Certificate != nil {
+
+		if swag.IsZero(m.Certificate) { // not required
+			return nil
+		}
+
+		if err := m.Certificate.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("certificate")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("certificate")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *CertificateData) contextValidateEcCurve(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.EcCurve) { // not required
+		return nil
+	}
+
+	if err := m.EcCurve.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("ecCurve")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("ecCurve")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *CertificateData) contextValidateHistories(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Histories); i++ {
+
+		if m.Histories[i] != nil {
+
+			if swag.IsZero(m.Histories[i]) { // not required
+				return nil
+			}
+
+			if err := m.Histories[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("histories" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("histories" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *CertificateData) contextValidateScope(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Scope) { // not required
+		return nil
+	}
+
+	if err := m.Scope.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("scope")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("scope")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *CertificateData) contextValidateSignatureHashAlgorithm(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.SignatureHashAlgorithm) { // not required
+		return nil
+	}
+
+	if err := m.SignatureHashAlgorithm.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("signatureHashAlgorithm")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("signatureHashAlgorithm")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *CertificateData) contextValidateSubjectAlternativeNames(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.SubjectAlternativeNames); i++ {
+
+		if m.SubjectAlternativeNames[i] != nil {
+
+			if swag.IsZero(m.SubjectAlternativeNames[i]) { // not required
+				return nil
+			}
+
+			if err := m.SubjectAlternativeNames[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("subjectAlternativeNames" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("subjectAlternativeNames" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *CertificateData) contextValidateVmcTrademarkCountryOrRegion(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.VmcTrademarkCountryOrRegion) { // not required
+		return nil
+	}
+
+	if err := m.VmcTrademarkCountryOrRegion.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("vmcTrademarkCountryOrRegion")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("vmcTrademarkCountryOrRegion")
 		}
 		return err
 	}

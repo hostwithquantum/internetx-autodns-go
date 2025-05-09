@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,34 +19,31 @@ import (
 // swagger:model UserProfile
 type UserProfile struct {
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// The mode of the entry
-	// Required: true
-	Flag UserProfileFlag `json:"flag"`
+	// Defines to what extent the settings of a user are adopted by its subusers.
+	// Example: FIX
+	Flag UserProfileFlag `json:"flag,omitempty"`
 
-	// The  user profile key
-	// Required: true
-	Key *string `json:"key"`
+	// The user profile key.
+	// Example: techc
+	Key string `json:"key,omitempty"`
 
-	// The owner of the object.
+	// The object owner.
 	Owner *BasicUser `json:"owner,omitempty"`
 
-	// The read only entry
-	Readonly bool `json:"readonly,omitempty"`
-
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The updating user of the object.
+	// User who performed the last update.
 	Updater *BasicUser `json:"updater,omitempty"`
 
-	// The value of the key
-	// Required: true
-	Value *string `json:"value"`
+	// The value of the key.
+	// Example: 12345
+	Value string `json:"value,omitempty"`
 }
 
 // Validate validates this user profile
@@ -56,10 +55,6 @@ func (m *UserProfile) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateFlag(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateKey(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -75,10 +70,6 @@ func (m *UserProfile) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateValue(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -86,7 +77,6 @@ func (m *UserProfile) Validate(formats strfmt.Registry) error {
 }
 
 func (m *UserProfile) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -99,10 +89,15 @@ func (m *UserProfile) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *UserProfile) validateFlag(formats strfmt.Registry) error {
+	if swag.IsZero(m.Flag) { // not required
+		return nil
+	}
 
 	if err := m.Flag.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("flag")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("flag")
 		}
 		return err
 	}
@@ -110,17 +105,7 @@ func (m *UserProfile) validateFlag(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *UserProfile) validateKey(formats strfmt.Registry) error {
-
-	if err := validate.Required("key", "body", m.Key); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *UserProfile) validateOwner(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -129,6 +114,8 @@ func (m *UserProfile) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -138,7 +125,6 @@ func (m *UserProfile) validateOwner(formats strfmt.Registry) error {
 }
 
 func (m *UserProfile) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -151,7 +137,6 @@ func (m *UserProfile) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *UserProfile) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -160,6 +145,8 @@ func (m *UserProfile) validateUpdater(formats strfmt.Registry) error {
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}
@@ -168,10 +155,83 @@ func (m *UserProfile) validateUpdater(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *UserProfile) validateValue(formats strfmt.Registry) error {
+// ContextValidate validate this user profile based on the context it is used
+func (m *UserProfile) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
 
-	if err := validate.Required("value", "body", m.Value); err != nil {
+	if err := m.contextValidateFlag(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *UserProfile) contextValidateFlag(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Flag) { // not required
+		return nil
+	}
+
+	if err := m.Flag.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("flag")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("flag")
+		}
 		return err
+	}
+
+	return nil
+}
+
+func (m *UserProfile) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *UserProfile) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
 	}
 
 	return nil

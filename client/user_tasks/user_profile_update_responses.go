@@ -6,6 +6,7 @@ package user_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *UserProfileUpdateReader) ReadResponse(response runtime.ClientResponse, 
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[PUT /user/{name}/{context}/profile] userProfileUpdate", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewUserProfileUpdateOK() *UserProfileUpdateOK {
 	return &UserProfileUpdateOK{}
 }
 
-/*UserProfileUpdateOK handles this case with default header values.
+/*
+UserProfileUpdateOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type UserProfileUpdateOK struct {
 	Payload *models.JSONResponseDataUserProfileViews
 }
 
+// IsSuccess returns true when this user profile update o k response has a 2xx status code
+func (o *UserProfileUpdateOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this user profile update o k response has a 3xx status code
+func (o *UserProfileUpdateOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this user profile update o k response has a 4xx status code
+func (o *UserProfileUpdateOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this user profile update o k response has a 5xx status code
+func (o *UserProfileUpdateOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this user profile update o k response a status code equal to that given
+func (o *UserProfileUpdateOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the user profile update o k response
+func (o *UserProfileUpdateOK) Code() int {
+	return 200
+}
+
 func (o *UserProfileUpdateOK) Error() string {
-	return fmt.Sprintf("[PUT /user/{name}/{context}/profile][%d] userProfileUpdateOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /user/{name}/{context}/profile][%d] userProfileUpdateOK %s", 200, payload)
+}
+
+func (o *UserProfileUpdateOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /user/{name}/{context}/profile][%d] userProfileUpdateOK %s", 200, payload)
 }
 
 func (o *UserProfileUpdateOK) GetPayload() *models.JSONResponseDataUserProfileViews {

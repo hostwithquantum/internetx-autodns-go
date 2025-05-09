@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,33 +19,29 @@ import (
 // swagger:model TransferOut
 type TransferOut struct {
 
-	// The auto ack date.
+	// Date of the automatic ACK on which the transfer is confirmed.
 	// Format: date-time
 	AutoAck strfmt.DateTime `json:"autoAck,omitempty"`
 
-	// Autoanswer active.
+	// Automatic response to the transfer request.
+	// false = not active
+	// true = active
+	// Default value = false
+	// For XML, 0 (false) and 1 (true) can also be used.
 	AutoAnswer bool `json:"autoAnswer,omitempty"`
 
-	// The auto nack date.
+	// Date of the automatic NACK on which the transfer is rejected.
 	// Format: date-time
 	AutoNack strfmt.DateTime `json:"autoNack,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// The delivered date.
-	// Format: date-time
-	Delivered strfmt.DateTime `json:"delivered,omitempty"`
-
-	// The delivered mailserver.
-	DeliveredMailserver string `json:"deliveredMailserver,omitempty"`
-
 	// The domain name.
-	// Required: true
-	Domain *string `json:"domain"`
+	Domain string `json:"domain,omitempty"`
 
-	// The end date.
+	// Date on which the transfer process ends.
 	// Format: date-time
 	End strfmt.DateTime `json:"end,omitempty"`
 
@@ -53,23 +51,20 @@ type TransferOut struct {
 	// The loosing registrar.
 	LoosingRegistrar string `json:"loosingRegistrar,omitempty"`
 
-	// The mailserver.
-	Mailserver string `json:"mailserver,omitempty"`
-
-	// The reason. Possible values are : 1 = Evidence of fraud / 2 = Current UDRP action / 3 = Court order / 4 = Identity dispute / 5 = No payment for previous registration period / 6 = Express written objection to the transfer from the transfer contact.
+	// Reason for rejection. Only for type "nack", mandatory here.
 	NackReason int32 `json:"nackReason,omitempty"`
 
-	// The owner of the object.
+	// The object owner.
 	Owner *BasicUser `json:"owner,omitempty"`
 
-	// The recipient.
+	// Receiver of the reminder email.
 	Recipient string `json:"recipient,omitempty"`
 
-	// The reminder date.
+	// Date on which the transfer reminder mail is sent.
 	// Format: date-time
 	Reminder strfmt.DateTime `json:"reminder,omitempty"`
 
-	// The start date.
+	// Date on which the transfer started.
 	// Format: date-time
 	Start strfmt.DateTime `json:"start,omitempty"`
 
@@ -77,14 +72,13 @@ type TransferOut struct {
 	Transaction string `json:"transaction,omitempty"`
 
 	// The type of the transfer.
-	// Required: true
-	Type TransferAnswer `json:"type"`
+	Type TransferAnswer `json:"type,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The updating user of the object.
+	// User who performed the last update.
 	Updater *BasicUser `json:"updater,omitempty"`
 }
 
@@ -101,14 +95,6 @@ func (m *TransferOut) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateCreated(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateDelivered(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateDomain(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -147,7 +133,6 @@ func (m *TransferOut) Validate(formats strfmt.Registry) error {
 }
 
 func (m *TransferOut) validateAutoAck(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.AutoAck) { // not required
 		return nil
 	}
@@ -160,7 +145,6 @@ func (m *TransferOut) validateAutoAck(formats strfmt.Registry) error {
 }
 
 func (m *TransferOut) validateAutoNack(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.AutoNack) { // not required
 		return nil
 	}
@@ -173,7 +157,6 @@ func (m *TransferOut) validateAutoNack(formats strfmt.Registry) error {
 }
 
 func (m *TransferOut) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -185,30 +168,7 @@ func (m *TransferOut) validateCreated(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *TransferOut) validateDelivered(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Delivered) { // not required
-		return nil
-	}
-
-	if err := validate.FormatOf("delivered", "body", "date-time", m.Delivered.String(), formats); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *TransferOut) validateDomain(formats strfmt.Registry) error {
-
-	if err := validate.Required("domain", "body", m.Domain); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *TransferOut) validateEnd(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.End) { // not required
 		return nil
 	}
@@ -221,7 +181,6 @@ func (m *TransferOut) validateEnd(formats strfmt.Registry) error {
 }
 
 func (m *TransferOut) validateOwner(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -230,6 +189,8 @@ func (m *TransferOut) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -239,7 +200,6 @@ func (m *TransferOut) validateOwner(formats strfmt.Registry) error {
 }
 
 func (m *TransferOut) validateReminder(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Reminder) { // not required
 		return nil
 	}
@@ -252,7 +212,6 @@ func (m *TransferOut) validateReminder(formats strfmt.Registry) error {
 }
 
 func (m *TransferOut) validateStart(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Start) { // not required
 		return nil
 	}
@@ -265,10 +224,15 @@ func (m *TransferOut) validateStart(formats strfmt.Registry) error {
 }
 
 func (m *TransferOut) validateType(formats strfmt.Registry) error {
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
 
 	if err := m.Type.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
 		}
 		return err
 	}
@@ -277,7 +241,6 @@ func (m *TransferOut) validateType(formats strfmt.Registry) error {
 }
 
 func (m *TransferOut) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -290,7 +253,6 @@ func (m *TransferOut) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *TransferOut) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -299,6 +261,90 @@ func (m *TransferOut) validateUpdater(formats strfmt.Registry) error {
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this transfer out based on the context it is used
+func (m *TransferOut) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *TransferOut) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *TransferOut) contextValidateType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	if err := m.Type.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *TransferOut) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}

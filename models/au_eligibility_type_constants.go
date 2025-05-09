@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model AuEligibilityTypeConstants
 type AuEligibilityTypeConstants string
+
+func NewAuEligibilityTypeConstants(value AuEligibilityTypeConstants) *AuEligibilityTypeConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated AuEligibilityTypeConstants.
+func (m AuEligibilityTypeConstants) Pointer() *AuEligibilityTypeConstants {
+	return &m
+}
 
 const (
 
@@ -73,6 +83,108 @@ const (
 
 	// AuEligibilityTypeConstantsOTHER captures enum value "OTHER"
 	AuEligibilityTypeConstantsOTHER AuEligibilityTypeConstants = "OTHER"
+
+	// AuEligibilityTypeConstantsREGISTRABLEBODY captures enum value "REGISTRABLE_BODY"
+	AuEligibilityTypeConstantsREGISTRABLEBODY AuEligibilityTypeConstants = "REGISTRABLE_BODY"
+
+	// AuEligibilityTypeConstantsINDIGENOUSCORPORATION captures enum value "INDIGENOUS_CORPORATION"
+	AuEligibilityTypeConstantsINDIGENOUSCORPORATION AuEligibilityTypeConstants = "INDIGENOUS_CORPORATION"
+
+	// AuEligibilityTypeConstantsREGISTEREDORGANISATION captures enum value "REGISTERED_ORGANISATION"
+	AuEligibilityTypeConstantsREGISTEREDORGANISATION AuEligibilityTypeConstants = "REGISTERED_ORGANISATION"
+
+	// AuEligibilityTypeConstantsCOOPERATIVE captures enum value "COOPERATIVE"
+	AuEligibilityTypeConstantsCOOPERATIVE AuEligibilityTypeConstants = "COOPERATIVE"
+
+	// AuEligibilityTypeConstantsTRUST captures enum value "TRUST"
+	AuEligibilityTypeConstantsTRUST AuEligibilityTypeConstants = "TRUST"
+
+	// AuEligibilityTypeConstantsEDUCATIONALINSTITUTION captures enum value "EDUCATIONAL_INSTITUTION"
+	AuEligibilityTypeConstantsEDUCATIONALINSTITUTION AuEligibilityTypeConstants = "EDUCATIONAL_INSTITUTION"
+
+	// AuEligibilityTypeConstantsCOMMONWEALTHENTITY captures enum value "COMMONWEALTH_ENTITY"
+	AuEligibilityTypeConstantsCOMMONWEALTHENTITY AuEligibilityTypeConstants = "COMMONWEALTH_ENTITY"
+
+	// AuEligibilityTypeConstantsSTATUTORYBODY captures enum value "STATUTORY_BODY"
+	AuEligibilityTypeConstantsSTATUTORYBODY AuEligibilityTypeConstants = "STATUTORY_BODY"
+
+	// AuEligibilityTypeConstantsTRADINGCOOPERATIVE captures enum value "TRADING_COOPERATIVE"
+	AuEligibilityTypeConstantsTRADINGCOOPERATIVE AuEligibilityTypeConstants = "TRADING_COOPERATIVE"
+
+	// AuEligibilityTypeConstantsCOMPANYLIMITEDBYGUARANTEE captures enum value "COMPANY_LIMITED_BY_GUARANTEE"
+	AuEligibilityTypeConstantsCOMPANYLIMITEDBYGUARANTEE AuEligibilityTypeConstants = "COMPANY_LIMITED_BY_GUARANTEE"
+
+	// AuEligibilityTypeConstantsNONDISTRIBUTINGCOOPERATIVE captures enum value "NON_DISTRIBUTING_COOPERATIVE"
+	AuEligibilityTypeConstantsNONDISTRIBUTINGCOOPERATIVE AuEligibilityTypeConstants = "NON_DISTRIBUTING_COOPERATIVE"
+
+	// AuEligibilityTypeConstantsNONTRADINGCOOPERATIVE captures enum value "NON_TRADING_COOPERATIVE"
+	AuEligibilityTypeConstantsNONTRADINGCOOPERATIVE AuEligibilityTypeConstants = "NON_TRADING_COOPERATIVE"
+
+	// AuEligibilityTypeConstantsCHARITABLETRUST captures enum value "CHARITABLE_TRUST"
+	AuEligibilityTypeConstantsCHARITABLETRUST AuEligibilityTypeConstants = "CHARITABLE_TRUST"
+
+	// AuEligibilityTypeConstantsPUBLICPRIVATEANCILLARYFUND captures enum value "PUBLIC_PRIVATE_ANCILLARY_FUND"
+	AuEligibilityTypeConstantsPUBLICPRIVATEANCILLARYFUND AuEligibilityTypeConstants = "PUBLIC_PRIVATE_ANCILLARY_FUND"
+
+	// AuEligibilityTypeConstantsPEAKSTATETERRITORYBODY captures enum value "PEAK_STATE_TERRITORY_BODY"
+	AuEligibilityTypeConstantsPEAKSTATETERRITORYBODY AuEligibilityTypeConstants = "PEAK_STATE_TERRITORY_BODY"
+
+	// AuEligibilityTypeConstantsNOTFORPROFITCOMMUNITYGROUP captures enum value "NOT_FOR_PROFIT_COMMUNITY_GROUP"
+	AuEligibilityTypeConstantsNOTFORPROFITCOMMUNITYGROUP AuEligibilityTypeConstants = "NOT_FOR_PROFIT_COMMUNITY_GROUP"
+
+	// AuEligibilityTypeConstantsFOREIGNEMBASSYORCONSULATE captures enum value "FOREIGN_EMBASSY_OR_CONSULATE"
+	AuEligibilityTypeConstantsFOREIGNEMBASSYORCONSULATE AuEligibilityTypeConstants = "FOREIGN_EMBASSY_OR_CONSULATE"
+
+	// AuEligibilityTypeConstantsUNION captures enum value "UNION"
+	AuEligibilityTypeConstantsUNION AuEligibilityTypeConstants = "UNION"
+
+	// AuEligibilityTypeConstantsBODYSERVINGOVERSEASSTUDENTS captures enum value "BODY_SERVING_OVERSEAS_STUDENTS"
+	AuEligibilityTypeConstantsBODYSERVINGOVERSEASSTUDENTS AuEligibilityTypeConstants = "BODY_SERVING_OVERSEAS_STUDENTS"
+
+	// AuEligibilityTypeConstantsCHILDCARECENTER captures enum value "CHILD_CARE_CENTER"
+	AuEligibilityTypeConstantsCHILDCARECENTER AuEligibilityTypeConstants = "CHILD_CARE_CENTER"
+
+	// AuEligibilityTypeConstantsEDUCATIONANDCARESERVICESCHILDCARE captures enum value "EDUCATION_AND_CARE_SERVICES_CHILD_CARE"
+	AuEligibilityTypeConstantsEDUCATIONANDCARESERVICESCHILDCARE AuEligibilityTypeConstants = "EDUCATION_AND_CARE_SERVICES_CHILD_CARE"
+
+	// AuEligibilityTypeConstantsGOVERNMENTBODY captures enum value "GOVERNMENT_BODY"
+	AuEligibilityTypeConstantsGOVERNMENTBODY AuEligibilityTypeConstants = "GOVERNMENT_BODY"
+
+	// AuEligibilityTypeConstantsGOVERNMENTSCHOOL captures enum value "GOVERNMENT_SCHOOL"
+	AuEligibilityTypeConstantsGOVERNMENTSCHOOL AuEligibilityTypeConstants = "GOVERNMENT_SCHOOL"
+
+	// AuEligibilityTypeConstantsHIGHEREDUCATIONINSTITUTION captures enum value "HIGHER_EDUCATION_INSTITUTION"
+	AuEligibilityTypeConstantsHIGHEREDUCATIONINSTITUTION AuEligibilityTypeConstants = "HIGHER_EDUCATION_INSTITUTION"
+
+	// AuEligibilityTypeConstantsNATIONALBODY captures enum value "NATIONAL_BODY"
+	AuEligibilityTypeConstantsNATIONALBODY AuEligibilityTypeConstants = "NATIONAL_BODY"
+
+	// AuEligibilityTypeConstantsNONGOVERNMENTSCHOOL captures enum value "NON_GOVERNMENT_SCHOOL"
+	AuEligibilityTypeConstantsNONGOVERNMENTSCHOOL AuEligibilityTypeConstants = "NON_GOVERNMENT_SCHOOL"
+
+	// AuEligibilityTypeConstantsPARENTANDPROFESSIONALASSOCIATIONORGANISATION captures enum value "PARENT_AND_PROFESSIONAL_ASSOCIATION_ORGANISATION"
+	AuEligibilityTypeConstantsPARENTANDPROFESSIONALASSOCIATIONORGANISATION AuEligibilityTypeConstants = "PARENT_AND_PROFESSIONAL_ASSOCIATION_ORGANISATION"
+
+	// AuEligibilityTypeConstantsPRESCHOOL captures enum value "PRE_SCHOOL"
+	AuEligibilityTypeConstantsPRESCHOOL AuEligibilityTypeConstants = "PRE_SCHOOL"
+
+	// AuEligibilityTypeConstantsPROVIDEROFNONACCREDITEDTRAINING captures enum value "PROVIDER_OF_NON_ACCREDITED_TRAINING"
+	AuEligibilityTypeConstantsPROVIDEROFNONACCREDITEDTRAINING AuEligibilityTypeConstants = "PROVIDER_OF_NON_ACCREDITED_TRAINING"
+
+	// AuEligibilityTypeConstantsRESEARCHORGANISATION captures enum value "RESEARCH_ORGANISATION"
+	AuEligibilityTypeConstantsRESEARCHORGANISATION AuEligibilityTypeConstants = "RESEARCH_ORGANISATION"
+
+	// AuEligibilityTypeConstantsTRAININGORGANISATION captures enum value "TRAINING_ORGANISATION"
+	AuEligibilityTypeConstantsTRAININGORGANISATION AuEligibilityTypeConstants = "TRAINING_ORGANISATION"
+
+	// AuEligibilityTypeConstantsINDUSTRYORGANISATION captures enum value "INDUSTRY_ORGANISATION"
+	AuEligibilityTypeConstantsINDUSTRYORGANISATION AuEligibilityTypeConstants = "INDUSTRY_ORGANISATION"
+
+	// AuEligibilityTypeConstantsCHARITYTRADE captures enum value "CHARITY_TRADE"
+	AuEligibilityTypeConstantsCHARITYTRADE AuEligibilityTypeConstants = "CHARITY_TRADE"
+
+	// AuEligibilityTypeConstantsSTATUTORYBODYTRADINGCOOPERATIVE captures enum value "STATUTORY_BODY_TRADING_COOPERATIVE"
+	AuEligibilityTypeConstantsSTATUTORYBODYTRADINGCOOPERATIVE AuEligibilityTypeConstants = "STATUTORY_BODY_TRADING_COOPERATIVE"
 )
 
 // for schema
@@ -80,7 +192,7 @@ var auEligibilityTypeConstantsEnum []interface{}
 
 func init() {
 	var res []AuEligibilityTypeConstants
-	if err := json.Unmarshal([]byte(`["COMPANY","REGISTERED_BUSINESS","SOLE_TRADER","PARTNERSHIP","TRADEMARK_OWNER","PENDING_TM_OWNER","CITIZEN_RESIDENT","INCORPORATED_ASSOCIATION","UNINCORPORATED_ASSOCIATION","CLUB","NON_PROFIT_ORGANISATION","CHARITY","TRADE_UNION","INDUSTRY_BODY","COMMERCIAL_STATUTORY_BODY","POLITICAL_PARTY","RELIGIOUS_CHURCH_GROUPS","OTHER"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["COMPANY","REGISTERED_BUSINESS","SOLE_TRADER","PARTNERSHIP","TRADEMARK_OWNER","PENDING_TM_OWNER","CITIZEN_RESIDENT","INCORPORATED_ASSOCIATION","UNINCORPORATED_ASSOCIATION","CLUB","NON_PROFIT_ORGANISATION","CHARITY","TRADE_UNION","INDUSTRY_BODY","COMMERCIAL_STATUTORY_BODY","POLITICAL_PARTY","RELIGIOUS_CHURCH_GROUPS","OTHER","REGISTRABLE_BODY","INDIGENOUS_CORPORATION","REGISTERED_ORGANISATION","COOPERATIVE","TRUST","EDUCATIONAL_INSTITUTION","COMMONWEALTH_ENTITY","STATUTORY_BODY","TRADING_COOPERATIVE","COMPANY_LIMITED_BY_GUARANTEE","NON_DISTRIBUTING_COOPERATIVE","NON_TRADING_COOPERATIVE","CHARITABLE_TRUST","PUBLIC_PRIVATE_ANCILLARY_FUND","PEAK_STATE_TERRITORY_BODY","NOT_FOR_PROFIT_COMMUNITY_GROUP","FOREIGN_EMBASSY_OR_CONSULATE","UNION","BODY_SERVING_OVERSEAS_STUDENTS","CHILD_CARE_CENTER","EDUCATION_AND_CARE_SERVICES_CHILD_CARE","GOVERNMENT_BODY","GOVERNMENT_SCHOOL","HIGHER_EDUCATION_INSTITUTION","NATIONAL_BODY","NON_GOVERNMENT_SCHOOL","PARENT_AND_PROFESSIONAL_ASSOCIATION_ORGANISATION","PRE_SCHOOL","PROVIDER_OF_NON_ACCREDITED_TRAINING","RESEARCH_ORGANISATION","TRAINING_ORGANISATION","INDUSTRY_ORGANISATION","CHARITY_TRADE","STATUTORY_BODY_TRADING_COOPERATIVE"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -107,5 +219,10 @@ func (m AuEligibilityTypeConstants) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this au eligibility type constants based on context it is used
+func (m AuEligibilityTypeConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model ObjectStatus
 type ObjectStatus string
+
+func NewObjectStatus(value ObjectStatus) *ObjectStatus {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated ObjectStatus.
+func (m ObjectStatus) Pointer() *ObjectStatus {
+	return &m
+}
 
 const (
 
@@ -77,5 +87,10 @@ func (m ObjectStatus) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this object status based on context it is used
+func (m ObjectStatus) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

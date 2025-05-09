@@ -6,6 +6,7 @@ package domain_prereg_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *CreateAndConfirmPreregReader) ReadResponse(response runtime.ClientRespo
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[POST /domainPrereg/_confirm] createAndConfirmPrereg", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewCreateAndConfirmPreregOK() *CreateAndConfirmPreregOK {
 	return &CreateAndConfirmPreregOK{}
 }
 
-/*CreateAndConfirmPreregOK handles this case with default header values.
+/*
+CreateAndConfirmPreregOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type CreateAndConfirmPreregOK struct {
 	Payload *models.JSONResponseDataVoid
 }
 
+// IsSuccess returns true when this create and confirm prereg o k response has a 2xx status code
+func (o *CreateAndConfirmPreregOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this create and confirm prereg o k response has a 3xx status code
+func (o *CreateAndConfirmPreregOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create and confirm prereg o k response has a 4xx status code
+func (o *CreateAndConfirmPreregOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this create and confirm prereg o k response has a 5xx status code
+func (o *CreateAndConfirmPreregOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create and confirm prereg o k response a status code equal to that given
+func (o *CreateAndConfirmPreregOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the create and confirm prereg o k response
+func (o *CreateAndConfirmPreregOK) Code() int {
+	return 200
+}
+
 func (o *CreateAndConfirmPreregOK) Error() string {
-	return fmt.Sprintf("[POST /domainPrereg/_confirm][%d] createAndConfirmPreregOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /domainPrereg/_confirm][%d] createAndConfirmPreregOK %s", 200, payload)
+}
+
+func (o *CreateAndConfirmPreregOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /domainPrereg/_confirm][%d] createAndConfirmPreregOK %s", 200, payload)
 }
 
 func (o *CreateAndConfirmPreregOK) GetPayload() *models.JSONResponseDataVoid {

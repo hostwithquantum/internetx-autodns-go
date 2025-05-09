@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -19,35 +20,38 @@ import (
 // swagger:model PollMessage
 type PollMessage struct {
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// the custom transaction id.
+	// The custom transaction ID.
 	Ctid string `json:"ctid,omitempty"`
 
 	// Optional message flags.
 	Flags string `json:"flags,omitempty"`
 
-	// The message id.
+	// Message ID. Required for confirming with Poll Confirm.
 	ID int64 `json:"id,omitempty"`
 
 	// The job data. Available if the message is a job message
 	Job *Job `json:"job,omitempty"`
 
-	// The general localized messages.
+	// System messages.
 	Messages []*Message `json:"messages"`
+
+	// Optional notice.
+	Notice string `json:"notice,omitempty"`
 
 	// The notification data. Available if the message is a notification message
 	Notify *NotifyMessage `json:"notify,omitempty"`
 
-	// The object of the job or notify.
+	// "Response" object like "domain". Object type depends on the request.
 	Object *ResponseObject `json:"object,omitempty"`
 
-	// The owner of the message.
+	// The object owner.
 	Owner *BasicUser `json:"owner,omitempty"`
 
-	// The server transaction id.
+	// The server transaction ID.
 	Stid string `json:"stid,omitempty"`
 }
 
@@ -86,7 +90,6 @@ func (m *PollMessage) Validate(formats strfmt.Registry) error {
 }
 
 func (m *PollMessage) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -99,7 +102,6 @@ func (m *PollMessage) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *PollMessage) validateJob(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Job) { // not required
 		return nil
 	}
@@ -108,6 +110,8 @@ func (m *PollMessage) validateJob(formats strfmt.Registry) error {
 		if err := m.Job.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("job")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("job")
 			}
 			return err
 		}
@@ -117,7 +121,6 @@ func (m *PollMessage) validateJob(formats strfmt.Registry) error {
 }
 
 func (m *PollMessage) validateMessages(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Messages) { // not required
 		return nil
 	}
@@ -131,6 +134,8 @@ func (m *PollMessage) validateMessages(formats strfmt.Registry) error {
 			if err := m.Messages[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("messages" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("messages" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -142,7 +147,6 @@ func (m *PollMessage) validateMessages(formats strfmt.Registry) error {
 }
 
 func (m *PollMessage) validateNotify(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Notify) { // not required
 		return nil
 	}
@@ -151,6 +155,8 @@ func (m *PollMessage) validateNotify(formats strfmt.Registry) error {
 		if err := m.Notify.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("notify")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("notify")
 			}
 			return err
 		}
@@ -160,7 +166,6 @@ func (m *PollMessage) validateNotify(formats strfmt.Registry) error {
 }
 
 func (m *PollMessage) validateObject(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Object) { // not required
 		return nil
 	}
@@ -169,6 +174,8 @@ func (m *PollMessage) validateObject(formats strfmt.Registry) error {
 		if err := m.Object.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("object")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("object")
 			}
 			return err
 		}
@@ -178,7 +185,6 @@ func (m *PollMessage) validateObject(formats strfmt.Registry) error {
 }
 
 func (m *PollMessage) validateOwner(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -187,6 +193,147 @@ func (m *PollMessage) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this poll message based on the context it is used
+func (m *PollMessage) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateJob(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateMessages(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateNotify(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateObject(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PollMessage) contextValidateJob(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Job != nil {
+
+		if swag.IsZero(m.Job) { // not required
+			return nil
+		}
+
+		if err := m.Job.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("job")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("job")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *PollMessage) contextValidateMessages(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Messages); i++ {
+
+		if m.Messages[i] != nil {
+
+			if swag.IsZero(m.Messages[i]) { // not required
+				return nil
+			}
+
+			if err := m.Messages[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("messages" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("messages" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *PollMessage) contextValidateNotify(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Notify != nil {
+
+		if swag.IsZero(m.Notify) { // not required
+			return nil
+		}
+
+		if err := m.Notify.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("notify")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("notify")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *PollMessage) contextValidateObject(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Object != nil {
+
+		if swag.IsZero(m.Object) { // not required
+			return nil
+		}
+
+		if err := m.Object.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("object")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("object")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *PollMessage) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}

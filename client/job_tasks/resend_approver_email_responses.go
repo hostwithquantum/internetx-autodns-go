@@ -6,6 +6,7 @@ package job_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *ResendApproverEmailReader) ReadResponse(response runtime.ClientResponse
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[PUT /job/{id}/_resendApproverEmail] resendApproverEmail", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewResendApproverEmailOK() *ResendApproverEmailOK {
 	return &ResendApproverEmailOK{}
 }
 
-/*ResendApproverEmailOK handles this case with default header values.
+/*
+ResendApproverEmailOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type ResendApproverEmailOK struct {
 	Payload *models.JSONResponseDataJSONNoData
 }
 
+// IsSuccess returns true when this resend approver email o k response has a 2xx status code
+func (o *ResendApproverEmailOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this resend approver email o k response has a 3xx status code
+func (o *ResendApproverEmailOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this resend approver email o k response has a 4xx status code
+func (o *ResendApproverEmailOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this resend approver email o k response has a 5xx status code
+func (o *ResendApproverEmailOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this resend approver email o k response a status code equal to that given
+func (o *ResendApproverEmailOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the resend approver email o k response
+func (o *ResendApproverEmailOK) Code() int {
+	return 200
+}
+
 func (o *ResendApproverEmailOK) Error() string {
-	return fmt.Sprintf("[PUT /job/{id}/_resendApproverEmail][%d] resendApproverEmailOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /job/{id}/_resendApproverEmail][%d] resendApproverEmailOK %s", 200, payload)
+}
+
+func (o *ResendApproverEmailOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /job/{id}/_resendApproverEmail][%d] resendApproverEmailOK %s", 200, payload)
 }
 
 func (o *ResendApproverEmailOK) GetPayload() *models.JSONResponseDataJSONNoData {

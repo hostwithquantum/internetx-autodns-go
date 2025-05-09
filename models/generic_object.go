@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -15,15 +17,31 @@ import (
 // swagger:model GenericObject
 type GenericObject struct {
 
-	// The type of the object.
+	// Object type.
+	//
+	// Possible values:
+	//
+	// domain
+	// handle
+	// zone
+	// domainzone (domain and zone)
+	// domain_prereg (preregistration)
+	// server_redirect (redirect)
+	// backup_mx
+	// tmch_mark
 	Type string `json:"type,omitempty"`
 
-	// The value of the object.
+	// The value contained in the object.
 	Value string `json:"value,omitempty"`
 }
 
 // Validate validates this generic object
 func (m *GenericObject) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this generic object based on context it is used
+func (m *GenericObject) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

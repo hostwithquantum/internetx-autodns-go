@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -20,38 +22,47 @@ type BasicDocument struct {
 	// The alias of the document
 	Alias string `json:"alias,omitempty"`
 
-	// comment
+	// Document comment
 	Comment string `json:"comment,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
 	// data
+	// Example: The file in binary format
 	Data string `json:"data,omitempty"`
 
-	// id
+	// The expire date.
+	// Format: date-time
+	Expire strfmt.DateTime `json:"expire,omitempty"`
+
+	// The unique identifier of the document
 	ID int64 `json:"id,omitempty"`
 
-	// link
+	// Link created by Internetx to download invoices.
 	Link string `json:"link,omitempty"`
 
-	// mime type
+	// MIME type (Multipurpose Internet Mail Extensions)
+	//  Which MimeType is valid depends on the type of document
+	// Example: application/pdf (invalid for contact document)\nimage/png\nimage/jpeg \ntext/xml (invalid for contact document)\nimage/gif (invalid for contact document)
 	MimeType string `json:"mimeType,omitempty"`
 
-	// name
+	// Name of the document. Can be freely chosen
 	Name string `json:"name,omitempty"`
 
 	// The owner of the object.
 	Owner *BasicUser `json:"owner,omitempty"`
 
-	// size
+	// Document size
+	// (Maximum size for contact documents is 2MB)
 	Size int64 `json:"size,omitempty"`
 
-	// type
+	// Type of document, related to InternetX.
+	// Example: - tmchMarkDocument \n - contactDocument
 	Type string `json:"type,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
@@ -59,8 +70,7 @@ type BasicDocument struct {
 	Updater *BasicUser `json:"updater,omitempty"`
 
 	// The unique identifier of the document
-	// Required: true
-	UUID *string `json:"uuid"`
+	UUID string `json:"uuid,omitempty"`
 }
 
 // Validate validates this basic document
@@ -68,6 +78,10 @@ func (m *BasicDocument) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateCreated(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateExpire(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -83,10 +97,6 @@ func (m *BasicDocument) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateUUID(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -94,7 +104,6 @@ func (m *BasicDocument) Validate(formats strfmt.Registry) error {
 }
 
 func (m *BasicDocument) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -106,8 +115,19 @@ func (m *BasicDocument) validateCreated(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *BasicDocument) validateOwner(formats strfmt.Registry) error {
+func (m *BasicDocument) validateExpire(formats strfmt.Registry) error {
+	if swag.IsZero(m.Expire) { // not required
+		return nil
+	}
 
+	if err := validate.FormatOf("expire", "body", "date-time", m.Expire.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *BasicDocument) validateOwner(formats strfmt.Registry) error {
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -116,6 +136,8 @@ func (m *BasicDocument) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -125,7 +147,6 @@ func (m *BasicDocument) validateOwner(formats strfmt.Registry) error {
 }
 
 func (m *BasicDocument) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -138,7 +159,6 @@ func (m *BasicDocument) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *BasicDocument) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -147,6 +167,8 @@ func (m *BasicDocument) validateUpdater(formats strfmt.Registry) error {
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}
@@ -155,10 +177,61 @@ func (m *BasicDocument) validateUpdater(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *BasicDocument) validateUUID(formats strfmt.Registry) error {
+// ContextValidate validate this basic document based on the context it is used
+func (m *BasicDocument) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
 
-	if err := validate.Required("uuid", "body", m.UUID); err != nil {
-		return err
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *BasicDocument) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *BasicDocument) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
 	}
 
 	return nil

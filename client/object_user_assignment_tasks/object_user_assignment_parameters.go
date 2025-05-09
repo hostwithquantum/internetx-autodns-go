@@ -19,81 +19,121 @@ import (
 	"github.com/hostwithquantum/internetx-autodns-go/models"
 )
 
-// NewObjectUserAssignmentParams creates a new ObjectUserAssignmentParams object
-// with the default values initialized.
+// NewObjectUserAssignmentParams creates a new ObjectUserAssignmentParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewObjectUserAssignmentParams() *ObjectUserAssignmentParams {
-	var ()
 	return &ObjectUserAssignmentParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewObjectUserAssignmentParamsWithTimeout creates a new ObjectUserAssignmentParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewObjectUserAssignmentParamsWithTimeout(timeout time.Duration) *ObjectUserAssignmentParams {
-	var ()
 	return &ObjectUserAssignmentParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewObjectUserAssignmentParamsWithContext creates a new ObjectUserAssignmentParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewObjectUserAssignmentParamsWithContext(ctx context.Context) *ObjectUserAssignmentParams {
-	var ()
 	return &ObjectUserAssignmentParams{
-
 		Context: ctx,
 	}
 }
 
 // NewObjectUserAssignmentParamsWithHTTPClient creates a new ObjectUserAssignmentParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewObjectUserAssignmentParamsWithHTTPClient(client *http.Client) *ObjectUserAssignmentParams {
-	var ()
 	return &ObjectUserAssignmentParams{
 		HTTPClient: client,
 	}
 }
 
-/*ObjectUserAssignmentParams contains all the parameters to send to the API endpoint
-for the object user assignment operation typically these are written to a http.Request
+/*
+ObjectUserAssignmentParams contains all the parameters to send to the API endpoint
+
+	for the object user assignment operation.
+
+	Typically these are written to a http.Request.
 */
 type ObjectUserAssignmentParams struct {
 
-	/*XDomainrobotBulkLimit*/
-	XDomainrobotBulkLimit *int32
-	/*XDomainrobotContext*/
-	XDomainrobotContext *int32
-	/*XDomainrobotDemo*/
-	XDomainrobotDemo *bool
-	/*XDomainrobotDomainSafePin*/
-	XDomainrobotDomainSafePin *string
-	/*XDomainrobotDomainSafeTan*/
-	XDomainrobotDomainSafeTan *string
-	/*XDomainrobotDomainSafeTransaction*/
-	XDomainrobotDomainSafeTransaction *string
-	/*XDomainrobotDomainSafeTransactionExpire*/
-	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
-	/*XDomainrobotOwnerContext*/
-	XDomainrobotOwnerContext *int32
-	/*XDomainrobotOwnerUser*/
-	XDomainrobotOwnerUser *string
-	/*XDomainrobotSessionID*/
-	XDomainrobotSessionID *string
-	/*XDomainrobotWS*/
-	XDomainrobotWS *string
-	/*Body
-	  object
+	// XDomainrobot2FAToken.
+	//
+	// Format: int32
+	XDomainrobot2FAToken *int32
 
+	// XDomainrobotBulkLimit.
+	//
+	// Format: int32
+	XDomainrobotBulkLimit *int32
+
+	// XDomainrobotContext.
+	//
+	// Format: int32
+	XDomainrobotContext *int32
+
+	// XDomainrobotDemo.
+	XDomainrobotDemo *bool
+
+	// XDomainrobotDomainSafePin.
+	XDomainrobotDomainSafePin *string
+
+	// XDomainrobotDomainSafeTan.
+	XDomainrobotDomainSafeTan *string
+
+	// XDomainrobotDomainSafeTransaction.
+	XDomainrobotDomainSafeTransaction *string
+
+	// XDomainrobotDomainSafeTransactionExpire.
+	//
+	// Format: date-time
+	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
+
+	// XDomainrobotOwnerContext.
+	//
+	// Format: int32
+	XDomainrobotOwnerContext *int32
+
+	// XDomainrobotOwnerUser.
+	XDomainrobotOwnerUser *string
+
+	// XDomainrobotSessionID.
+	XDomainrobotSessionID *string
+
+	// XDomainrobotWS.
+	XDomainrobotWS *string
+
+	/* Body.
+
+	   object
 	*/
 	Body *models.ObjectUserAssignment
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the object user assignment params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *ObjectUserAssignmentParams) WithDefaults() *ObjectUserAssignmentParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the object user assignment params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *ObjectUserAssignmentParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the object user assignment params
@@ -127,6 +167,17 @@ func (o *ObjectUserAssignmentParams) WithHTTPClient(client *http.Client) *Object
 // SetHTTPClient adds the HTTPClient to the object user assignment params
 func (o *ObjectUserAssignmentParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithXDomainrobot2FAToken adds the xDomainrobot2FAToken to the object user assignment params
+func (o *ObjectUserAssignmentParams) WithXDomainrobot2FAToken(xDomainrobot2FAToken *int32) *ObjectUserAssignmentParams {
+	o.SetXDomainrobot2FAToken(xDomainrobot2FAToken)
+	return o
+}
+
+// SetXDomainrobot2FAToken adds the xDomainrobot2FAToken to the object user assignment params
+func (o *ObjectUserAssignmentParams) SetXDomainrobot2FAToken(xDomainrobot2FAToken *int32) {
+	o.XDomainrobot2FAToken = xDomainrobot2FAToken
 }
 
 // WithXDomainrobotBulkLimit adds the xDomainrobotBulkLimit to the object user assignment params
@@ -269,13 +320,20 @@ func (o *ObjectUserAssignmentParams) WriteToRequest(r runtime.ClientRequest, reg
 	}
 	var res []error
 
+	if o.XDomainrobot2FAToken != nil {
+
+		// header param X-Domainrobot-2FA-Token
+		if err := r.SetHeaderParam("X-Domainrobot-2FA-Token", swag.FormatInt32(*o.XDomainrobot2FAToken)); err != nil {
+			return err
+		}
+	}
+
 	if o.XDomainrobotBulkLimit != nil {
 
 		// header param X-Domainrobot-Bulk-Limit
 		if err := r.SetHeaderParam("X-Domainrobot-Bulk-Limit", swag.FormatInt32(*o.XDomainrobotBulkLimit)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotContext != nil {
@@ -284,7 +342,6 @@ func (o *ObjectUserAssignmentParams) WriteToRequest(r runtime.ClientRequest, reg
 		if err := r.SetHeaderParam("X-Domainrobot-Context", swag.FormatInt32(*o.XDomainrobotContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDemo != nil {
@@ -293,7 +350,6 @@ func (o *ObjectUserAssignmentParams) WriteToRequest(r runtime.ClientRequest, reg
 		if err := r.SetHeaderParam("X-Domainrobot-Demo", swag.FormatBool(*o.XDomainrobotDemo)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafePin != nil {
@@ -302,7 +358,6 @@ func (o *ObjectUserAssignmentParams) WriteToRequest(r runtime.ClientRequest, reg
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Pin", *o.XDomainrobotDomainSafePin); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTan != nil {
@@ -311,7 +366,6 @@ func (o *ObjectUserAssignmentParams) WriteToRequest(r runtime.ClientRequest, reg
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Tan", *o.XDomainrobotDomainSafeTan); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransaction != nil {
@@ -320,7 +374,6 @@ func (o *ObjectUserAssignmentParams) WriteToRequest(r runtime.ClientRequest, reg
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction", *o.XDomainrobotDomainSafeTransaction); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransactionExpire != nil {
@@ -329,7 +382,6 @@ func (o *ObjectUserAssignmentParams) WriteToRequest(r runtime.ClientRequest, reg
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction-Expire", o.XDomainrobotDomainSafeTransactionExpire.String()); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerContext != nil {
@@ -338,7 +390,6 @@ func (o *ObjectUserAssignmentParams) WriteToRequest(r runtime.ClientRequest, reg
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-Context", swag.FormatInt32(*o.XDomainrobotOwnerContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerUser != nil {
@@ -347,7 +398,6 @@ func (o *ObjectUserAssignmentParams) WriteToRequest(r runtime.ClientRequest, reg
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-User", *o.XDomainrobotOwnerUser); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotSessionID != nil {
@@ -356,7 +406,6 @@ func (o *ObjectUserAssignmentParams) WriteToRequest(r runtime.ClientRequest, reg
 		if err := r.SetHeaderParam("X-Domainrobot-SessionId", *o.XDomainrobotSessionID); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotWS != nil {
@@ -365,9 +414,7 @@ func (o *ObjectUserAssignmentParams) WriteToRequest(r runtime.ClientRequest, reg
 		if err := r.SetHeaderParam("X-Domainrobot-WS", *o.XDomainrobotWS); err != nil {
 			return err
 		}
-
 	}
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

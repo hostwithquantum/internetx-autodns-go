@@ -14,63 +14,77 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-
-	"github.com/hostwithquantum/internetx-autodns-go/models"
 )
 
-// NewTmchMarkDocumentDeleteParams creates a new TmchMarkDocumentDeleteParams object
-// with the default values initialized.
+// NewTmchMarkDocumentDeleteParams creates a new TmchMarkDocumentDeleteParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewTmchMarkDocumentDeleteParams() *TmchMarkDocumentDeleteParams {
-	var ()
 	return &TmchMarkDocumentDeleteParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewTmchMarkDocumentDeleteParamsWithTimeout creates a new TmchMarkDocumentDeleteParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewTmchMarkDocumentDeleteParamsWithTimeout(timeout time.Duration) *TmchMarkDocumentDeleteParams {
-	var ()
 	return &TmchMarkDocumentDeleteParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewTmchMarkDocumentDeleteParamsWithContext creates a new TmchMarkDocumentDeleteParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewTmchMarkDocumentDeleteParamsWithContext(ctx context.Context) *TmchMarkDocumentDeleteParams {
-	var ()
 	return &TmchMarkDocumentDeleteParams{
-
 		Context: ctx,
 	}
 }
 
 // NewTmchMarkDocumentDeleteParamsWithHTTPClient creates a new TmchMarkDocumentDeleteParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewTmchMarkDocumentDeleteParamsWithHTTPClient(client *http.Client) *TmchMarkDocumentDeleteParams {
-	var ()
 	return &TmchMarkDocumentDeleteParams{
 		HTTPClient: client,
 	}
 }
 
-/*TmchMarkDocumentDeleteParams contains all the parameters to send to the API endpoint
-for the tmch mark document delete operation typically these are written to a http.Request
+/*
+TmchMarkDocumentDeleteParams contains all the parameters to send to the API endpoint
+
+	for the tmch mark document delete operation.
+
+	Typically these are written to a http.Request.
 */
 type TmchMarkDocumentDeleteParams struct {
 
-	/*Body
-	  type
+	// Reference.
+	Reference string
 
-	*/
-	Body models.DocumentTypeConstants
+	// Type.
+	Type string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the tmch mark document delete params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *TmchMarkDocumentDeleteParams) WithDefaults() *TmchMarkDocumentDeleteParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the tmch mark document delete params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *TmchMarkDocumentDeleteParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the tmch mark document delete params
@@ -106,15 +120,26 @@ func (o *TmchMarkDocumentDeleteParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithBody adds the body to the tmch mark document delete params
-func (o *TmchMarkDocumentDeleteParams) WithBody(body models.DocumentTypeConstants) *TmchMarkDocumentDeleteParams {
-	o.SetBody(body)
+// WithReference adds the reference to the tmch mark document delete params
+func (o *TmchMarkDocumentDeleteParams) WithReference(reference string) *TmchMarkDocumentDeleteParams {
+	o.SetReference(reference)
 	return o
 }
 
-// SetBody adds the body to the tmch mark document delete params
-func (o *TmchMarkDocumentDeleteParams) SetBody(body models.DocumentTypeConstants) {
-	o.Body = body
+// SetReference adds the reference to the tmch mark document delete params
+func (o *TmchMarkDocumentDeleteParams) SetReference(reference string) {
+	o.Reference = reference
+}
+
+// WithType adds the typeVar to the tmch mark document delete params
+func (o *TmchMarkDocumentDeleteParams) WithType(typeVar string) *TmchMarkDocumentDeleteParams {
+	o.SetType(typeVar)
+	return o
+}
+
+// SetType adds the type to the tmch mark document delete params
+func (o *TmchMarkDocumentDeleteParams) SetType(typeVar string) {
+	o.Type = typeVar
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -125,7 +150,13 @@ func (o *TmchMarkDocumentDeleteParams) WriteToRequest(r runtime.ClientRequest, r
 	}
 	var res []error
 
-	if err := r.SetBodyParam(o.Body); err != nil {
+	// path param reference
+	if err := r.SetPathParam("reference", o.Reference); err != nil {
+		return err
+	}
+
+	// path param type
+	if err := r.SetPathParam("type", o.Type); err != nil {
 		return err
 	}
 

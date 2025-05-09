@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model DomainEnvelopeSearchService
 type DomainEnvelopeSearchService string
+
+func NewDomainEnvelopeSearchService(value DomainEnvelopeSearchService) *DomainEnvelopeSearchService {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated DomainEnvelopeSearchService.
+func (m DomainEnvelopeSearchService) Pointer() *DomainEnvelopeSearchService {
+	return &m
+}
 
 const (
 
@@ -62,5 +72,10 @@ func (m DomainEnvelopeSearchService) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this domain envelope search service based on context it is used
+func (m DomainEnvelopeSearchService) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

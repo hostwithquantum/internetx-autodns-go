@@ -6,6 +6,7 @@ package certificate_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *CertificateRealtimeReader) ReadResponse(response runtime.ClientResponse
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[POST /certificate/_realtime] certificateRealtime", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewCertificateRealtimeOK() *CertificateRealtimeOK {
 	return &CertificateRealtimeOK{}
 }
 
-/*CertificateRealtimeOK handles this case with default header values.
+/*
+CertificateRealtimeOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type CertificateRealtimeOK struct {
 	Payload *models.JSONResponseDataCertificate
 }
 
+// IsSuccess returns true when this certificate realtime o k response has a 2xx status code
+func (o *CertificateRealtimeOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this certificate realtime o k response has a 3xx status code
+func (o *CertificateRealtimeOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this certificate realtime o k response has a 4xx status code
+func (o *CertificateRealtimeOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this certificate realtime o k response has a 5xx status code
+func (o *CertificateRealtimeOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this certificate realtime o k response a status code equal to that given
+func (o *CertificateRealtimeOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the certificate realtime o k response
+func (o *CertificateRealtimeOK) Code() int {
+	return 200
+}
+
 func (o *CertificateRealtimeOK) Error() string {
-	return fmt.Sprintf("[POST /certificate/_realtime][%d] certificateRealtimeOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /certificate/_realtime][%d] certificateRealtimeOK %s", 200, payload)
+}
+
+func (o *CertificateRealtimeOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /certificate/_realtime][%d] certificateRealtimeOK %s", 200, payload)
 }
 
 func (o *CertificateRealtimeOK) GetPayload() *models.JSONResponseDataCertificate {

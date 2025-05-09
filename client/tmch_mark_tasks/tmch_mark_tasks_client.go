@@ -9,12 +9,38 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime"
+	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new tmch mark tasks API client.
 func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new tmch mark tasks API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new tmch mark tasks API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -25,85 +51,75 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
+// This client is generated with a few options you might find useful for your swagger spec.
+//
+// Feel free to add you own set of options.
+
+// WithContentType allows the client to force the Content-Type header
+// to negotiate a specific Consumer from the server.
+//
+// You may use this option to set arbitrary extensions to your MIME media type.
+func WithContentType(mime string) ClientOption {
+	return func(r *runtime.ClientOperation) {
+		r.ConsumesMediaTypes = []string{mime}
+	}
+}
+
+// WithContentTypeApplicationJSON sets the Content-Type header to "application/json".
+func WithContentTypeApplicationJSON(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"application/json"}
+}
+
+// WithContentTypeMultipartFormData sets the Content-Type header to "multipart/form-data".
+func WithContentTypeMultipartFormData(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"multipart/form-data"}
+}
+
 // ClientService is the interface for Client methods
 type ClientService interface {
-	DocumentCreate(params *DocumentCreateParams) (*DocumentCreateOK, error)
+	ImportAndtmchMarkTransfer(params *ImportAndtmchMarkTransferParams, opts ...ClientOption) (*ImportAndtmchMarkTransferOK, error)
 
-	ImportAndtmchMarkTransfer(params *ImportAndtmchMarkTransferParams) (*ImportAndtmchMarkTransferOK, error)
+	TmchMArkDelete(params *TmchMArkDeleteParams, opts ...ClientOption) (*TmchMArkDeleteOK, error)
 
-	TmchMArkDelete(params *TmchMArkDeleteParams) (*TmchMArkDeleteOK, error)
+	TmchMarkConfirm(params *TmchMarkConfirmParams, opts ...ClientOption) (*TmchMarkConfirmOK, error)
 
-	TmchMarkConfirm(params *TmchMarkConfirmParams) (*TmchMarkConfirmOK, error)
+	TmchMarkCreate(params *TmchMarkCreateParams, opts ...ClientOption) (*TmchMarkCreateOK, error)
 
-	TmchMarkCreate(params *TmchMarkCreateParams) (*TmchMarkCreateOK, error)
+	TmchMarkDocumentCreate(params *TmchMarkDocumentCreateParams, opts ...ClientOption) (*TmchMarkDocumentCreateOK, error)
 
-	TmchMarkDocumentCreate(params *TmchMarkDocumentCreateParams) (*TmchMarkDocumentCreateOK, error)
+	TmchMarkDocumentDelete(params *TmchMarkDocumentDeleteParams, opts ...ClientOption) (*TmchMarkDocumentDeleteOK, error)
 
-	TmchMarkDocumentDelete(params *TmchMarkDocumentDeleteParams) (*TmchMarkDocumentDeleteOK, error)
+	TmchMarkDocumentInfo(params *TmchMarkDocumentInfoParams, opts ...ClientOption) (*TmchMarkDocumentInfoOK, error)
 
-	TmchMarkDocumentInfo(params *TmchMarkDocumentInfoParams) (*TmchMarkDocumentInfoOK, error)
+	TmchMarkImport(params *TmchMarkImportParams, opts ...ClientOption) (*TmchMarkImportOK, error)
 
-	TmchMarkImport(params *TmchMarkImportParams) (*TmchMarkImportOK, error)
+	TmchMarkInfo(params *TmchMarkInfoParams, opts ...ClientOption) (*TmchMarkInfoOK, error)
 
-	TmchMarkInfo(params *TmchMarkInfoParams) (*TmchMarkInfoOK, error)
+	TmchMarkList(params *TmchMarkListParams, opts ...ClientOption) (*TmchMarkListOK, error)
 
-	TmchMarkList(params *TmchMarkListParams) (*TmchMarkListOK, error)
+	TmchMarkTransfer(params *TmchMarkTransferParams, opts ...ClientOption) (*TmchMarkTransferOK, error)
 
-	TmchMarkTransfer(params *TmchMarkTransferParams) (*TmchMarkTransferOK, error)
+	TmchMarkUpdate(params *TmchMarkUpdateParams, opts ...ClientOption) (*TmchMarkUpdateOK, error)
 
-	TmchMarkUpdate(params *TmchMarkUpdateParams) (*TmchMarkUpdateOK, error)
+	TmchMarkdocumentUpload(params *TmchMarkdocumentUploadParams, opts ...ClientOption) (*TmchMarkdocumentUploadOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
 
 /*
-  DocumentCreate tmches mark document upload
+ImportAndtmchMarkTransfer tmches mark transfer request 011450
 
-  Uploading a specific document to a tmch mark entry.
+Importing an existing TmchMark and starting the transfer.
 */
-func (a *Client) DocumentCreate(params *DocumentCreateParams) (*DocumentCreateOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewDocumentCreateParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "documentCreate",
-		Method:             "PUT",
-		PathPattern:        "/tmchMark/{reference}/document/{type}",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"multipart/form-data"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &DocumentCreateReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*DocumentCreateOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for documentCreate: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-  ImportAndtmchMarkTransfer tmches mark transfer request
-
-  Importing an existing TmchMark and starting the transfer.
-*/
-func (a *Client) ImportAndtmchMarkTransfer(params *ImportAndtmchMarkTransferParams) (*ImportAndtmchMarkTransferOK, error) {
+func (a *Client) ImportAndtmchMarkTransfer(params *ImportAndtmchMarkTransferParams, opts ...ClientOption) (*ImportAndtmchMarkTransferOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewImportAndtmchMarkTransferParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "importAndtmchMarkTransfer",
 		Method:             "POST",
 		PathPattern:        "/tmchMark/_transfer",
@@ -114,7 +130,12 @@ func (a *Client) ImportAndtmchMarkTransfer(params *ImportAndtmchMarkTransferPara
 		Reader:             &ImportAndtmchMarkTransferReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -129,17 +150,16 @@ func (a *Client) ImportAndtmchMarkTransfer(params *ImportAndtmchMarkTransferPara
 }
 
 /*
-  TmchMArkDelete tmches mark delete
+TmchMArkDelete tmches mark delete 011443
 
-  Deleting the TmchMark entry for the given reference.
+Deleting the TmchMark entry for the given reference.
 */
-func (a *Client) TmchMArkDelete(params *TmchMArkDeleteParams) (*TmchMArkDeleteOK, error) {
+func (a *Client) TmchMArkDelete(params *TmchMArkDeleteParams, opts ...ClientOption) (*TmchMArkDeleteOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewTmchMArkDeleteParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "tmchMArkDelete",
 		Method:             "DELETE",
 		PathPattern:        "/tmchMark/{reference}",
@@ -150,7 +170,12 @@ func (a *Client) TmchMArkDelete(params *TmchMArkDeleteParams) (*TmchMArkDeleteOK
 		Reader:             &TmchMArkDeleteReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -165,17 +190,16 @@ func (a *Client) TmchMArkDelete(params *TmchMArkDeleteParams) (*TmchMArkDeleteOK
 }
 
 /*
-  TmchMarkConfirm tmches mark confirm
+TmchMarkConfirm tmches mark confirm 011446
 
-  Confirming an existing TmchMark.
+Confirming an existing TmchMark.
 */
-func (a *Client) TmchMarkConfirm(params *TmchMarkConfirmParams) (*TmchMarkConfirmOK, error) {
+func (a *Client) TmchMarkConfirm(params *TmchMarkConfirmParams, opts ...ClientOption) (*TmchMarkConfirmOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewTmchMarkConfirmParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "tmchMarkConfirm",
 		Method:             "POST",
 		PathPattern:        "/tmchMark/{reference}/_confirm",
@@ -186,7 +210,12 @@ func (a *Client) TmchMarkConfirm(params *TmchMarkConfirmParams) (*TmchMarkConfir
 		Reader:             &TmchMarkConfirmReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -201,17 +230,16 @@ func (a *Client) TmchMarkConfirm(params *TmchMarkConfirmParams) (*TmchMarkConfir
 }
 
 /*
-  TmchMarkCreate tmches mark create
+TmchMarkCreate tmches mark create 011441
 
-  Creating a new TmchMark.
+Creating a new TmchMark.
 */
-func (a *Client) TmchMarkCreate(params *TmchMarkCreateParams) (*TmchMarkCreateOK, error) {
+func (a *Client) TmchMarkCreate(params *TmchMarkCreateParams, opts ...ClientOption) (*TmchMarkCreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewTmchMarkCreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "tmchMarkCreate",
 		Method:             "POST",
 		PathPattern:        "/tmchMark",
@@ -222,7 +250,12 @@ func (a *Client) TmchMarkCreate(params *TmchMarkCreateParams) (*TmchMarkCreateOK
 		Reader:             &TmchMarkCreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -237,17 +270,16 @@ func (a *Client) TmchMarkCreate(params *TmchMarkCreateParams) (*TmchMarkCreateOK
 }
 
 /*
-  TmchMarkDocumentCreate tmches mark document create
+TmchMarkDocumentCreate tmches mark document create 011451
 
-  Assinging an uploaded document to a tmch mark entry.
+Assinging an uploaded document to a tmch mark entry.
 */
-func (a *Client) TmchMarkDocumentCreate(params *TmchMarkDocumentCreateParams) (*TmchMarkDocumentCreateOK, error) {
+func (a *Client) TmchMarkDocumentCreate(params *TmchMarkDocumentCreateParams, opts ...ClientOption) (*TmchMarkDocumentCreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewTmchMarkDocumentCreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "tmchMarkDocumentCreate",
 		Method:             "POST",
 		PathPattern:        "/tmchMark/{reference}/document",
@@ -258,7 +290,12 @@ func (a *Client) TmchMarkDocumentCreate(params *TmchMarkDocumentCreateParams) (*
 		Reader:             &TmchMarkDocumentCreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -273,17 +310,16 @@ func (a *Client) TmchMarkDocumentCreate(params *TmchMarkDocumentCreateParams) (*
 }
 
 /*
-  TmchMarkDocumentDelete tmches mark document delete
+TmchMarkDocumentDelete tmches mark document delete 011453
 
-  Deleting a single TmchMark document for the given type.
+Deleting a single TmchMark document for the given type.
 */
-func (a *Client) TmchMarkDocumentDelete(params *TmchMarkDocumentDeleteParams) (*TmchMarkDocumentDeleteOK, error) {
+func (a *Client) TmchMarkDocumentDelete(params *TmchMarkDocumentDeleteParams, opts ...ClientOption) (*TmchMarkDocumentDeleteOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewTmchMarkDocumentDeleteParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "tmchMarkDocumentDelete",
 		Method:             "DELETE",
 		PathPattern:        "/tmchMark/{reference}/document/{type}",
@@ -294,7 +330,12 @@ func (a *Client) TmchMarkDocumentDelete(params *TmchMarkDocumentDeleteParams) (*
 		Reader:             &TmchMarkDocumentDeleteReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -309,17 +350,16 @@ func (a *Client) TmchMarkDocumentDelete(params *TmchMarkDocumentDeleteParams) (*
 }
 
 /*
-  TmchMarkDocumentInfo tmches mark document info
+TmchMarkDocumentInfo tmches mark document info 011454
 
-  Inquiring a single TmchMark document for the given type.
+Inquiring a single TmchMark document for the given type.
 */
-func (a *Client) TmchMarkDocumentInfo(params *TmchMarkDocumentInfoParams) (*TmchMarkDocumentInfoOK, error) {
+func (a *Client) TmchMarkDocumentInfo(params *TmchMarkDocumentInfoParams, opts ...ClientOption) (*TmchMarkDocumentInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewTmchMarkDocumentInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "tmchMarkDocumentInfo",
 		Method:             "GET",
 		PathPattern:        "/tmchMark/{reference}/document/{type}",
@@ -330,7 +370,12 @@ func (a *Client) TmchMarkDocumentInfo(params *TmchMarkDocumentInfoParams) (*Tmch
 		Reader:             &TmchMarkDocumentInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -345,17 +390,16 @@ func (a *Client) TmchMarkDocumentInfo(params *TmchMarkDocumentInfoParams) (*Tmch
 }
 
 /*
-  TmchMarkImport tmches mark import
+TmchMarkImport tmches mark import 011449
 
-  Importing an existing TmchMark.
+Importing an existing TmchMark.
 */
-func (a *Client) TmchMarkImport(params *TmchMarkImportParams) (*TmchMarkImportOK, error) {
+func (a *Client) TmchMarkImport(params *TmchMarkImportParams, opts ...ClientOption) (*TmchMarkImportOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewTmchMarkImportParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "tmchMarkImport",
 		Method:             "POST",
 		PathPattern:        "/tmchMark/_import",
@@ -366,7 +410,12 @@ func (a *Client) TmchMarkImport(params *TmchMarkImportParams) (*TmchMarkImportOK
 		Reader:             &TmchMarkImportReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -381,17 +430,16 @@ func (a *Client) TmchMarkImport(params *TmchMarkImportParams) (*TmchMarkImportOK
 }
 
 /*
-  TmchMarkInfo tmches mark info
+TmchMarkInfo tmches mark info 011444
 
-  -inquiring the TmchMark entry for the given reference.
+Inquiring the TmchMark entry for the given reference.
 */
-func (a *Client) TmchMarkInfo(params *TmchMarkInfoParams) (*TmchMarkInfoOK, error) {
+func (a *Client) TmchMarkInfo(params *TmchMarkInfoParams, opts ...ClientOption) (*TmchMarkInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewTmchMarkInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "tmchMarkInfo",
 		Method:             "GET",
 		PathPattern:        "/tmchMark/{reference}",
@@ -402,7 +450,12 @@ func (a *Client) TmchMarkInfo(params *TmchMarkInfoParams) (*TmchMarkInfoOK, erro
 		Reader:             &TmchMarkInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -417,17 +470,16 @@ func (a *Client) TmchMarkInfo(params *TmchMarkInfoParams) (*TmchMarkInfoOK, erro
 }
 
 /*
-  TmchMarkList tmches mark list
+TmchMarkList tmches mark list 011445
 
-  Inquiring a list of TmchMark with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: type, name, reference, description, period, renew, status, payable, sent.
+Inquiring a list of TmchMark with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: type, name, reference, description, period, renew, status, payable, sent.
 */
-func (a *Client) TmchMarkList(params *TmchMarkListParams) (*TmchMarkListOK, error) {
+func (a *Client) TmchMarkList(params *TmchMarkListParams, opts ...ClientOption) (*TmchMarkListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewTmchMarkListParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "tmchMarkList",
 		Method:             "POST",
 		PathPattern:        "/tmchMark/_search",
@@ -438,7 +490,12 @@ func (a *Client) TmchMarkList(params *TmchMarkListParams) (*TmchMarkListOK, erro
 		Reader:             &TmchMarkListReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -453,17 +510,16 @@ func (a *Client) TmchMarkList(params *TmchMarkListParams) (*TmchMarkListOK, erro
 }
 
 /*
-  TmchMarkTransfer tmches mark transfer request
+TmchMarkTransfer tmches mark transfer request 011450
 
-  Starting the transfer for given reference (External TmchMark).
+Starting the transfer for given reference (External TmchMark).
 */
-func (a *Client) TmchMarkTransfer(params *TmchMarkTransferParams) (*TmchMarkTransferOK, error) {
+func (a *Client) TmchMarkTransfer(params *TmchMarkTransferParams, opts ...ClientOption) (*TmchMarkTransferOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewTmchMarkTransferParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "tmchMarkTransfer",
 		Method:             "PUT",
 		PathPattern:        "/tmchMark/{reference}/_transfer",
@@ -474,7 +530,12 @@ func (a *Client) TmchMarkTransfer(params *TmchMarkTransferParams) (*TmchMarkTran
 		Reader:             &TmchMarkTransferReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -489,17 +550,16 @@ func (a *Client) TmchMarkTransfer(params *TmchMarkTransferParams) (*TmchMarkTran
 }
 
 /*
-  TmchMarkUpdate tmches mark update
+TmchMarkUpdate tmches mark update 011442
 
-  Updating the TmchMark entry for the given reference.
+Updating the TmchMark entry for the given reference.
 */
-func (a *Client) TmchMarkUpdate(params *TmchMarkUpdateParams) (*TmchMarkUpdateOK, error) {
+func (a *Client) TmchMarkUpdate(params *TmchMarkUpdateParams, opts ...ClientOption) (*TmchMarkUpdateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewTmchMarkUpdateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "tmchMarkUpdate",
 		Method:             "PUT",
 		PathPattern:        "/tmchMark/{reference}",
@@ -510,7 +570,12 @@ func (a *Client) TmchMarkUpdate(params *TmchMarkUpdateParams) (*TmchMarkUpdateOK
 		Reader:             &TmchMarkUpdateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -521,6 +586,46 @@ func (a *Client) TmchMarkUpdate(params *TmchMarkUpdateParams) (*TmchMarkUpdateOK
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for tmchMarkUpdate: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+TmchMarkdocumentUpload tmches mark document upload
+
+Uploading a specific document to a tmch mark entry.
+*/
+func (a *Client) TmchMarkdocumentUpload(params *TmchMarkdocumentUploadParams, opts ...ClientOption) (*TmchMarkdocumentUploadOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewTmchMarkdocumentUploadParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "tmchMarkdocumentUpload",
+		Method:             "PUT",
+		PathPattern:        "/tmchMark/{reference}/document/{type}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"multipart/form-data"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &TmchMarkdocumentUploadReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*TmchMarkdocumentUploadOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for tmchMarkdocumentUpload: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

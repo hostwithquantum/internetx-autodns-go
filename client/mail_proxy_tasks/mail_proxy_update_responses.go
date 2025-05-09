@@ -6,6 +6,7 @@ package mail_proxy_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *MailProxyUpdateReader) ReadResponse(response runtime.ClientResponse, co
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[PUT /mailProxy/{domain}] mailProxyUpdate", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewMailProxyUpdateOK() *MailProxyUpdateOK {
 	return &MailProxyUpdateOK{}
 }
 
-/*MailProxyUpdateOK handles this case with default header values.
+/*
+MailProxyUpdateOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type MailProxyUpdateOK struct {
 	Payload *models.JSONResponseDataJSONNoData
 }
 
+// IsSuccess returns true when this mail proxy update o k response has a 2xx status code
+func (o *MailProxyUpdateOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this mail proxy update o k response has a 3xx status code
+func (o *MailProxyUpdateOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this mail proxy update o k response has a 4xx status code
+func (o *MailProxyUpdateOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this mail proxy update o k response has a 5xx status code
+func (o *MailProxyUpdateOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this mail proxy update o k response a status code equal to that given
+func (o *MailProxyUpdateOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the mail proxy update o k response
+func (o *MailProxyUpdateOK) Code() int {
+	return 200
+}
+
 func (o *MailProxyUpdateOK) Error() string {
-	return fmt.Sprintf("[PUT /mailProxy/{domain}][%d] mailProxyUpdateOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /mailProxy/{domain}][%d] mailProxyUpdateOK %s", 200, payload)
+}
+
+func (o *MailProxyUpdateOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /mailProxy/{domain}][%d] mailProxyUpdateOK %s", 200, payload)
 }
 
 func (o *MailProxyUpdateOK) GetPayload() *models.JSONResponseDataJSONNoData {

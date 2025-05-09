@@ -16,58 +16,75 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-// NewSafeObjectDeleteParams creates a new SafeObjectDeleteParams object
-// with the default values initialized.
+// NewSafeObjectDeleteParams creates a new SafeObjectDeleteParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewSafeObjectDeleteParams() *SafeObjectDeleteParams {
-	var ()
 	return &SafeObjectDeleteParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewSafeObjectDeleteParamsWithTimeout creates a new SafeObjectDeleteParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewSafeObjectDeleteParamsWithTimeout(timeout time.Duration) *SafeObjectDeleteParams {
-	var ()
 	return &SafeObjectDeleteParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewSafeObjectDeleteParamsWithContext creates a new SafeObjectDeleteParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewSafeObjectDeleteParamsWithContext(ctx context.Context) *SafeObjectDeleteParams {
-	var ()
 	return &SafeObjectDeleteParams{
-
 		Context: ctx,
 	}
 }
 
 // NewSafeObjectDeleteParamsWithHTTPClient creates a new SafeObjectDeleteParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewSafeObjectDeleteParamsWithHTTPClient(client *http.Client) *SafeObjectDeleteParams {
-	var ()
 	return &SafeObjectDeleteParams{
 		HTTPClient: client,
 	}
 }
 
-/*SafeObjectDeleteParams contains all the parameters to send to the API endpoint
-for the safe object delete operation typically these are written to a http.Request
+/*
+SafeObjectDeleteParams contains all the parameters to send to the API endpoint
+
+	for the safe object delete operation.
+
+	Typically these are written to a http.Request.
 */
 type SafeObjectDeleteParams struct {
 
-	/*SafeObject*/
+	// SafeObject.
 	SafeObject string
-	/*Type*/
+
+	// Type.
 	Type string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the safe object delete params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *SafeObjectDeleteParams) WithDefaults() *SafeObjectDeleteParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the safe object delete params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *SafeObjectDeleteParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the safe object delete params

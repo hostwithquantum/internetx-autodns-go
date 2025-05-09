@@ -6,6 +6,7 @@ package tmch_mark_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *TmchMarkTransferReader) ReadResponse(response runtime.ClientResponse, c
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[PUT /tmchMark/{reference}/_transfer] tmchMarkTransfer", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewTmchMarkTransferOK() *TmchMarkTransferOK {
 	return &TmchMarkTransferOK{}
 }
 
-/*TmchMarkTransferOK handles this case with default header values.
+/*
+TmchMarkTransferOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type TmchMarkTransferOK struct {
 	Payload *models.JSONResponseDataVoid
 }
 
+// IsSuccess returns true when this tmch mark transfer o k response has a 2xx status code
+func (o *TmchMarkTransferOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this tmch mark transfer o k response has a 3xx status code
+func (o *TmchMarkTransferOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this tmch mark transfer o k response has a 4xx status code
+func (o *TmchMarkTransferOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this tmch mark transfer o k response has a 5xx status code
+func (o *TmchMarkTransferOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this tmch mark transfer o k response a status code equal to that given
+func (o *TmchMarkTransferOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the tmch mark transfer o k response
+func (o *TmchMarkTransferOK) Code() int {
+	return 200
+}
+
 func (o *TmchMarkTransferOK) Error() string {
-	return fmt.Sprintf("[PUT /tmchMark/{reference}/_transfer][%d] tmchMarkTransferOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /tmchMark/{reference}/_transfer][%d] tmchMarkTransferOK %s", 200, payload)
+}
+
+func (o *TmchMarkTransferOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /tmchMark/{reference}/_transfer][%d] tmchMarkTransferOK %s", 200, payload)
 }
 
 func (o *TmchMarkTransferOK) GetPayload() *models.JSONResponseDataVoid {

@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,31 +19,39 @@ import (
 // swagger:model LoginData
 type LoginData struct {
 
-	// The context.
-	// Required: true
-	Context *int32 `json:"context"`
+	// The context. A separated section.
+	Context int32 `json:"context,omitempty"`
 
 	// The password.
 	Password string `json:"password,omitempty"`
+
+	// The date on which the password has changed
+	// Format: date-time
+	PasswordChanged strfmt.DateTime `json:"passwordChanged,omitempty"`
+
+	// Is the current password expired
+	PasswordExpired bool `json:"passwordExpired,omitempty"`
+
+	// The date on which the password will expire
+	// Format: date-time
+	PasswordExpires strfmt.DateTime `json:"passwordExpires,omitempty"`
 
 	// The one time password in case of 2fa authentication.
 	Token string `json:"token,omitempty"`
 
 	// The user name.
-	// Required: true
-	// Pattern: ^[^_].*
-	User *string `json:"user"`
+	User string `json:"user,omitempty"`
 }
 
 // Validate validates this login data
 func (m *LoginData) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateContext(formats); err != nil {
+	if err := m.validatePasswordChanged(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateUser(formats); err != nil {
+	if err := m.validatePasswordExpires(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -51,25 +61,32 @@ func (m *LoginData) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *LoginData) validateContext(formats strfmt.Registry) error {
+func (m *LoginData) validatePasswordChanged(formats strfmt.Registry) error {
+	if swag.IsZero(m.PasswordChanged) { // not required
+		return nil
+	}
 
-	if err := validate.Required("context", "body", m.Context); err != nil {
+	if err := validate.FormatOf("passwordChanged", "body", "date-time", m.PasswordChanged.String(), formats); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (m *LoginData) validateUser(formats strfmt.Registry) error {
+func (m *LoginData) validatePasswordExpires(formats strfmt.Registry) error {
+	if swag.IsZero(m.PasswordExpires) { // not required
+		return nil
+	}
 
-	if err := validate.Required("user", "body", m.User); err != nil {
+	if err := validate.FormatOf("passwordExpires", "body", "date-time", m.PasswordExpires.String(), formats); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("user", "body", string(*m.User), `^[^_].*`); err != nil {
-		return err
-	}
+	return nil
+}
 
+// ContextValidate validates this login data based on context it is used
+func (m *LoginData) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

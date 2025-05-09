@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -16,14 +18,21 @@ import (
 type ContactXxxExtensions struct {
 
 	// Membership ID (token) for the .XXX community.
+	//  You receive your ID after you have finished the ICM registry membership process successfully and having created an account there.
 	MembershipID string `json:"membershipID,omitempty"`
 
-	// XXX community membership available or not.
+	// XXX community membership. Members have a membership ID (token).
+	// Example: false
 	NonResolverDomain bool `json:"nonResolverDomain,omitempty"`
 }
 
 // Validate validates this contact xxx extensions
 func (m *ContactXxxExtensions) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this contact xxx extensions based on context it is used
+func (m *ContactXxxExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

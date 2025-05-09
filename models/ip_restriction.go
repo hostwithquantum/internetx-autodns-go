@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -18,18 +20,17 @@ import (
 type IPRestriction struct {
 
 	// A net address or ip address
-	// Required: true
-	Address *string `json:"address"`
+	// Example: 192.33.1.4/24
+	Address string `json:"address,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
 	// The restriction level
-	// Required: true
-	Type IPRestrictionTypeConstants `json:"type"`
+	Type IPRestrictionTypeConstants `json:"type,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 }
@@ -37,10 +38,6 @@ type IPRestriction struct {
 // Validate validates this Ip restriction
 func (m *IPRestriction) Validate(formats strfmt.Registry) error {
 	var res []error
-
-	if err := m.validateAddress(formats); err != nil {
-		res = append(res, err)
-	}
 
 	if err := m.validateCreated(formats); err != nil {
 		res = append(res, err)
@@ -60,17 +57,7 @@ func (m *IPRestriction) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *IPRestriction) validateAddress(formats strfmt.Registry) error {
-
-	if err := validate.Required("address", "body", m.Address); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *IPRestriction) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -83,10 +70,15 @@ func (m *IPRestriction) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *IPRestriction) validateType(formats strfmt.Registry) error {
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
 
 	if err := m.Type.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
 		}
 		return err
 	}
@@ -95,12 +87,43 @@ func (m *IPRestriction) validateType(formats strfmt.Registry) error {
 }
 
 func (m *IPRestriction) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
 
 	if err := validate.FormatOf("updated", "body", "date-time", m.Updated.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this Ip restriction based on the context it is used
+func (m *IPRestriction) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *IPRestriction) contextValidateType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	if err := m.Type.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
+		}
 		return err
 	}
 

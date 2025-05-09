@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -19,17 +21,26 @@ type DomainStudioSources struct {
 	// The configuration for the custom source
 	Custom *DomainStudioSourceCustom `json:"custom,omitempty"`
 
+	// The configuration for the domainsbot
+	Domainsbot *DomainStudioSourceDomainsBot `json:"domainsbot,omitempty"`
+
 	// The configuration for the geo source
 	Geo *DomainStudioSourceGeo `json:"geo,omitempty"`
 
 	// The configuration for the initial source
 	Initial *DomainStudioSourceInitial `json:"initial,omitempty"`
 
+	// The configuration for the market source
+	Market *DomainStudioSourceMarket `json:"market,omitempty"`
+
 	// The configuration for the online presence source
 	OnlinePresence *DomainStudioSourceOnlinePresence `json:"onlinePresence,omitempty"`
 
 	// The configuration for the personal names source
 	PersonalNames *DomainStudioSourcePersonalNames `json:"personalNames,omitempty"`
+
+	// The configuration for the PlacementPlus source
+	PlacementPlus *DomainStudioSourcePlacementPlus `json:"placementPlus,omitempty"`
 
 	// The configuration for the prefix suffix source
 	PrefixSuffix *DomainStudioSourcePrefixSuffix `json:"prefixSuffix,omitempty"`
@@ -39,6 +50,9 @@ type DomainStudioSources struct {
 
 	// The configuration for the recommended source
 	Recommended *DomainStudioSourceRecommended `json:"recommended,omitempty"`
+
+	// The configuration for the suggestion2 source
+	Semantic *DomainStudioSourceSuggestion2 `json:"semantic,omitempty"`
 
 	// The configuration for the similar source
 	Similar *DomainStudioSourceSimilar `json:"similar,omitempty"`
@@ -61,6 +75,10 @@ func (m *DomainStudioSources) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateDomainsbot(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateGeo(formats); err != nil {
 		res = append(res, err)
 	}
@@ -69,11 +87,19 @@ func (m *DomainStudioSources) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateMarket(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateOnlinePresence(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if err := m.validatePersonalNames(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePlacementPlus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -86,6 +112,10 @@ func (m *DomainStudioSources) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateRecommended(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSemantic(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -112,7 +142,6 @@ func (m *DomainStudioSources) Validate(formats strfmt.Registry) error {
 }
 
 func (m *DomainStudioSources) validateCustom(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Custom) { // not required
 		return nil
 	}
@@ -121,6 +150,27 @@ func (m *DomainStudioSources) validateCustom(formats strfmt.Registry) error {
 		if err := m.Custom.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("custom")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("custom")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainStudioSources) validateDomainsbot(formats strfmt.Registry) error {
+	if swag.IsZero(m.Domainsbot) { // not required
+		return nil
+	}
+
+	if m.Domainsbot != nil {
+		if err := m.Domainsbot.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("domainsbot")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("domainsbot")
 			}
 			return err
 		}
@@ -130,7 +180,6 @@ func (m *DomainStudioSources) validateCustom(formats strfmt.Registry) error {
 }
 
 func (m *DomainStudioSources) validateGeo(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Geo) { // not required
 		return nil
 	}
@@ -139,6 +188,8 @@ func (m *DomainStudioSources) validateGeo(formats strfmt.Registry) error {
 		if err := m.Geo.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("geo")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("geo")
 			}
 			return err
 		}
@@ -148,7 +199,6 @@ func (m *DomainStudioSources) validateGeo(formats strfmt.Registry) error {
 }
 
 func (m *DomainStudioSources) validateInitial(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Initial) { // not required
 		return nil
 	}
@@ -157,6 +207,27 @@ func (m *DomainStudioSources) validateInitial(formats strfmt.Registry) error {
 		if err := m.Initial.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("initial")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("initial")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainStudioSources) validateMarket(formats strfmt.Registry) error {
+	if swag.IsZero(m.Market) { // not required
+		return nil
+	}
+
+	if m.Market != nil {
+		if err := m.Market.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("market")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("market")
 			}
 			return err
 		}
@@ -166,7 +237,6 @@ func (m *DomainStudioSources) validateInitial(formats strfmt.Registry) error {
 }
 
 func (m *DomainStudioSources) validateOnlinePresence(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.OnlinePresence) { // not required
 		return nil
 	}
@@ -175,6 +245,8 @@ func (m *DomainStudioSources) validateOnlinePresence(formats strfmt.Registry) er
 		if err := m.OnlinePresence.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("onlinePresence")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("onlinePresence")
 			}
 			return err
 		}
@@ -184,7 +256,6 @@ func (m *DomainStudioSources) validateOnlinePresence(formats strfmt.Registry) er
 }
 
 func (m *DomainStudioSources) validatePersonalNames(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.PersonalNames) { // not required
 		return nil
 	}
@@ -193,6 +264,27 @@ func (m *DomainStudioSources) validatePersonalNames(formats strfmt.Registry) err
 		if err := m.PersonalNames.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("personalNames")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("personalNames")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainStudioSources) validatePlacementPlus(formats strfmt.Registry) error {
+	if swag.IsZero(m.PlacementPlus) { // not required
+		return nil
+	}
+
+	if m.PlacementPlus != nil {
+		if err := m.PlacementPlus.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("placementPlus")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("placementPlus")
 			}
 			return err
 		}
@@ -202,7 +294,6 @@ func (m *DomainStudioSources) validatePersonalNames(formats strfmt.Registry) err
 }
 
 func (m *DomainStudioSources) validatePrefixSuffix(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.PrefixSuffix) { // not required
 		return nil
 	}
@@ -211,6 +302,8 @@ func (m *DomainStudioSources) validatePrefixSuffix(formats strfmt.Registry) erro
 		if err := m.PrefixSuffix.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("prefixSuffix")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("prefixSuffix")
 			}
 			return err
 		}
@@ -220,7 +313,6 @@ func (m *DomainStudioSources) validatePrefixSuffix(formats strfmt.Registry) erro
 }
 
 func (m *DomainStudioSources) validatePremium(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Premium) { // not required
 		return nil
 	}
@@ -229,6 +321,8 @@ func (m *DomainStudioSources) validatePremium(formats strfmt.Registry) error {
 		if err := m.Premium.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("premium")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("premium")
 			}
 			return err
 		}
@@ -238,7 +332,6 @@ func (m *DomainStudioSources) validatePremium(formats strfmt.Registry) error {
 }
 
 func (m *DomainStudioSources) validateRecommended(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Recommended) { // not required
 		return nil
 	}
@@ -247,6 +340,27 @@ func (m *DomainStudioSources) validateRecommended(formats strfmt.Registry) error
 		if err := m.Recommended.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("recommended")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("recommended")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainStudioSources) validateSemantic(formats strfmt.Registry) error {
+	if swag.IsZero(m.Semantic) { // not required
+		return nil
+	}
+
+	if m.Semantic != nil {
+		if err := m.Semantic.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("semantic")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("semantic")
 			}
 			return err
 		}
@@ -256,7 +370,6 @@ func (m *DomainStudioSources) validateRecommended(formats strfmt.Registry) error
 }
 
 func (m *DomainStudioSources) validateSimilar(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Similar) { // not required
 		return nil
 	}
@@ -265,6 +378,8 @@ func (m *DomainStudioSources) validateSimilar(formats strfmt.Registry) error {
 		if err := m.Similar.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("similar")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("similar")
 			}
 			return err
 		}
@@ -274,7 +389,6 @@ func (m *DomainStudioSources) validateSimilar(formats strfmt.Registry) error {
 }
 
 func (m *DomainStudioSources) validateSpinWord(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.SpinWord) { // not required
 		return nil
 	}
@@ -283,6 +397,8 @@ func (m *DomainStudioSources) validateSpinWord(formats strfmt.Registry) error {
 		if err := m.SpinWord.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("spinWord")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("spinWord")
 			}
 			return err
 		}
@@ -292,7 +408,6 @@ func (m *DomainStudioSources) validateSpinWord(formats strfmt.Registry) error {
 }
 
 func (m *DomainStudioSources) validateSuggestion(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Suggestion) { // not required
 		return nil
 	}
@@ -301,6 +416,8 @@ func (m *DomainStudioSources) validateSuggestion(formats strfmt.Registry) error 
 		if err := m.Suggestion.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("suggestion")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("suggestion")
 			}
 			return err
 		}
@@ -310,7 +427,6 @@ func (m *DomainStudioSources) validateSuggestion(formats strfmt.Registry) error 
 }
 
 func (m *DomainStudioSources) validateUpcoming(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Upcoming) { // not required
 		return nil
 	}
@@ -319,6 +435,418 @@ func (m *DomainStudioSources) validateUpcoming(formats strfmt.Registry) error {
 		if err := m.Upcoming.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("upcoming")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("upcoming")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this domain studio sources based on the context it is used
+func (m *DomainStudioSources) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateCustom(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateDomainsbot(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateGeo(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateInitial(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateMarket(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOnlinePresence(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePersonalNames(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePlacementPlus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePrefixSuffix(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePremium(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRecommended(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSemantic(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSimilar(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSpinWord(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSuggestion(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpcoming(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *DomainStudioSources) contextValidateCustom(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Custom != nil {
+
+		if swag.IsZero(m.Custom) { // not required
+			return nil
+		}
+
+		if err := m.Custom.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("custom")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("custom")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainStudioSources) contextValidateDomainsbot(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Domainsbot != nil {
+
+		if swag.IsZero(m.Domainsbot) { // not required
+			return nil
+		}
+
+		if err := m.Domainsbot.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("domainsbot")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("domainsbot")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainStudioSources) contextValidateGeo(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Geo != nil {
+
+		if swag.IsZero(m.Geo) { // not required
+			return nil
+		}
+
+		if err := m.Geo.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("geo")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("geo")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainStudioSources) contextValidateInitial(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Initial != nil {
+
+		if swag.IsZero(m.Initial) { // not required
+			return nil
+		}
+
+		if err := m.Initial.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("initial")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("initial")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainStudioSources) contextValidateMarket(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Market != nil {
+
+		if swag.IsZero(m.Market) { // not required
+			return nil
+		}
+
+		if err := m.Market.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("market")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("market")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainStudioSources) contextValidateOnlinePresence(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.OnlinePresence != nil {
+
+		if swag.IsZero(m.OnlinePresence) { // not required
+			return nil
+		}
+
+		if err := m.OnlinePresence.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("onlinePresence")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("onlinePresence")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainStudioSources) contextValidatePersonalNames(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.PersonalNames != nil {
+
+		if swag.IsZero(m.PersonalNames) { // not required
+			return nil
+		}
+
+		if err := m.PersonalNames.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("personalNames")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("personalNames")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainStudioSources) contextValidatePlacementPlus(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.PlacementPlus != nil {
+
+		if swag.IsZero(m.PlacementPlus) { // not required
+			return nil
+		}
+
+		if err := m.PlacementPlus.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("placementPlus")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("placementPlus")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainStudioSources) contextValidatePrefixSuffix(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.PrefixSuffix != nil {
+
+		if swag.IsZero(m.PrefixSuffix) { // not required
+			return nil
+		}
+
+		if err := m.PrefixSuffix.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("prefixSuffix")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("prefixSuffix")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainStudioSources) contextValidatePremium(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Premium != nil {
+
+		if swag.IsZero(m.Premium) { // not required
+			return nil
+		}
+
+		if err := m.Premium.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("premium")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("premium")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainStudioSources) contextValidateRecommended(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Recommended != nil {
+
+		if swag.IsZero(m.Recommended) { // not required
+			return nil
+		}
+
+		if err := m.Recommended.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("recommended")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("recommended")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainStudioSources) contextValidateSemantic(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Semantic != nil {
+
+		if swag.IsZero(m.Semantic) { // not required
+			return nil
+		}
+
+		if err := m.Semantic.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("semantic")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("semantic")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainStudioSources) contextValidateSimilar(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Similar != nil {
+
+		if swag.IsZero(m.Similar) { // not required
+			return nil
+		}
+
+		if err := m.Similar.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("similar")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("similar")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainStudioSources) contextValidateSpinWord(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.SpinWord != nil {
+
+		if swag.IsZero(m.SpinWord) { // not required
+			return nil
+		}
+
+		if err := m.SpinWord.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("spinWord")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("spinWord")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainStudioSources) contextValidateSuggestion(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Suggestion != nil {
+
+		if swag.IsZero(m.Suggestion) { // not required
+			return nil
+		}
+
+		if err := m.Suggestion.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("suggestion")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("suggestion")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainStudioSources) contextValidateUpcoming(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Upcoming != nil {
+
+		if swag.IsZero(m.Upcoming) { // not required
+			return nil
+		}
+
+		if err := m.Upcoming.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("upcoming")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("upcoming")
 			}
 			return err
 		}

@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model ExecutionTypeConstants
 type ExecutionTypeConstants string
+
+func NewExecutionTypeConstants(value ExecutionTypeConstants) *ExecutionTypeConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated ExecutionTypeConstants.
+func (m ExecutionTypeConstants) Pointer() *ExecutionTypeConstants {
+	return &m
+}
 
 const (
 
@@ -62,5 +72,10 @@ func (m ExecutionTypeConstants) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this execution type constants based on context it is used
+func (m ExecutionTypeConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

@@ -6,6 +6,7 @@ package domain_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *DomainListReader) ReadResponse(response runtime.ClientResponse, consume
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[POST /domain/_search] domainList", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewDomainListOK() *DomainListOK {
 	return &DomainListOK{}
 }
 
-/*DomainListOK handles this case with default header values.
+/*
+DomainListOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type DomainListOK struct {
 	Payload *models.JSONResponseDataDomain
 }
 
+// IsSuccess returns true when this domain list o k response has a 2xx status code
+func (o *DomainListOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this domain list o k response has a 3xx status code
+func (o *DomainListOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this domain list o k response has a 4xx status code
+func (o *DomainListOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this domain list o k response has a 5xx status code
+func (o *DomainListOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this domain list o k response a status code equal to that given
+func (o *DomainListOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the domain list o k response
+func (o *DomainListOK) Code() int {
+	return 200
+}
+
 func (o *DomainListOK) Error() string {
-	return fmt.Sprintf("[POST /domain/_search][%d] domainListOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /domain/_search][%d] domainListOK %s", 200, payload)
+}
+
+func (o *DomainListOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /domain/_search][%d] domainListOK %s", 200, payload)
 }
 
 func (o *DomainListOK) GetPayload() *models.JSONResponseDataDomain {

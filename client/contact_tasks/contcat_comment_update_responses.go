@@ -6,6 +6,7 @@ package contact_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *ContcatCommentUpdateReader) ReadResponse(response runtime.ClientRespons
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[PUT /contact/{id}/_comment] contcatCommentUpdate", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewContcatCommentUpdateOK() *ContcatCommentUpdateOK {
 	return &ContcatCommentUpdateOK{}
 }
 
-/*ContcatCommentUpdateOK handles this case with default header values.
+/*
+ContcatCommentUpdateOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type ContcatCommentUpdateOK struct {
 	Payload *models.JSONResponseDataVoid
 }
 
+// IsSuccess returns true when this contcat comment update o k response has a 2xx status code
+func (o *ContcatCommentUpdateOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this contcat comment update o k response has a 3xx status code
+func (o *ContcatCommentUpdateOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this contcat comment update o k response has a 4xx status code
+func (o *ContcatCommentUpdateOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this contcat comment update o k response has a 5xx status code
+func (o *ContcatCommentUpdateOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this contcat comment update o k response a status code equal to that given
+func (o *ContcatCommentUpdateOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the contcat comment update o k response
+func (o *ContcatCommentUpdateOK) Code() int {
+	return 200
+}
+
 func (o *ContcatCommentUpdateOK) Error() string {
-	return fmt.Sprintf("[PUT /contact/{id}/_comment][%d] contcatCommentUpdateOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /contact/{id}/_comment][%d] contcatCommentUpdateOK %s", 200, payload)
+}
+
+func (o *ContcatCommentUpdateOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /contact/{id}/_comment][%d] contcatCommentUpdateOK %s", 200, payload)
 }
 
 func (o *ContcatCommentUpdateOK) GetPayload() *models.JSONResponseDataVoid {

@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -18,6 +19,15 @@ import (
 // swagger:model CertificateType
 type CertificateType string
 
+func NewCertificateType(value CertificateType) *CertificateType {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated CertificateType.
+func (m CertificateType) Pointer() *CertificateType {
+	return &m
+}
+
 const (
 
 	// CertificateTypeFQDN captures enum value "FQDN"
@@ -28,6 +38,12 @@ const (
 
 	// CertificateTypeCODE captures enum value "CODE"
 	CertificateTypeCODE CertificateType = "CODE"
+
+	// CertificateTypeDOCUMENT captures enum value "DOCUMENT"
+	CertificateTypeDOCUMENT CertificateType = "DOCUMENT"
+
+	// CertificateTypeVMC captures enum value "VMC"
+	CertificateTypeVMC CertificateType = "VMC"
 )
 
 // for schema
@@ -35,7 +51,7 @@ var certificateTypeEnum []interface{}
 
 func init() {
 	var res []CertificateType
-	if err := json.Unmarshal([]byte(`["FQDN","MAIL","CODE"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["FQDN","MAIL","CODE","DOCUMENT","VMC"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -62,5 +78,10 @@ func (m CertificateType) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this certificate type based on context it is used
+func (m CertificateType) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

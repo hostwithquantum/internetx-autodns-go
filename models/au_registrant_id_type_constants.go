@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -18,6 +19,15 @@ import (
 // swagger:model AuRegistrantIdTypeConstants
 type AuRegistrantIDTypeConstants string
 
+func NewAuRegistrantIDTypeConstants(value AuRegistrantIDTypeConstants) *AuRegistrantIDTypeConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated AuRegistrantIDTypeConstants.
+func (m AuRegistrantIDTypeConstants) Pointer() *AuRegistrantIDTypeConstants {
+	return &m
+}
+
 const (
 
 	// AuRegistrantIDTypeConstantsACN captures enum value "ACN"
@@ -28,6 +38,39 @@ const (
 
 	// AuRegistrantIDTypeConstantsOTHER captures enum value "OTHER"
 	AuRegistrantIDTypeConstantsOTHER AuRegistrantIDTypeConstants = "OTHER"
+
+	// AuRegistrantIDTypeConstantsTAS captures enum value "TAS"
+	AuRegistrantIDTypeConstantsTAS AuRegistrantIDTypeConstants = "TAS"
+
+	// AuRegistrantIDTypeConstantsVIC captures enum value "VIC"
+	AuRegistrantIDTypeConstantsVIC AuRegistrantIDTypeConstants = "VIC"
+
+	// AuRegistrantIDTypeConstantsNSW captures enum value "NSW"
+	AuRegistrantIDTypeConstantsNSW AuRegistrantIDTypeConstants = "NSW"
+
+	// AuRegistrantIDTypeConstantsACT captures enum value "ACT"
+	AuRegistrantIDTypeConstantsACT AuRegistrantIDTypeConstants = "ACT"
+
+	// AuRegistrantIDTypeConstantsQLD captures enum value "QLD"
+	AuRegistrantIDTypeConstantsQLD AuRegistrantIDTypeConstants = "QLD"
+
+	// AuRegistrantIDTypeConstantsNT captures enum value "NT"
+	AuRegistrantIDTypeConstantsNT AuRegistrantIDTypeConstants = "NT"
+
+	// AuRegistrantIDTypeConstantsWA captures enum value "WA"
+	AuRegistrantIDTypeConstantsWA AuRegistrantIDTypeConstants = "WA"
+
+	// AuRegistrantIDTypeConstantsSA captures enum value "SA"
+	AuRegistrantIDTypeConstantsSA AuRegistrantIDTypeConstants = "SA"
+
+	// AuRegistrantIDTypeConstantsTM captures enum value "TM"
+	AuRegistrantIDTypeConstantsTM AuRegistrantIDTypeConstants = "TM"
+
+	// AuRegistrantIDTypeConstantsARBN captures enum value "ARBN"
+	AuRegistrantIDTypeConstantsARBN AuRegistrantIDTypeConstants = "ARBN"
+
+	// AuRegistrantIDTypeConstantsICN captures enum value "ICN"
+	AuRegistrantIDTypeConstantsICN AuRegistrantIDTypeConstants = "ICN"
 )
 
 // for schema
@@ -35,7 +78,7 @@ var auRegistrantIdTypeConstantsEnum []interface{}
 
 func init() {
 	var res []AuRegistrantIDTypeConstants
-	if err := json.Unmarshal([]byte(`["ACN","ABN","OTHER"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["ACN","ABN","OTHER","TAS","VIC","NSW","ACT","QLD","NT","WA","SA","TM","ARBN","ICN"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -62,5 +105,10 @@ func (m AuRegistrantIDTypeConstants) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this au registrant Id type constants based on context it is used
+func (m AuRegistrantIDTypeConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

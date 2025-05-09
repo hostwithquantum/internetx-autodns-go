@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -24,8 +25,7 @@ type Subject struct {
 	Customs []*Custom `json:"customs"`
 
 	// The name of the booking item, e.g. domain.de
-	// Required: true
-	Name *string `json:"name"`
+	Name string `json:"name,omitempty"`
 
 	// The internal unique name of the object, e.g. xn--
 	Object string `json:"object,omitempty"`
@@ -39,10 +39,6 @@ func (m *Subject) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateName(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -50,7 +46,6 @@ func (m *Subject) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Subject) validateCustoms(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Customs) { // not required
 		return nil
 	}
@@ -68,6 +63,8 @@ func (m *Subject) validateCustoms(formats strfmt.Registry) error {
 			if err := m.Customs[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("customs" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("customs" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -78,10 +75,40 @@ func (m *Subject) validateCustoms(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Subject) validateName(formats strfmt.Registry) error {
+// ContextValidate validate this subject based on the context it is used
+func (m *Subject) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
 
-	if err := validate.Required("name", "body", m.Name); err != nil {
-		return err
+	if err := m.contextValidateCustoms(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Subject) contextValidateCustoms(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Customs); i++ {
+
+		if m.Customs[i] != nil {
+
+			if swag.IsZero(m.Customs[i]) { // not required
+				return nil
+			}
+
+			if err := m.Customs[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("customs" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("customs" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil

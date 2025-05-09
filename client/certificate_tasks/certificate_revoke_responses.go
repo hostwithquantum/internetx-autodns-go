@@ -6,6 +6,7 @@ package certificate_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *CertificateRevokeReader) ReadResponse(response runtime.ClientResponse, 
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[POST /certificate/{id}/_revoke] certificateRevoke", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewCertificateRevokeOK() *CertificateRevokeOK {
 	return &CertificateRevokeOK{}
 }
 
-/*CertificateRevokeOK handles this case with default header values.
+/*
+CertificateRevokeOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type CertificateRevokeOK struct {
 	Payload *models.JSONResponseDataJob
 }
 
+// IsSuccess returns true when this certificate revoke o k response has a 2xx status code
+func (o *CertificateRevokeOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this certificate revoke o k response has a 3xx status code
+func (o *CertificateRevokeOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this certificate revoke o k response has a 4xx status code
+func (o *CertificateRevokeOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this certificate revoke o k response has a 5xx status code
+func (o *CertificateRevokeOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this certificate revoke o k response a status code equal to that given
+func (o *CertificateRevokeOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the certificate revoke o k response
+func (o *CertificateRevokeOK) Code() int {
+	return 200
+}
+
 func (o *CertificateRevokeOK) Error() string {
-	return fmt.Sprintf("[DELETE /certificate/{id}/_revoke][%d] certificateRevokeOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /certificate/{id}/_revoke][%d] certificateRevokeOK %s", 200, payload)
+}
+
+func (o *CertificateRevokeOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /certificate/{id}/_revoke][%d] certificateRevokeOK %s", 200, payload)
 }
 
 func (o *CertificateRevokeOK) GetPayload() *models.JSONResponseDataJob {

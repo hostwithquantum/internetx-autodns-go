@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model ProtocolTypeConstants
 type ProtocolTypeConstants string
+
+func NewProtocolTypeConstants(value ProtocolTypeConstants) *ProtocolTypeConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated ProtocolTypeConstants.
+func (m ProtocolTypeConstants) Pointer() *ProtocolTypeConstants {
+	return &m
+}
 
 const (
 
@@ -59,5 +69,10 @@ func (m ProtocolTypeConstants) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this protocol type constants based on context it is used
+func (m ProtocolTypeConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

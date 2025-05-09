@@ -6,6 +6,7 @@ package zone_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *ZoneImportReader) ReadResponse(response runtime.ClientResponse, consume
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[POST /zone/{name}/{systemNameServer}/_import] zoneImport", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewZoneImportOK() *ZoneImportOK {
 	return &ZoneImportOK{}
 }
 
-/*ZoneImportOK handles this case with default header values.
+/*
+ZoneImportOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type ZoneImportOK struct {
 	Payload *models.JSONResponseDataZone
 }
 
+// IsSuccess returns true when this zone import o k response has a 2xx status code
+func (o *ZoneImportOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this zone import o k response has a 3xx status code
+func (o *ZoneImportOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this zone import o k response has a 4xx status code
+func (o *ZoneImportOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this zone import o k response has a 5xx status code
+func (o *ZoneImportOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this zone import o k response a status code equal to that given
+func (o *ZoneImportOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the zone import o k response
+func (o *ZoneImportOK) Code() int {
+	return 200
+}
+
 func (o *ZoneImportOK) Error() string {
-	return fmt.Sprintf("[POST /zone/{name}/{systemNameServer}/_import][%d] zoneImportOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /zone/{name}/{systemNameServer}/_import][%d] zoneImportOK %s", 200, payload)
+}
+
+func (o *ZoneImportOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /zone/{name}/{systemNameServer}/_import][%d] zoneImportOK %s", 200, payload)
 }
 
 func (o *ZoneImportOK) GetPayload() *models.JSONResponseDataZone {

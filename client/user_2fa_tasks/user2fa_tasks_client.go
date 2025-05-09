@@ -9,12 +9,38 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime"
+	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new user 2fa tasks API client.
 func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new user 2fa tasks API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new user 2fa tasks API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -25,31 +51,33 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
 // ClientService is the interface for Client methods
 type ClientService interface {
-	OtpAuthCreate(params *OtpAuthCreateParams) (*OtpAuthCreateOK, error)
+	OtpAuthCreate(params *OtpAuthCreateParams, opts ...ClientOption) (*OtpAuthCreateOK, error)
 
-	OtpAuthInfo(params *OtpAuthInfoParams) (*OtpAuthInfoOK, error)
+	OtpAuthInfo(params *OtpAuthInfoParams, opts ...ClientOption) (*OtpAuthInfoOK, error)
 
-	User2faAktivate(params *User2faAktivateParams) (*User2faAktivateOK, error)
+	User2faAktivate(params *User2faAktivateParams, opts ...ClientOption) (*User2faAktivateOK, error)
 
-	User2faDelete(params *User2faDeleteParams) (*User2faDeleteOK, error)
+	User2faDelete(params *User2faDeleteParams, opts ...ClientOption) (*User2faDeleteOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
 
 /*
-  OtpAuthCreate users token config create
+OtpAuthCreate users token config create 1301041
 
-  Creating a temporary token for the logged in user. The response contains the qr code as a base64 image.
+Creating a temporary token for the logged in user. The response contains the qr code as a base64 image.
 */
-func (a *Client) OtpAuthCreate(params *OtpAuthCreateParams) (*OtpAuthCreateOK, error) {
+func (a *Client) OtpAuthCreate(params *OtpAuthCreateParams, opts ...ClientOption) (*OtpAuthCreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewOtpAuthCreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "otpAuthCreate",
 		Method:             "POST",
 		PathPattern:        "/OTPAuth",
@@ -60,7 +88,12 @@ func (a *Client) OtpAuthCreate(params *OtpAuthCreateParams) (*OtpAuthCreateOK, e
 		Reader:             &OtpAuthCreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -75,17 +108,16 @@ func (a *Client) OtpAuthCreate(params *OtpAuthCreateParams) (*OtpAuthCreateOK, e
 }
 
 /*
-  OtpAuthInfo users token config info
+OtpAuthInfo users token config info 1301044
 
-  Inquiring the token-configuration of the logged in user.
+Inquiring the token configuration of the logged in user.
 */
-func (a *Client) OtpAuthInfo(params *OtpAuthInfoParams) (*OtpAuthInfoOK, error) {
+func (a *Client) OtpAuthInfo(params *OtpAuthInfoParams, opts ...ClientOption) (*OtpAuthInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewOtpAuthInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "otpAuthInfo",
 		Method:             "GET",
 		PathPattern:        "/OTPAuth",
@@ -96,7 +128,12 @@ func (a *Client) OtpAuthInfo(params *OtpAuthInfoParams) (*OtpAuthInfoOK, error) 
 		Reader:             &OtpAuthInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -111,17 +148,16 @@ func (a *Client) OtpAuthInfo(params *OtpAuthInfoParams) (*OtpAuthInfoOK, error) 
 }
 
 /*
-  User2faAktivate users token config activate
+User2faAktivate users token config activate 1301042
 
-  Activating the 2fa authentication for the logged in user. The response contains the rescue tokens
+Activating the 2fa authentication for the logged in user. The response contains the rescue tokens
 */
-func (a *Client) User2faAktivate(params *User2faAktivateParams) (*User2faAktivateOK, error) {
+func (a *Client) User2faAktivate(params *User2faAktivateParams, opts ...ClientOption) (*User2faAktivateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUser2faAktivateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "user2faAktivate",
 		Method:             "PUT",
 		PathPattern:        "/user/_2fa",
@@ -132,7 +168,12 @@ func (a *Client) User2faAktivate(params *User2faAktivateParams) (*User2faAktivat
 		Reader:             &User2faAktivateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -147,17 +188,16 @@ func (a *Client) User2faAktivate(params *User2faAktivateParams) (*User2faAktivat
 }
 
 /*
-  User2faDelete users token config delete
+User2faDelete users token config delete 1301043
 
-  Deactivating the 2fa of the logged in user. The auth type of the user is set back to password.
+Deactivating the 2fa of the logged in user. The auth type of the user is set back to password.
 */
-func (a *Client) User2faDelete(params *User2faDeleteParams) (*User2faDeleteOK, error) {
+func (a *Client) User2faDelete(params *User2faDeleteParams, opts ...ClientOption) (*User2faDeleteOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUser2faDeleteParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "user2faDelete",
 		Method:             "DELETE",
 		PathPattern:        "/user/_2fa",
@@ -168,7 +208,12 @@ func (a *Client) User2faDelete(params *User2faDeleteParams) (*User2faDeleteOK, e
 		Reader:             &User2faDeleteReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}

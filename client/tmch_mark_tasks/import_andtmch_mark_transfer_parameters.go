@@ -18,59 +18,75 @@ import (
 	"github.com/hostwithquantum/internetx-autodns-go/models"
 )
 
-// NewImportAndtmchMarkTransferParams creates a new ImportAndtmchMarkTransferParams object
-// with the default values initialized.
+// NewImportAndtmchMarkTransferParams creates a new ImportAndtmchMarkTransferParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewImportAndtmchMarkTransferParams() *ImportAndtmchMarkTransferParams {
-	var ()
 	return &ImportAndtmchMarkTransferParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewImportAndtmchMarkTransferParamsWithTimeout creates a new ImportAndtmchMarkTransferParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewImportAndtmchMarkTransferParamsWithTimeout(timeout time.Duration) *ImportAndtmchMarkTransferParams {
-	var ()
 	return &ImportAndtmchMarkTransferParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewImportAndtmchMarkTransferParamsWithContext creates a new ImportAndtmchMarkTransferParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewImportAndtmchMarkTransferParamsWithContext(ctx context.Context) *ImportAndtmchMarkTransferParams {
-	var ()
 	return &ImportAndtmchMarkTransferParams{
-
 		Context: ctx,
 	}
 }
 
 // NewImportAndtmchMarkTransferParamsWithHTTPClient creates a new ImportAndtmchMarkTransferParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewImportAndtmchMarkTransferParamsWithHTTPClient(client *http.Client) *ImportAndtmchMarkTransferParams {
-	var ()
 	return &ImportAndtmchMarkTransferParams{
 		HTTPClient: client,
 	}
 }
 
-/*ImportAndtmchMarkTransferParams contains all the parameters to send to the API endpoint
-for the import andtmch mark transfer operation typically these are written to a http.Request
+/*
+ImportAndtmchMarkTransferParams contains all the parameters to send to the API endpoint
+
+	for the import andtmch mark transfer operation.
+
+	Typically these are written to a http.Request.
 */
 type ImportAndtmchMarkTransferParams struct {
 
-	/*Body
-	  tmchMark
+	/* Body.
 
+	   tmchMark
 	*/
 	Body *models.TmchMark
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the import andtmch mark transfer params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *ImportAndtmchMarkTransferParams) WithDefaults() *ImportAndtmchMarkTransferParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the import andtmch mark transfer params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *ImportAndtmchMarkTransferParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the import andtmch mark transfer params
@@ -124,7 +140,6 @@ func (o *ImportAndtmchMarkTransferParams) WriteToRequest(r runtime.ClientRequest
 		return err
 	}
 	var res []error
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

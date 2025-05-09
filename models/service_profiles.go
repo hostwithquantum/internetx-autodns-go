@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -37,7 +38,6 @@ func (m *ServiceProfiles) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ServiceProfiles) validateServiceProfiles(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ServiceProfiles) { // not required
 		return nil
 	}
@@ -51,6 +51,47 @@ func (m *ServiceProfiles) validateServiceProfiles(formats strfmt.Registry) error
 			if err := m.ServiceProfiles[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("serviceProfiles" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("serviceProfiles" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this service profiles based on the context it is used
+func (m *ServiceProfiles) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateServiceProfiles(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ServiceProfiles) contextValidateServiceProfiles(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.ServiceProfiles); i++ {
+
+		if m.ServiceProfiles[i] != nil {
+
+			if swag.IsZero(m.ServiceProfiles[i]) { // not required
+				return nil
+			}
+
+			if err := m.ServiceProfiles[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("serviceProfiles" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("serviceProfiles" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

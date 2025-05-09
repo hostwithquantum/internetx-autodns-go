@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model BillingStatus
 type BillingStatus string
+
+func NewBillingStatus(value BillingStatus) *BillingStatus {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated BillingStatus.
+func (m BillingStatus) Pointer() *BillingStatus {
+	return &m
+}
 
 const (
 
@@ -38,6 +48,9 @@ const (
 	// BillingStatusUSERCHANGED captures enum value "USER_CHANGED"
 	BillingStatusUSERCHANGED BillingStatus = "USER_CHANGED"
 
+	// BillingStatusUPGRADE captures enum value "UPGRADE"
+	BillingStatusUPGRADE BillingStatus = "UPGRADE"
+
 	// BillingStatusACTIVE captures enum value "ACTIVE"
 	BillingStatusACTIVE BillingStatus = "ACTIVE"
 
@@ -55,6 +68,9 @@ const (
 
 	// BillingStatusREMOVED captures enum value "REMOVED"
 	BillingStatusREMOVED BillingStatus = "REMOVED"
+
+	// BillingStatusDROP captures enum value "DROP"
+	BillingStatusDROP BillingStatus = "DROP"
 )
 
 // for schema
@@ -62,7 +78,7 @@ var billingStatusEnum []interface{}
 
 func init() {
 	var res []BillingStatus
-	if err := json.Unmarshal([]byte(`["ADD","REMOVE","UPDATE","IGNORE","CUSTOMER_CHANGED","USER_CHANGED","ACTIVE","CANCELED","CANCELED_EXPIRE","RESTORE","AUTODELETE","REMOVED"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["ADD","REMOVE","UPDATE","IGNORE","CUSTOMER_CHANGED","USER_CHANGED","UPGRADE","ACTIVE","CANCELED","CANCELED_EXPIRE","RESTORE","AUTODELETE","REMOVED","DROP"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -89,5 +105,10 @@ func (m BillingStatus) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this billing status based on context it is used
+func (m BillingStatus) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

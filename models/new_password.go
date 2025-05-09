@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -16,6 +18,7 @@ import (
 type NewPassword struct {
 
 	// The context of the user
+	// Example: 4
 	Context int32 `json:"context,omitempty"`
 
 	// The disguised email to which the TAN is to be sent.
@@ -28,23 +31,32 @@ type NewPassword struct {
 	Mobile string `json:"mobile,omitempty"`
 
 	// The password
+	// Example: wd23os
 	Password string `json:"password,omitempty"`
 
 	// The tan
+	// Example: 123456
 	Tan string `json:"tan,omitempty"`
 
 	// The tan methods available for the user
+	// Example: METHOD_EMAIL, METHOD_MOBILE, METHOD_2FA
 	TanMethods []string `json:"tanMethods"`
 
 	// The token
 	Token string `json:"token,omitempty"`
 
 	// The user
+	// Example: hello@world.com
 	User string `json:"user,omitempty"`
 }
 
 // Validate validates this new password
 func (m *NewPassword) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this new password based on context it is used
+func (m *NewPassword) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model ItEntityTypeConstants
 type ItEntityTypeConstants string
+
+func NewItEntityTypeConstants(value ItEntityTypeConstants) *ItEntityTypeConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated ItEntityTypeConstants.
+func (m ItEntityTypeConstants) Pointer() *ItEntityTypeConstants {
+	return &m
+}
 
 const (
 
@@ -74,5 +84,10 @@ func (m ItEntityTypeConstants) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this it entity type constants based on context it is used
+func (m ItEntityTypeConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

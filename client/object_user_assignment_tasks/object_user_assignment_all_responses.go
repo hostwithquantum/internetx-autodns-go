@@ -6,6 +6,7 @@ package object_user_assignment_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *ObjectUserAssignmentAllReader) ReadResponse(response runtime.ClientResp
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[PUT /object/_assignment/all] objectUserAssignmentAll", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewObjectUserAssignmentAllOK() *ObjectUserAssignmentAllOK {
 	return &ObjectUserAssignmentAllOK{}
 }
 
-/*ObjectUserAssignmentAllOK handles this case with default header values.
+/*
+ObjectUserAssignmentAllOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type ObjectUserAssignmentAllOK struct {
 	Payload *models.JSONResponseDataObjectUserAssignment
 }
 
+// IsSuccess returns true when this object user assignment all o k response has a 2xx status code
+func (o *ObjectUserAssignmentAllOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this object user assignment all o k response has a 3xx status code
+func (o *ObjectUserAssignmentAllOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this object user assignment all o k response has a 4xx status code
+func (o *ObjectUserAssignmentAllOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this object user assignment all o k response has a 5xx status code
+func (o *ObjectUserAssignmentAllOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this object user assignment all o k response a status code equal to that given
+func (o *ObjectUserAssignmentAllOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the object user assignment all o k response
+func (o *ObjectUserAssignmentAllOK) Code() int {
+	return 200
+}
+
 func (o *ObjectUserAssignmentAllOK) Error() string {
-	return fmt.Sprintf("[PUT /object/_assignment/all][%d] objectUserAssignmentAllOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /object/_assignment/all][%d] objectUserAssignmentAllOK %s", 200, payload)
+}
+
+func (o *ObjectUserAssignmentAllOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /object/_assignment/all][%d] objectUserAssignmentAllOK %s", 200, payload)
 }
 
 func (o *ObjectUserAssignmentAllOK) GetPayload() *models.JSONResponseDataObjectUserAssignment {

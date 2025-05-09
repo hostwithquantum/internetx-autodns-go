@@ -17,83 +17,126 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// NewCertificateDeleteParams creates a new CertificateDeleteParams object
-// with the default values initialized.
+// NewCertificateDeleteParams creates a new CertificateDeleteParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewCertificateDeleteParams() *CertificateDeleteParams {
-	var ()
 	return &CertificateDeleteParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewCertificateDeleteParamsWithTimeout creates a new CertificateDeleteParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewCertificateDeleteParamsWithTimeout(timeout time.Duration) *CertificateDeleteParams {
-	var ()
 	return &CertificateDeleteParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewCertificateDeleteParamsWithContext creates a new CertificateDeleteParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewCertificateDeleteParamsWithContext(ctx context.Context) *CertificateDeleteParams {
-	var ()
 	return &CertificateDeleteParams{
-
 		Context: ctx,
 	}
 }
 
 // NewCertificateDeleteParamsWithHTTPClient creates a new CertificateDeleteParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewCertificateDeleteParamsWithHTTPClient(client *http.Client) *CertificateDeleteParams {
-	var ()
 	return &CertificateDeleteParams{
 		HTTPClient: client,
 	}
 }
 
-/*CertificateDeleteParams contains all the parameters to send to the API endpoint
-for the certificate delete operation typically these are written to a http.Request
+/*
+CertificateDeleteParams contains all the parameters to send to the API endpoint
+
+	for the certificate delete operation.
+
+	Typically these are written to a http.Request.
 */
 type CertificateDeleteParams struct {
 
-	/*XDomainrobotBulkLimit*/
-	XDomainrobotBulkLimit *int32
-	/*XDomainrobotContext*/
-	XDomainrobotContext *int32
-	/*XDomainrobotDemo*/
-	XDomainrobotDemo *bool
-	/*XDomainrobotDomainSafePin*/
-	XDomainrobotDomainSafePin *string
-	/*XDomainrobotDomainSafeTan*/
-	XDomainrobotDomainSafeTan *string
-	/*XDomainrobotDomainSafeTransaction*/
-	XDomainrobotDomainSafeTransaction *string
-	/*XDomainrobotDomainSafeTransactionExpire*/
-	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
-	/*XDomainrobotOwnerContext*/
-	XDomainrobotOwnerContext *int32
-	/*XDomainrobotOwnerUser*/
-	XDomainrobotOwnerUser *string
-	/*XDomainrobotSessionID*/
-	XDomainrobotSessionID *string
-	/*XDomainrobotWS*/
-	XDomainrobotWS *string
-	/*ID*/
-	ID int32
-	/*Keys
-	  The query parameter to enable additional features.
+	// XDomainrobot2FAToken.
+	//
+	// Format: int32
+	XDomainrobot2FAToken *int32
 
+	// XDomainrobotBulkLimit.
+	//
+	// Format: int32
+	XDomainrobotBulkLimit *int32
+
+	// XDomainrobotContext.
+	//
+	// Format: int32
+	XDomainrobotContext *int32
+
+	// XDomainrobotDemo.
+	XDomainrobotDemo *bool
+
+	// XDomainrobotDomainSafePin.
+	XDomainrobotDomainSafePin *string
+
+	// XDomainrobotDomainSafeTan.
+	XDomainrobotDomainSafeTan *string
+
+	// XDomainrobotDomainSafeTransaction.
+	XDomainrobotDomainSafeTransaction *string
+
+	// XDomainrobotDomainSafeTransactionExpire.
+	//
+	// Format: date-time
+	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
+
+	// XDomainrobotOwnerContext.
+	//
+	// Format: int32
+	XDomainrobotOwnerContext *int32
+
+	// XDomainrobotOwnerUser.
+	XDomainrobotOwnerUser *string
+
+	// XDomainrobotSessionID.
+	XDomainrobotSessionID *string
+
+	// XDomainrobotWS.
+	XDomainrobotWS *string
+
+	// ID.
+	//
+	// Format: int32
+	ID int32
+
+	/* Keys.
+
+	   The query parameter to enable additional features.
 	*/
 	Keys []string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the certificate delete params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *CertificateDeleteParams) WithDefaults() *CertificateDeleteParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the certificate delete params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *CertificateDeleteParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the certificate delete params
@@ -127,6 +170,17 @@ func (o *CertificateDeleteParams) WithHTTPClient(client *http.Client) *Certifica
 // SetHTTPClient adds the HTTPClient to the certificate delete params
 func (o *CertificateDeleteParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithXDomainrobot2FAToken adds the xDomainrobot2FAToken to the certificate delete params
+func (o *CertificateDeleteParams) WithXDomainrobot2FAToken(xDomainrobot2FAToken *int32) *CertificateDeleteParams {
+	o.SetXDomainrobot2FAToken(xDomainrobot2FAToken)
+	return o
+}
+
+// SetXDomainrobot2FAToken adds the xDomainrobot2FAToken to the certificate delete params
+func (o *CertificateDeleteParams) SetXDomainrobot2FAToken(xDomainrobot2FAToken *int32) {
+	o.XDomainrobot2FAToken = xDomainrobot2FAToken
 }
 
 // WithXDomainrobotBulkLimit adds the xDomainrobotBulkLimit to the certificate delete params
@@ -280,13 +334,20 @@ func (o *CertificateDeleteParams) WriteToRequest(r runtime.ClientRequest, reg st
 	}
 	var res []error
 
+	if o.XDomainrobot2FAToken != nil {
+
+		// header param X-Domainrobot-2FA-Token
+		if err := r.SetHeaderParam("X-Domainrobot-2FA-Token", swag.FormatInt32(*o.XDomainrobot2FAToken)); err != nil {
+			return err
+		}
+	}
+
 	if o.XDomainrobotBulkLimit != nil {
 
 		// header param X-Domainrobot-Bulk-Limit
 		if err := r.SetHeaderParam("X-Domainrobot-Bulk-Limit", swag.FormatInt32(*o.XDomainrobotBulkLimit)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotContext != nil {
@@ -295,7 +356,6 @@ func (o *CertificateDeleteParams) WriteToRequest(r runtime.ClientRequest, reg st
 		if err := r.SetHeaderParam("X-Domainrobot-Context", swag.FormatInt32(*o.XDomainrobotContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDemo != nil {
@@ -304,7 +364,6 @@ func (o *CertificateDeleteParams) WriteToRequest(r runtime.ClientRequest, reg st
 		if err := r.SetHeaderParam("X-Domainrobot-Demo", swag.FormatBool(*o.XDomainrobotDemo)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafePin != nil {
@@ -313,7 +372,6 @@ func (o *CertificateDeleteParams) WriteToRequest(r runtime.ClientRequest, reg st
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Pin", *o.XDomainrobotDomainSafePin); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTan != nil {
@@ -322,7 +380,6 @@ func (o *CertificateDeleteParams) WriteToRequest(r runtime.ClientRequest, reg st
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Tan", *o.XDomainrobotDomainSafeTan); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransaction != nil {
@@ -331,7 +388,6 @@ func (o *CertificateDeleteParams) WriteToRequest(r runtime.ClientRequest, reg st
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction", *o.XDomainrobotDomainSafeTransaction); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransactionExpire != nil {
@@ -340,7 +396,6 @@ func (o *CertificateDeleteParams) WriteToRequest(r runtime.ClientRequest, reg st
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction-Expire", o.XDomainrobotDomainSafeTransactionExpire.String()); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerContext != nil {
@@ -349,7 +404,6 @@ func (o *CertificateDeleteParams) WriteToRequest(r runtime.ClientRequest, reg st
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-Context", swag.FormatInt32(*o.XDomainrobotOwnerContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerUser != nil {
@@ -358,7 +412,6 @@ func (o *CertificateDeleteParams) WriteToRequest(r runtime.ClientRequest, reg st
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-User", *o.XDomainrobotOwnerUser); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotSessionID != nil {
@@ -367,7 +420,6 @@ func (o *CertificateDeleteParams) WriteToRequest(r runtime.ClientRequest, reg st
 		if err := r.SetHeaderParam("X-Domainrobot-SessionId", *o.XDomainrobotSessionID); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotWS != nil {
@@ -376,7 +428,6 @@ func (o *CertificateDeleteParams) WriteToRequest(r runtime.ClientRequest, reg st
 		if err := r.SetHeaderParam("X-Domainrobot-WS", *o.XDomainrobotWS); err != nil {
 			return err
 		}
-
 	}
 
 	// path param id
@@ -384,16 +435,36 @@ func (o *CertificateDeleteParams) WriteToRequest(r runtime.ClientRequest, reg st
 		return err
 	}
 
-	valuesKeys := o.Keys
+	if o.Keys != nil {
 
-	joinedKeys := swag.JoinByFormat(valuesKeys, "multi")
-	// query array param keys
-	if err := r.SetQueryParam("keys", joinedKeys...); err != nil {
-		return err
+		// binding items for keys
+		joinedKeys := o.bindParamKeys(reg)
+
+		// query array param keys
+		if err := r.SetQueryParam("keys", joinedKeys...); err != nil {
+			return err
+		}
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
+}
+
+// bindParamCertificateDelete binds the parameter keys
+func (o *CertificateDeleteParams) bindParamKeys(formats strfmt.Registry) []string {
+	keysIR := o.Keys
+
+	var keysIC []string
+	for _, keysIIR := range keysIR { // explode []string
+
+		keysIIV := keysIIR // string as string
+		keysIC = append(keysIC, keysIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	keysIS := swag.JoinByFormat(keysIC, "multi")
+
+	return keysIS
 }

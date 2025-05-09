@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -18,6 +19,15 @@ import (
 // swagger:model AuEligibilityIdTypeConstants
 type AuEligibilityIDTypeConstants string
 
+func NewAuEligibilityIDTypeConstants(value AuEligibilityIDTypeConstants) *AuEligibilityIDTypeConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated AuEligibilityIDTypeConstants.
+func (m AuEligibilityIDTypeConstants) Pointer() *AuEligibilityIDTypeConstants {
+	return &m
+}
+
 const (
 
 	// AuEligibilityIDTypeConstantsACN captures enum value "ACN"
@@ -26,38 +36,50 @@ const (
 	// AuEligibilityIDTypeConstantsABN captures enum value "ABN"
 	AuEligibilityIDTypeConstantsABN AuEligibilityIDTypeConstants = "ABN"
 
-	// AuEligibilityIDTypeConstantsVICBN captures enum value "VIC_BN"
-	AuEligibilityIDTypeConstantsVICBN AuEligibilityIDTypeConstants = "VIC_BN"
+	// AuEligibilityIDTypeConstantsVIC captures enum value "VIC"
+	AuEligibilityIDTypeConstantsVIC AuEligibilityIDTypeConstants = "VIC"
 
-	// AuEligibilityIDTypeConstantsNSWBN captures enum value "NSW_BN"
-	AuEligibilityIDTypeConstantsNSWBN AuEligibilityIDTypeConstants = "NSW_BN"
+	// AuEligibilityIDTypeConstantsNSW captures enum value "NSW"
+	AuEligibilityIDTypeConstantsNSW AuEligibilityIDTypeConstants = "NSW"
 
 	// AuEligibilityIDTypeConstantsSA captures enum value "SA"
 	AuEligibilityIDTypeConstantsSA AuEligibilityIDTypeConstants = "SA"
 
-	// AuEligibilityIDTypeConstantsBN captures enum value "BN"
-	AuEligibilityIDTypeConstantsBN AuEligibilityIDTypeConstants = "BN"
+	// AuEligibilityIDTypeConstantsNT captures enum value "NT"
+	AuEligibilityIDTypeConstantsNT AuEligibilityIDTypeConstants = "NT"
 
-	// AuEligibilityIDTypeConstantsNTBN captures enum value "NT_BN"
-	AuEligibilityIDTypeConstantsNTBN AuEligibilityIDTypeConstants = "NT_BN"
+	// AuEligibilityIDTypeConstantsWA captures enum value "WA"
+	AuEligibilityIDTypeConstantsWA AuEligibilityIDTypeConstants = "WA"
 
-	// AuEligibilityIDTypeConstantsWABN captures enum value "WA_BN"
-	AuEligibilityIDTypeConstantsWABN AuEligibilityIDTypeConstants = "WA_BN"
+	// AuEligibilityIDTypeConstantsTAS captures enum value "TAS"
+	AuEligibilityIDTypeConstantsTAS AuEligibilityIDTypeConstants = "TAS"
 
-	// AuEligibilityIDTypeConstantsTASBN captures enum value "TAS_BN"
-	AuEligibilityIDTypeConstantsTASBN AuEligibilityIDTypeConstants = "TAS_BN"
+	// AuEligibilityIDTypeConstantsACT captures enum value "ACT"
+	AuEligibilityIDTypeConstantsACT AuEligibilityIDTypeConstants = "ACT"
 
-	// AuEligibilityIDTypeConstantsACTBN captures enum value "ACT_BN"
-	AuEligibilityIDTypeConstantsACTBN AuEligibilityIDTypeConstants = "ACT_BN"
-
-	// AuEligibilityIDTypeConstantsQLDBN captures enum value "QLD_BN"
-	AuEligibilityIDTypeConstantsQLDBN AuEligibilityIDTypeConstants = "QLD_BN"
+	// AuEligibilityIDTypeConstantsQLD captures enum value "QLD"
+	AuEligibilityIDTypeConstantsQLD AuEligibilityIDTypeConstants = "QLD"
 
 	// AuEligibilityIDTypeConstantsTM captures enum value "TM"
 	AuEligibilityIDTypeConstantsTM AuEligibilityIDTypeConstants = "TM"
 
 	// AuEligibilityIDTypeConstantsOTHER captures enum value "OTHER"
 	AuEligibilityIDTypeConstantsOTHER AuEligibilityIDTypeConstants = "OTHER"
+
+	// AuEligibilityIDTypeConstantsASL captures enum value "ASL"
+	AuEligibilityIDTypeConstantsASL AuEligibilityIDTypeConstants = "ASL"
+
+	// AuEligibilityIDTypeConstantsACECQA captures enum value "ACECQA"
+	AuEligibilityIDTypeConstantsACECQA AuEligibilityIDTypeConstants = "ACECQA"
+
+	// AuEligibilityIDTypeConstantsCRICOS captures enum value "CRICOS"
+	AuEligibilityIDTypeConstantsCRICOS AuEligibilityIDTypeConstants = "CRICOS"
+
+	// AuEligibilityIDTypeConstantsRTO captures enum value "RTO"
+	AuEligibilityIDTypeConstantsRTO AuEligibilityIDTypeConstants = "RTO"
+
+	// AuEligibilityIDTypeConstantsTEQSA captures enum value "TEQSA"
+	AuEligibilityIDTypeConstantsTEQSA AuEligibilityIDTypeConstants = "TEQSA"
 )
 
 // for schema
@@ -65,7 +87,7 @@ var auEligibilityIdTypeConstantsEnum []interface{}
 
 func init() {
 	var res []AuEligibilityIDTypeConstants
-	if err := json.Unmarshal([]byte(`["ACN","ABN","VIC_BN","NSW_BN","SA","BN","NT_BN","WA_BN","TAS_BN","ACT_BN","QLD_BN","TM","OTHER"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["ACN","ABN","VIC","NSW","SA","NT","WA","TAS","ACT","QLD","TM","OTHER","ASL","ACECQA","CRICOS","RTO","TEQSA"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -92,5 +114,10 @@ func (m AuEligibilityIDTypeConstants) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this au eligibility Id type constants based on context it is used
+func (m AuEligibilityIDTypeConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

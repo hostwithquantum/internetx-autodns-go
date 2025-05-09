@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,24 +19,24 @@ import (
 // swagger:model ContactVerificationDomain
 type ContactVerificationDomain struct {
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// the deactivation of the domain Verification
+	// The date on which the associated domain is deactivated if the contact verification is not completed
 	// Format: date-time
 	Deactivation strfmt.DateTime `json:"deactivation,omitempty"`
 
-	// the idn domain
+	// The domain name written in Punycode syntax(IDN)
 	Idn string `json:"idn,omitempty"`
 
-	// the domain of the Verification
+	// The domain name associated with the contact verification
 	Name string `json:"name,omitempty"`
 
-	// the status of the domain Verification
+	// The status of the domain Verification
 	Status GenericStatusConstants `json:"status,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 }
@@ -66,7 +68,6 @@ func (m *ContactVerificationDomain) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ContactVerificationDomain) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -79,7 +80,6 @@ func (m *ContactVerificationDomain) validateCreated(formats strfmt.Registry) err
 }
 
 func (m *ContactVerificationDomain) validateDeactivation(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Deactivation) { // not required
 		return nil
 	}
@@ -92,7 +92,6 @@ func (m *ContactVerificationDomain) validateDeactivation(formats strfmt.Registry
 }
 
 func (m *ContactVerificationDomain) validateStatus(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Status) { // not required
 		return nil
 	}
@@ -100,6 +99,8 @@ func (m *ContactVerificationDomain) validateStatus(formats strfmt.Registry) erro
 	if err := m.Status.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
 		}
 		return err
 	}
@@ -108,12 +109,43 @@ func (m *ContactVerificationDomain) validateStatus(formats strfmt.Registry) erro
 }
 
 func (m *ContactVerificationDomain) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
 
 	if err := validate.FormatOf("updated", "body", "date-time", m.Updated.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this contact verification domain based on the context it is used
+func (m *ContactVerificationDomain) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ContactVerificationDomain) contextValidateStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	if err := m.Status.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
+		}
 		return err
 	}
 

@@ -6,6 +6,7 @@ package tmch_mark_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *TmchMarkDocumentDeleteReader) ReadResponse(response runtime.ClientRespo
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[DELETE /tmchMark/{reference}/document/{type}] tmchMarkDocumentDelete", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewTmchMarkDocumentDeleteOK() *TmchMarkDocumentDeleteOK {
 	return &TmchMarkDocumentDeleteOK{}
 }
 
-/*TmchMarkDocumentDeleteOK handles this case with default header values.
+/*
+TmchMarkDocumentDeleteOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type TmchMarkDocumentDeleteOK struct {
 	Payload *models.JSONResponseDataVoid
 }
 
+// IsSuccess returns true when this tmch mark document delete o k response has a 2xx status code
+func (o *TmchMarkDocumentDeleteOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this tmch mark document delete o k response has a 3xx status code
+func (o *TmchMarkDocumentDeleteOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this tmch mark document delete o k response has a 4xx status code
+func (o *TmchMarkDocumentDeleteOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this tmch mark document delete o k response has a 5xx status code
+func (o *TmchMarkDocumentDeleteOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this tmch mark document delete o k response a status code equal to that given
+func (o *TmchMarkDocumentDeleteOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the tmch mark document delete o k response
+func (o *TmchMarkDocumentDeleteOK) Code() int {
+	return 200
+}
+
 func (o *TmchMarkDocumentDeleteOK) Error() string {
-	return fmt.Sprintf("[DELETE /tmchMark/{reference}/document/{type}][%d] tmchMarkDocumentDeleteOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /tmchMark/{reference}/document/{type}][%d] tmchMarkDocumentDeleteOK %s", 200, payload)
+}
+
+func (o *TmchMarkDocumentDeleteOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /tmchMark/{reference}/document/{type}][%d] tmchMarkDocumentDeleteOK %s", 200, payload)
 }
 
 func (o *TmchMarkDocumentDeleteOK) GetPayload() *models.JSONResponseDataVoid {

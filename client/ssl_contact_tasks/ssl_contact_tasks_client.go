@@ -9,12 +9,38 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime"
+	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new ssl contact tasks API client.
 func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new ssl contact tasks API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new ssl contact tasks API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -25,31 +51,37 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
 // ClientService is the interface for Client methods
 type ClientService interface {
-	SslContactCreate(params *SslContactCreateParams) (*SslContactCreateOK, error)
+	SslContactCreate(params *SslContactCreateParams, opts ...ClientOption) (*SslContactCreateOK, error)
 
-	SslContactDelete(params *SslContactDeleteParams) (*SslContactDeleteOK, error)
+	SslContactDelete(params *SslContactDeleteParams, opts ...ClientOption) (*SslContactDeleteOK, error)
 
-	SslContactList(params *SslContactListParams) (*SslContactListOK, error)
+	SslContactInfo(params *SslContactInfoParams, opts ...ClientOption) (*SslContactInfoOK, error)
 
-	SslContactUpdate(params *SslContactUpdateParams) (*SslContactUpdateOK, error)
+	SslContactList(params *SslContactListParams, opts ...ClientOption) (*SslContactListOK, error)
+
+	SslContactUpdate(params *SslContactUpdateParams, opts ...ClientOption) (*SslContactUpdateOK, error)
+
+	SslContactsDeletes(params *SslContactsDeletesParams, opts ...ClientOption) (*SslContactsDeletesOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
 
 /*
-  SslContactCreate s s l contact create
+SslContactCreate s s l contact create 400201
 
-  Creating a new SSL contact.
+Creating a new SSL contact.
 */
-func (a *Client) SslContactCreate(params *SslContactCreateParams) (*SslContactCreateOK, error) {
+func (a *Client) SslContactCreate(params *SslContactCreateParams, opts ...ClientOption) (*SslContactCreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSslContactCreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "sslContactCreate",
 		Method:             "POST",
 		PathPattern:        "/sslcontact",
@@ -60,7 +92,12 @@ func (a *Client) SslContactCreate(params *SslContactCreateParams) (*SslContactCr
 		Reader:             &SslContactCreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -75,17 +112,16 @@ func (a *Client) SslContactCreate(params *SslContactCreateParams) (*SslContactCr
 }
 
 /*
-  SslContactDelete s s l contact delete
+SslContactDelete s s l contact delete 400203
 
-  Deleting an existing SSL contact.
+Deleting an existing SSL contact.
 */
-func (a *Client) SslContactDelete(params *SslContactDeleteParams) (*SslContactDeleteOK, error) {
+func (a *Client) SslContactDelete(params *SslContactDeleteParams, opts ...ClientOption) (*SslContactDeleteOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSslContactDeleteParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "sslContactDelete",
 		Method:             "DELETE",
 		PathPattern:        "/sslcontact/{id}",
@@ -96,7 +132,12 @@ func (a *Client) SslContactDelete(params *SslContactDeleteParams) (*SslContactDe
 		Reader:             &SslContactDeleteReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -111,17 +152,56 @@ func (a *Client) SslContactDelete(params *SslContactDeleteParams) (*SslContactDe
 }
 
 /*
-  SslContactList s s l contact list
+SslContactInfo s s l contact info 400204
 
-  Inquiring a list of SSL contacts with certain details. The following keys can be used for filtering, ordering and inquiring additional data via query parameter: country, fname, address, city, created, title, lname, phone, organization, state, id, fax, pcode, updated, email.
+Inquiring the data for a specified SSL contact.
 */
-func (a *Client) SslContactList(params *SslContactListParams) (*SslContactListOK, error) {
+func (a *Client) SslContactInfo(params *SslContactInfoParams, opts ...ClientOption) (*SslContactInfoOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewSslContactInfoParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "sslContactInfo",
+		Method:             "GET",
+		PathPattern:        "/sslcontact/{id}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &SslContactInfoReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*SslContactInfoOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for sslContactInfo: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+SslContactList s s l contact list 400205
+
+Inquiring a list of SSL contacts with certain details. The following keys can be used for filtering, ordering and inquiring additional data via query parameter: country, fname, address, city, created, title, lname, phone, organization, state, id, fax, pcode, updated, email.
+*/
+func (a *Client) SslContactList(params *SslContactListParams, opts ...ClientOption) (*SslContactListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSslContactListParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "sslContactList",
 		Method:             "POST",
 		PathPattern:        "/sslcontact/_search",
@@ -132,7 +212,12 @@ func (a *Client) SslContactList(params *SslContactListParams) (*SslContactListOK
 		Reader:             &SslContactListReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -147,17 +232,16 @@ func (a *Client) SslContactList(params *SslContactListParams) (*SslContactListOK
 }
 
 /*
-  SslContactUpdate s s l contact update
+SslContactUpdate s s l contact update 400202
 
-  Updating an existing SSL contact.
+Updating an existing SSL contact.
 */
-func (a *Client) SslContactUpdate(params *SslContactUpdateParams) (*SslContactUpdateOK, error) {
+func (a *Client) SslContactUpdate(params *SslContactUpdateParams, opts ...ClientOption) (*SslContactUpdateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSslContactUpdateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "sslContactUpdate",
 		Method:             "PUT",
 		PathPattern:        "/sslcontact/{id}",
@@ -168,7 +252,12 @@ func (a *Client) SslContactUpdate(params *SslContactUpdateParams) (*SslContactUp
 		Reader:             &SslContactUpdateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -179,6 +268,46 @@ func (a *Client) SslContactUpdate(params *SslContactUpdateParams) (*SslContactUp
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for sslContactUpdate: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+SslContactsDeletes ssls contact delete bulk 400203
+
+Deleting serveral SslContact with one request.
+*/
+func (a *Client) SslContactsDeletes(params *SslContactsDeletesParams, opts ...ClientOption) (*SslContactsDeletesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewSslContactsDeletesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "sslContactsDeletes",
+		Method:             "DELETE",
+		PathPattern:        "/bulk/sslcontact",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &SslContactsDeletesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*SslContactsDeletesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for sslContactsDeletes: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

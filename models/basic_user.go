@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,25 +19,33 @@ import (
 // swagger:model BasicUser
 type BasicUser struct {
 
-	// The context.
-	// Required: true
-	Context *int32 `json:"context"`
+	// The context. A separated section.
+	Context int32 `json:"context,omitempty"`
+
+	// The date on which the password has changed
+	// Format: date-time
+	PasswordChanged strfmt.DateTime `json:"passwordChanged,omitempty"`
+
+	// Is the current password expired
+	PasswordExpired bool `json:"passwordExpired,omitempty"`
+
+	// The date on which the password will expire
+	// Format: date-time
+	PasswordExpires strfmt.DateTime `json:"passwordExpires,omitempty"`
 
 	// The user name.
-	// Required: true
-	// Pattern: ^[^_].*
-	User *string `json:"user"`
+	User string `json:"user,omitempty"`
 }
 
 // Validate validates this basic user
 func (m *BasicUser) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateContext(formats); err != nil {
+	if err := m.validatePasswordChanged(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateUser(formats); err != nil {
+	if err := m.validatePasswordExpires(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -45,25 +55,32 @@ func (m *BasicUser) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *BasicUser) validateContext(formats strfmt.Registry) error {
+func (m *BasicUser) validatePasswordChanged(formats strfmt.Registry) error {
+	if swag.IsZero(m.PasswordChanged) { // not required
+		return nil
+	}
 
-	if err := validate.Required("context", "body", m.Context); err != nil {
+	if err := validate.FormatOf("passwordChanged", "body", "date-time", m.PasswordChanged.String(), formats); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (m *BasicUser) validateUser(formats strfmt.Registry) error {
+func (m *BasicUser) validatePasswordExpires(formats strfmt.Registry) error {
+	if swag.IsZero(m.PasswordExpires) { // not required
+		return nil
+	}
 
-	if err := validate.Required("user", "body", m.User); err != nil {
+	if err := validate.FormatOf("passwordExpires", "body", "date-time", m.PasswordExpires.String(), formats); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("user", "body", string(*m.User), `^[^_].*`); err != nil {
-		return err
-	}
+	return nil
+}
 
+// ContextValidate validates this basic user based on context it is used
+func (m *BasicUser) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model UkTypeConstants
 type UkTypeConstants string
+
+func NewUkTypeConstants(value UkTypeConstants) *UkTypeConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated UkTypeConstants.
+func (m UkTypeConstants) Pointer() *UkTypeConstants {
+	return &m
+}
 
 const (
 
@@ -101,5 +111,10 @@ func (m UkTypeConstants) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this uk type constants based on context it is used
+func (m UkTypeConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

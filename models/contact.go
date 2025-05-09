@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -19,98 +20,117 @@ import (
 // swagger:model Contact
 type Contact struct {
 
-	// The address of the contact.
-	// Required: true
-	// Max Items: 2147483647
-	// Min Items: 1
+	// Street or post box. Depending on the registry, up to 65,536 characters may be possible.
 	Address []string `json:"address"`
 
-	// The unique alias of the contact
+	// A string that is either automatically generated when an alias is not sent or a self-defined string that can be set by the user for the purpose of identifying the domain contact.
+	// Example: John-Doe-1
 	Alias string `json:"alias,omitempty"`
 
 	// The city of the contact
-	// Required: true
-	City *string `json:"city"`
+	// Example: Anytown
+	City string `json:"city,omitempty"`
 
-	// The comment for the contact
+	// A freely definable text that can be set for a contact. May only be composed of ASCII characters.
 	Comment string `json:"comment,omitempty"`
 
-	// ???
+	// Confirmation of the domain holder that he agrees to the changes.
+	//
+	//  false or blank= Refuse confirmation. Order will not be accepted.
+	//  true = Confirm
+	//  default value = false
+	//
+	//  This confirmation has been required since December 7, 2016 due to ICANN's new change of ownership procedure for changes to the domain holder's name, email address or organization. Only for gTLDs and new gTLDs.
 	ConfirmOwnerConsent bool `json:"confirmOwnerConsent,omitempty"`
 
-	// The country of the contact
-	// Required: true
-	Country *string `json:"country"`
+	// Country (ISO 3166-1 alpha-2).
+	//  Country Code.
+	//  Certain strings, such as "Germany", are mapped to DE.
+	// Example: DE
+	Country string `json:"country,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// The nic references of the contact
+	// documents
+	Documents []*ContactDocument `json:"documents"`
+
+	// Indicates whether the domain contact is in the DomainSafe.
 	Domainsafe bool `json:"domainsafe,omitempty"`
 
-	// The email of the contact
+	// Email address
+	// Example: john.doe@domain.com
 	Email string `json:"email,omitempty"`
 
-	// The contact extensions.
+	// Additional data for contacts required by certain TLDs.
 	Extensions *ContactExtensions `json:"extensions,omitempty"`
 
 	// The fax number of the contact
+	// Example: +49-123-12345
 	Fax string `json:"fax,omitempty"`
 
-	// The first name of the contact
+	// First name
+	// Example: John
 	Fname string `json:"fname,omitempty"`
 
 	// The unique identifier of the contact
+	// Example: 1
 	ID int32 `json:"id,omitempty"`
 
-	// The last name of the contact
-	// Required: true
-	Lname *string `json:"lname"`
+	// Last name
+	// Example: Doe
+	Lname string `json:"lname,omitempty"`
 
-	// The nic references of the contact
+	// Manually create a NIC reference for the domain contact. This is not required, since the NIC references are always created automatically.
+	//  This will no longer be supported in the future.
 	NicRef []*ContactReference `json:"nicRef"`
 
 	// The name of the organization
+	// Example: Company
 	Organization string `json:"organization,omitempty"`
 
-	// The owner of the object.
+	// The object owner.
 	Owner *BasicUser `json:"owner,omitempty"`
 
-	// The pcode of the contact
-	// Required: true
-	Pcode *string `json:"pcode"`
+	// The postal code (“zip-code”) of the contact. For countries Canada, Norway, Poland and Spain the format of the postal code is checked for validity.
+	// Canada (ca): Six characters in the following format 'LNL NLN', where 'L' represents a letter and 'N' represents a number.
+	// Norway (co): Four characters between 0001 and 9990.
+	// Poland (pl): Consists of five digits, with a hyphen ('-') between the second and third digits.
+	// Spain (es): Consisting of exactly five digits. No letters or special characters, only numbers. Each of the five positions can be any digit from 0 to 9.
+	// Example: Canada: M5V 3H5, H3Z2Y7 \nNorway: 0010 \nPoland: 12-345 \nSpain: 28040
+	Pcode string `json:"pcode,omitempty"`
 
 	// The phone number of the contact
+	// Example: +49-123-12345
 	Phone string `json:"phone,omitempty"`
 
 	// The protection of the contact
 	Protection ContactProtectionConstants `json:"protection,omitempty"`
 
-	// The remarks of the contact
-	Remarks []string `json:"remarks"`
-
 	// The sip of the contact
 	Sip string `json:"sip,omitempty"`
 
 	// The local country state of the contact
+	// Example: BY
 	State string `json:"state,omitempty"`
 
-	// The title of the contact
+	// A prefix to a person’s name.
+	// Example: Dr.
 	Title string `json:"title,omitempty"`
 
-	// The type of the contact
-	// Required: true
-	Type ContactTypeConstants `json:"type"`
+	// Domain contact type
+	Type ContactTypeConstants `json:"type,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The updating user of the object.
+	// User who performed the last update.
 	Updater *BasicUser `json:"updater,omitempty"`
 
-	// The verification status of the contact
+	// The status of domain contact verification.
+	// Example: SUCCESS - Domain contact verification successful. \n PENDING - Domain contact verification in progress. \n FAILED - Domain contact verification failed. \n NOT_SET - Domain contact verification not started.
 	Verification GenericStatusConstants `json:"verification,omitempty"`
 }
 
@@ -118,27 +138,15 @@ type Contact struct {
 func (m *Contact) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateAddress(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateCity(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateCountry(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateCreated(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateExtensions(formats); err != nil {
+	if err := m.validateDocuments(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateLname(formats); err != nil {
+	if err := m.validateExtensions(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -147,10 +155,6 @@ func (m *Contact) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateOwner(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validatePcode(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -180,45 +184,7 @@ func (m *Contact) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Contact) validateAddress(formats strfmt.Registry) error {
-
-	if err := validate.Required("address", "body", m.Address); err != nil {
-		return err
-	}
-
-	iAddressSize := int64(len(m.Address))
-
-	if err := validate.MinItems("address", "body", iAddressSize, 1); err != nil {
-		return err
-	}
-
-	if err := validate.MaxItems("address", "body", iAddressSize, 2147483647); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *Contact) validateCity(formats strfmt.Registry) error {
-
-	if err := validate.Required("city", "body", m.City); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *Contact) validateCountry(formats strfmt.Registry) error {
-
-	if err := validate.Required("country", "body", m.Country); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *Contact) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -230,8 +196,33 @@ func (m *Contact) validateCreated(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Contact) validateExtensions(formats strfmt.Registry) error {
+func (m *Contact) validateDocuments(formats strfmt.Registry) error {
+	if swag.IsZero(m.Documents) { // not required
+		return nil
+	}
 
+	for i := 0; i < len(m.Documents); i++ {
+		if swag.IsZero(m.Documents[i]) { // not required
+			continue
+		}
+
+		if m.Documents[i] != nil {
+			if err := m.Documents[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("documents" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("documents" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *Contact) validateExtensions(formats strfmt.Registry) error {
 	if swag.IsZero(m.Extensions) { // not required
 		return nil
 	}
@@ -240,6 +231,8 @@ func (m *Contact) validateExtensions(formats strfmt.Registry) error {
 		if err := m.Extensions.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("extensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("extensions")
 			}
 			return err
 		}
@@ -248,17 +241,7 @@ func (m *Contact) validateExtensions(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Contact) validateLname(formats strfmt.Registry) error {
-
-	if err := validate.Required("lname", "body", m.Lname); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *Contact) validateNicRef(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.NicRef) { // not required
 		return nil
 	}
@@ -272,6 +255,8 @@ func (m *Contact) validateNicRef(formats strfmt.Registry) error {
 			if err := m.NicRef[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("nicRef" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nicRef" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -283,7 +268,6 @@ func (m *Contact) validateNicRef(formats strfmt.Registry) error {
 }
 
 func (m *Contact) validateOwner(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -292,6 +276,8 @@ func (m *Contact) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -300,17 +286,7 @@ func (m *Contact) validateOwner(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Contact) validatePcode(formats strfmt.Registry) error {
-
-	if err := validate.Required("pcode", "body", m.Pcode); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *Contact) validateProtection(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Protection) { // not required
 		return nil
 	}
@@ -318,6 +294,8 @@ func (m *Contact) validateProtection(formats strfmt.Registry) error {
 	if err := m.Protection.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("protection")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("protection")
 		}
 		return err
 	}
@@ -326,10 +304,15 @@ func (m *Contact) validateProtection(formats strfmt.Registry) error {
 }
 
 func (m *Contact) validateType(formats strfmt.Registry) error {
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
 
 	if err := m.Type.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
 		}
 		return err
 	}
@@ -338,7 +321,6 @@ func (m *Contact) validateType(formats strfmt.Registry) error {
 }
 
 func (m *Contact) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -351,7 +333,6 @@ func (m *Contact) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *Contact) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -360,6 +341,8 @@ func (m *Contact) validateUpdater(formats strfmt.Registry) error {
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}
@@ -369,7 +352,6 @@ func (m *Contact) validateUpdater(formats strfmt.Registry) error {
 }
 
 func (m *Contact) validateVerification(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Verification) { // not required
 		return nil
 	}
@@ -377,6 +359,217 @@ func (m *Contact) validateVerification(formats strfmt.Registry) error {
 	if err := m.Verification.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("verification")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("verification")
+		}
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this contact based on the context it is used
+func (m *Contact) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateDocuments(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateExtensions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateNicRef(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateProtection(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateVerification(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Contact) contextValidateDocuments(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Documents); i++ {
+
+		if m.Documents[i] != nil {
+
+			if swag.IsZero(m.Documents[i]) { // not required
+				return nil
+			}
+
+			if err := m.Documents[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("documents" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("documents" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *Contact) contextValidateExtensions(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Extensions != nil {
+
+		if swag.IsZero(m.Extensions) { // not required
+			return nil
+		}
+
+		if err := m.Extensions.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("extensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("extensions")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Contact) contextValidateNicRef(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.NicRef); i++ {
+
+		if m.NicRef[i] != nil {
+
+			if swag.IsZero(m.NicRef[i]) { // not required
+				return nil
+			}
+
+			if err := m.NicRef[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("nicRef" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nicRef" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *Contact) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Contact) contextValidateProtection(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Protection) { // not required
+		return nil
+	}
+
+	if err := m.Protection.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("protection")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("protection")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *Contact) contextValidateType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	if err := m.Type.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *Contact) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Contact) contextValidateVerification(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Verification) { // not required
+		return nil
+	}
+
+	if err := m.Verification.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("verification")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("verification")
 		}
 		return err
 	}

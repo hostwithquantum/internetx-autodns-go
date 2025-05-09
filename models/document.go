@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,35 +19,40 @@ import (
 // swagger:model Document
 type Document struct {
 
-	// comment
+	// Document comment
 	Comment string `json:"comment,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
 	// data
+	// Example: The file in binary format
 	Data string `json:"data,omitempty"`
 
-	// id
+	// The unique identifier of the document
 	ID int64 `json:"id,omitempty"`
 
-	// link
+	// Link created by Internetx to download invoices.
 	Link string `json:"link,omitempty"`
 
-	// mime type
+	// MIME type (Multipurpose Internet Mail Extensions)
+	//  Which MimeType is valid depends on the type of document
+	// Example: application/pdf (invalid for contact document)\nimage/png\nimage/jpeg \ntext/xml (invalid for contact document)\nimage/gif (invalid for contact document)
 	MimeType string `json:"mimeType,omitempty"`
 
-	// name
+	// Name of the document. Can be freely chosen
 	Name string `json:"name,omitempty"`
 
-	// size
+	// Document size
+	// (Maximum size for contact documents is 2MB)
 	Size int64 `json:"size,omitempty"`
 
-	// type
+	// Type of document, related to InternetX.
+	// Example: - tmchMarkDocument \n - contactDocument
 	Type string `json:"type,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 }
@@ -69,7 +76,6 @@ func (m *Document) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Document) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -82,7 +88,6 @@ func (m *Document) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *Document) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -91,6 +96,11 @@ func (m *Document) validateUpdated(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this document based on context it is used
+func (m *Document) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

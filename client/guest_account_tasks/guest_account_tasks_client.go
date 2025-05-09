@@ -9,12 +9,38 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime"
+	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new guest account tasks API client.
 func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new guest account tasks API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new guest account tasks API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -25,27 +51,29 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
 // ClientService is the interface for Client methods
 type ClientService interface {
-	GuestApplyVerify(params *GuestApplyVerifyParams) (*GuestApplyVerifyOK, error)
+	GuestApplyVerify(params *GuestApplyVerifyParams, opts ...ClientOption) (*GuestApplyVerifyOK, error)
 
-	GuestCreate(params *GuestCreateParams) (*GuestCreateOK, error)
+	GuestCreate(params *GuestCreateParams, opts ...ClientOption) (*GuestCreateOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
 
 /*
-  GuestApplyVerify guests account verify
+GuestApplyVerify guests account verify
 
-  Applying a verification code for a guest account.
+Applying a verification code for a guest account.
 */
-func (a *Client) GuestApplyVerify(params *GuestApplyVerifyParams) (*GuestApplyVerifyOK, error) {
+func (a *Client) GuestApplyVerify(params *GuestApplyVerifyParams, opts ...ClientOption) (*GuestApplyVerifyOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGuestApplyVerifyParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "guestApplyVerify",
 		Method:             "GET",
 		PathPattern:        "/user/_guestverify/{token}",
@@ -56,7 +84,12 @@ func (a *Client) GuestApplyVerify(params *GuestApplyVerifyParams) (*GuestApplyVe
 		Reader:             &GuestApplyVerifyReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -71,17 +104,16 @@ func (a *Client) GuestApplyVerify(params *GuestApplyVerifyParams) (*GuestApplyVe
 }
 
 /*
-  GuestCreate guests account create
+GuestCreate guests account create
 
-  Creating a guest account.
+Creating a guest account.
 */
-func (a *Client) GuestCreate(params *GuestCreateParams) (*GuestCreateOK, error) {
+func (a *Client) GuestCreate(params *GuestCreateParams, opts ...ClientOption) (*GuestCreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGuestCreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "guestCreate",
 		Method:             "POST",
 		PathPattern:        "/user/_guest",
@@ -92,7 +124,12 @@ func (a *Client) GuestCreate(params *GuestCreateParams) (*GuestCreateOK, error) 
 		Reader:             &GuestCreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}

@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -16,19 +18,20 @@ import (
 // swagger:model ContactHkExtensions
 type ContactHkExtensions struct {
 
-	// Is the person 18 years of age or older. For Person only.
+	// For "Person" only. Is the person 18 years of age or older?.
+	// Example: false
 	Above18 bool `json:"above18,omitempty"`
 
-	// Document number.
+	// Document number, e.g. id card number.
 	DocumentNumber string `json:"documentNumber,omitempty"`
 
-	// Country of licensure.
+	// Country of issuing authority.
 	DocumentOrigin string `json:"documentOrigin,omitempty"`
 
-	// The document types.
+	// Dokument type für persons and organizations.
 	DocumentType HkDocumentTypeConstants `json:"documentType,omitempty"`
 
-	// The industry types.
+	// Industry type.
 	IndustryType HkIndustryTypeConstants `json:"industryType,omitempty"`
 
 	// Additional descriptions for OTHIDV and OTHORG.
@@ -54,7 +57,6 @@ func (m *ContactHkExtensions) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ContactHkExtensions) validateDocumentType(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.DocumentType) { // not required
 		return nil
 	}
@@ -62,6 +64,8 @@ func (m *ContactHkExtensions) validateDocumentType(formats strfmt.Registry) erro
 	if err := m.DocumentType.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("documentType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("documentType")
 		}
 		return err
 	}
@@ -70,7 +74,6 @@ func (m *ContactHkExtensions) validateDocumentType(formats strfmt.Registry) erro
 }
 
 func (m *ContactHkExtensions) validateIndustryType(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.IndustryType) { // not required
 		return nil
 	}
@@ -78,6 +81,62 @@ func (m *ContactHkExtensions) validateIndustryType(formats strfmt.Registry) erro
 	if err := m.IndustryType.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("industryType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("industryType")
+		}
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this contact hk extensions based on the context it is used
+func (m *ContactHkExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateDocumentType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateIndustryType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ContactHkExtensions) contextValidateDocumentType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.DocumentType) { // not required
+		return nil
+	}
+
+	if err := m.DocumentType.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("documentType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("documentType")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *ContactHkExtensions) contextValidateIndustryType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.IndustryType) { // not required
+		return nil
+	}
+
+	if err := m.IndustryType.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("industryType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("industryType")
 		}
 		return err
 	}

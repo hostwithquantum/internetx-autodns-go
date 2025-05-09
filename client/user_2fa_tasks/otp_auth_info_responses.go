@@ -6,6 +6,7 @@ package user_2fa_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *OtpAuthInfoReader) ReadResponse(response runtime.ClientResponse, consum
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[GET /OTPAuth] otpAuthInfo", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewOtpAuthInfoOK() *OtpAuthInfoOK {
 	return &OtpAuthInfoOK{}
 }
 
-/*OtpAuthInfoOK handles this case with default header values.
+/*
+OtpAuthInfoOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type OtpAuthInfoOK struct {
 	Payload *models.JSONResponseDataOTPAuth
 }
 
+// IsSuccess returns true when this otp auth info o k response has a 2xx status code
+func (o *OtpAuthInfoOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this otp auth info o k response has a 3xx status code
+func (o *OtpAuthInfoOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this otp auth info o k response has a 4xx status code
+func (o *OtpAuthInfoOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this otp auth info o k response has a 5xx status code
+func (o *OtpAuthInfoOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this otp auth info o k response a status code equal to that given
+func (o *OtpAuthInfoOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the otp auth info o k response
+func (o *OtpAuthInfoOK) Code() int {
+	return 200
+}
+
 func (o *OtpAuthInfoOK) Error() string {
-	return fmt.Sprintf("[GET /OTPAuth][%d] otpAuthInfoOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /OTPAuth][%d] otpAuthInfoOK %s", 200, payload)
+}
+
+func (o *OtpAuthInfoOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /OTPAuth][%d] otpAuthInfoOK %s", 200, payload)
 }
 
 func (o *OtpAuthInfoOK) GetPayload() *models.JSONResponseDataOTPAuth {

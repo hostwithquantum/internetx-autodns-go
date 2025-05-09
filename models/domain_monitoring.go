@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -19,45 +20,52 @@ import (
 // swagger:model DomainMonitoring
 type DomainMonitoring struct {
 
-	// The cancelation
+	// Monitoring setting for domain cancelations.
+	// false = Domain cancelations should not be monitored.
+	// true = Domain cancelations should be monitored.
+	// Default value = false
 	Cancelation bool `json:"cancelation,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// The idn version of the domain.
+	// The IDN version of the domain written in Punycode syntax to be monitored.
 	Idn string `json:"idn,omitempty"`
 
-	// The monitoringSetups
+	// Contains the setup data for domain monitoring.
 	MonitoringSetups []*DomainMonitoringSetup `json:"monitoringSetups"`
 
-	// The name of the domain.
-	// Required: true
-	Name *string `json:"name"`
+	// Domain to be monitored.
+	// Example: domain.de
+	Name string `json:"name,omitempty"`
 
-	// The notification email-addresses.
-	// Max Items: 2147483647
-	// Min Items: 1
+	// Email addresses to which an email is sent when the status changes.
 	NotificationEmails []string `json:"notificationEmails"`
 
-	// The notification mobile phone numbers.
+	// Mobile phone number to which an SMS is sent when the status changes.
 	NotificationMobiles []Phone `json:"notificationMobiles"`
 
-	// The ocval
+	// Monitoring setting for OwnerC validation.
+	// false = OwnerC validation should not be monitored.
+	// true = OwnerC validation should be monitored.
+	// Default value = false
 	Ocval bool `json:"ocval,omitempty"`
 
-	// The owner of the object.
+	// The object owner.
 	Owner *BasicUser `json:"owner,omitempty"`
 
-	// The removed
+	// Monitoring setting for domain deletions.
+	// false = Domain deletions should not be monitored.
+	// true = Domain deletions should be monitored.
+	// Default value = false
 	Removed bool `json:"removed,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The updating user of the object.
+	// User who performed the last update.
 	Updater *BasicUser `json:"updater,omitempty"`
 }
 
@@ -70,14 +78,6 @@ func (m *DomainMonitoring) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateMonitoringSetups(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateName(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateNotificationEmails(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -100,7 +100,6 @@ func (m *DomainMonitoring) Validate(formats strfmt.Registry) error {
 }
 
 func (m *DomainMonitoring) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -113,7 +112,6 @@ func (m *DomainMonitoring) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *DomainMonitoring) validateMonitoringSetups(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.MonitoringSetups) { // not required
 		return nil
 	}
@@ -127,6 +125,8 @@ func (m *DomainMonitoring) validateMonitoringSetups(formats strfmt.Registry) err
 			if err := m.MonitoringSetups[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("monitoringSetups" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("monitoringSetups" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -137,36 +137,7 @@ func (m *DomainMonitoring) validateMonitoringSetups(formats strfmt.Registry) err
 	return nil
 }
 
-func (m *DomainMonitoring) validateName(formats strfmt.Registry) error {
-
-	if err := validate.Required("name", "body", m.Name); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *DomainMonitoring) validateNotificationEmails(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.NotificationEmails) { // not required
-		return nil
-	}
-
-	iNotificationEmailsSize := int64(len(m.NotificationEmails))
-
-	if err := validate.MinItems("notificationEmails", "body", iNotificationEmailsSize, 1); err != nil {
-		return err
-	}
-
-	if err := validate.MaxItems("notificationEmails", "body", iNotificationEmailsSize, 2147483647); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *DomainMonitoring) validateOwner(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -175,6 +146,8 @@ func (m *DomainMonitoring) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -184,7 +157,6 @@ func (m *DomainMonitoring) validateOwner(formats strfmt.Registry) error {
 }
 
 func (m *DomainMonitoring) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -197,7 +169,6 @@ func (m *DomainMonitoring) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *DomainMonitoring) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -206,6 +177,97 @@ func (m *DomainMonitoring) validateUpdater(formats strfmt.Registry) error {
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this domain monitoring based on the context it is used
+func (m *DomainMonitoring) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateMonitoringSetups(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *DomainMonitoring) contextValidateMonitoringSetups(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.MonitoringSetups); i++ {
+
+		if m.MonitoringSetups[i] != nil {
+
+			if swag.IsZero(m.MonitoringSetups[i]) { // not required
+				return nil
+			}
+
+			if err := m.MonitoringSetups[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("monitoringSetups" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("monitoringSetups" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *DomainMonitoring) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainMonitoring) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}

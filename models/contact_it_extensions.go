@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -16,7 +18,8 @@ import (
 // swagger:model ContactItExtensions
 type ContactItExtensions struct {
 
-	// The number of the matching entity.
+	// Entity the contact belongs to.
+	//  Depending on what you have entered in it_entity_type, other data must also be specified. You can find a description of this data in the section "General Extensions".
 	EntityType ItEntityTypeConstants `json:"entityType,omitempty"`
 }
 
@@ -35,7 +38,6 @@ func (m *ContactItExtensions) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ContactItExtensions) validateEntityType(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.EntityType) { // not required
 		return nil
 	}
@@ -43,6 +45,40 @@ func (m *ContactItExtensions) validateEntityType(formats strfmt.Registry) error 
 	if err := m.EntityType.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("entityType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("entityType")
+		}
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this contact it extensions based on the context it is used
+func (m *ContactItExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateEntityType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ContactItExtensions) contextValidateEntityType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.EntityType) { // not required
+		return nil
+	}
+
+	if err := m.EntityType.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("entityType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("entityType")
 		}
 		return err
 	}

@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model RddsOptInConstants
 type RddsOptInConstants string
+
+func NewRddsOptInConstants(value RddsOptInConstants) *RddsOptInConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated RddsOptInConstants.
+func (m RddsOptInConstants) Pointer() *RddsOptInConstants {
+	return &m
+}
 
 const (
 
@@ -77,5 +87,10 @@ func (m RddsOptInConstants) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this rdds opt in constants based on context it is used
+func (m RddsOptInConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

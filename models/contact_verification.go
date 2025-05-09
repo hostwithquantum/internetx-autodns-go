@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -19,63 +20,57 @@ import (
 // swagger:model ContactVerification
 type ContactVerification struct {
 
-	// the action of the Verification, e.g. domain update or contact task
+	// Action for which the verification was triggered or updated.
 	Action string `json:"action,omitempty"`
 
-	// the comment of the Verification
+	// The verification comment. Can be included in the confirmation.
 	Comment string `json:"comment,omitempty"`
 
-	// the confirmIp of the Verification
-	// Required: true
-	ConfirmIP InetAddress `json:"confirmIp"`
+	// The IP address from which the verification was confirmed.
+	ConfirmIP InetAddress `json:"confirmIp,omitempty"`
 
-	// the confirmed date of the Verification
+	// The date when the last verification email was confirmed.
 	// Format: date-time
 	Confirmed strfmt.DateTime `json:"confirmed,omitempty"`
 
 	// the contact of the Verification
-	// Required: true
-	Contact *Contact `json:"contact"`
+	Contact *Contact `json:"contact,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// the domains of the Verification
+	// Domain for which verification was/is required.
 	Domains []*ContactVerificationDomain `json:"domains"`
 
-	// the failed date of the Verification
+	// The date on which the verification failed.
 	// Format: date-time
 	Failed strfmt.DateTime `json:"failed,omitempty"`
 
-	// the messageSend date of the Verification
+	// The date when the last verification email was sent.
 	// Format: date-time
 	MessageSend strfmt.DateTime `json:"messageSend,omitempty"`
 
-	// The owner of the object.
+	// The object owner.
 	Owner *BasicUser `json:"owner,omitempty"`
 
-	// the unique reference of the Verification
+	// The unique reference of the Verification
 	Reference string `json:"reference,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The updater of the object.
+	// User who performed the last update.
 	Updater *BasicUser `json:"updater,omitempty"`
 
-	// the messages of the Verification
+	// The verification mails. For each mail sent, it is recorded here whether the verification was successful or not.
 	VerificationMails []*ContactVerificationMessage `json:"verificationMails"`
 }
 
 // Validate validates this contact verification
 func (m *ContactVerification) Validate(formats strfmt.Registry) error {
 	var res []error
-
-	if err := m.validateConfirmIP(formats); err != nil {
-		res = append(res, err)
-	}
 
 	if err := m.validateConfirmed(formats); err != nil {
 		res = append(res, err)
@@ -123,17 +118,7 @@ func (m *ContactVerification) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ContactVerification) validateConfirmIP(formats strfmt.Registry) error {
-
-	if err := validate.Required("confirmIp", "body", m.ConfirmIP); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *ContactVerification) validateConfirmed(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Confirmed) { // not required
 		return nil
 	}
@@ -146,15 +131,16 @@ func (m *ContactVerification) validateConfirmed(formats strfmt.Registry) error {
 }
 
 func (m *ContactVerification) validateContact(formats strfmt.Registry) error {
-
-	if err := validate.Required("contact", "body", m.Contact); err != nil {
-		return err
+	if swag.IsZero(m.Contact) { // not required
+		return nil
 	}
 
 	if m.Contact != nil {
 		if err := m.Contact.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("contact")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("contact")
 			}
 			return err
 		}
@@ -164,7 +150,6 @@ func (m *ContactVerification) validateContact(formats strfmt.Registry) error {
 }
 
 func (m *ContactVerification) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -177,7 +162,6 @@ func (m *ContactVerification) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *ContactVerification) validateDomains(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Domains) { // not required
 		return nil
 	}
@@ -191,6 +175,8 @@ func (m *ContactVerification) validateDomains(formats strfmt.Registry) error {
 			if err := m.Domains[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("domains" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("domains" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -202,7 +188,6 @@ func (m *ContactVerification) validateDomains(formats strfmt.Registry) error {
 }
 
 func (m *ContactVerification) validateFailed(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Failed) { // not required
 		return nil
 	}
@@ -215,7 +200,6 @@ func (m *ContactVerification) validateFailed(formats strfmt.Registry) error {
 }
 
 func (m *ContactVerification) validateMessageSend(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.MessageSend) { // not required
 		return nil
 	}
@@ -228,7 +212,6 @@ func (m *ContactVerification) validateMessageSend(formats strfmt.Registry) error
 }
 
 func (m *ContactVerification) validateOwner(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -237,6 +220,8 @@ func (m *ContactVerification) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -246,7 +231,6 @@ func (m *ContactVerification) validateOwner(formats strfmt.Registry) error {
 }
 
 func (m *ContactVerification) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -259,7 +243,6 @@ func (m *ContactVerification) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *ContactVerification) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -268,6 +251,8 @@ func (m *ContactVerification) validateUpdater(formats strfmt.Registry) error {
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}
@@ -277,7 +262,6 @@ func (m *ContactVerification) validateUpdater(formats strfmt.Registry) error {
 }
 
 func (m *ContactVerification) validateVerificationMails(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.VerificationMails) { // not required
 		return nil
 	}
@@ -291,6 +275,151 @@ func (m *ContactVerification) validateVerificationMails(formats strfmt.Registry)
 			if err := m.VerificationMails[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("verificationMails" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("verificationMails" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this contact verification based on the context it is used
+func (m *ContactVerification) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateContact(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateDomains(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateVerificationMails(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ContactVerification) contextValidateContact(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Contact != nil {
+
+		if swag.IsZero(m.Contact) { // not required
+			return nil
+		}
+
+		if err := m.Contact.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("contact")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("contact")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactVerification) contextValidateDomains(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Domains); i++ {
+
+		if m.Domains[i] != nil {
+
+			if swag.IsZero(m.Domains[i]) { // not required
+				return nil
+			}
+
+			if err := m.Domains[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("domains" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("domains" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ContactVerification) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactVerification) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactVerification) contextValidateVerificationMails(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.VerificationMails); i++ {
+
+		if m.VerificationMails[i] != nil {
+
+			if swag.IsZero(m.VerificationMails[i]) { // not required
+				return nil
+			}
+
+			if err := m.VerificationMails[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("verificationMails" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("verificationMails" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

@@ -6,10 +6,11 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // TmchContact tmch contact
@@ -24,12 +25,10 @@ type TmchContact struct {
 	Country string `json:"country,omitempty"`
 
 	// email
-	// Required: true
-	Email *string `json:"email"`
+	Email string `json:"email,omitempty"`
 
 	// entitlement
-	// Required: true
-	Entitlement TmchMarkHolderConstants `json:"entitlement"`
+	Entitlement TmchMarkHolderConstants `json:"entitlement,omitempty"`
 
 	// fax
 	Fax string `json:"fax,omitempty"`
@@ -57,10 +56,6 @@ type TmchContact struct {
 func (m *TmchContact) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateEmail(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateEntitlement(formats); err != nil {
 		res = append(res, err)
 	}
@@ -71,20 +66,48 @@ func (m *TmchContact) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *TmchContact) validateEmail(formats strfmt.Registry) error {
+func (m *TmchContact) validateEntitlement(formats strfmt.Registry) error {
+	if swag.IsZero(m.Entitlement) { // not required
+		return nil
+	}
 
-	if err := validate.Required("email", "body", m.Email); err != nil {
+	if err := m.Entitlement.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("entitlement")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("entitlement")
+		}
 		return err
 	}
 
 	return nil
 }
 
-func (m *TmchContact) validateEntitlement(formats strfmt.Registry) error {
+// ContextValidate validate this tmch contact based on the context it is used
+func (m *TmchContact) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
 
-	if err := m.Entitlement.Validate(formats); err != nil {
+	if err := m.contextValidateEntitlement(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *TmchContact) contextValidateEntitlement(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Entitlement) { // not required
+		return nil
+	}
+
+	if err := m.Entitlement.ContextValidate(ctx, formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("entitlement")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("entitlement")
 		}
 		return err
 	}

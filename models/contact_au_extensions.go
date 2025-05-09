@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -19,7 +21,7 @@ type ContactAuExtensions struct {
 	// The corresponding ID number for the eligibility name if applicable, if in doubt just use the same details as your Registrant ID.
 	EligibilityID string `json:"eligibilityId,omitempty"`
 
-	// The type of Eligibility ID.
+	// The type of eligibility id as above.
 	EligibilityIDType AuEligibilityIDTypeConstants `json:"eligibilityIdType,omitempty"`
 
 	// 	This field is usually optional and whether it is required is determined by your policy reason for the domain registration, if in doubt just use the same details as your Registrant Name.
@@ -37,7 +39,7 @@ type ContactAuExtensions struct {
 	// Concerns the Registrant ID which you have selected in the Registrant ID form field.
 	RegistrantIDType AuRegistrantIDTypeConstants `json:"registrantIdType,omitempty"`
 
-	// The registrants name.
+	// Name of the registrant.
 	RegistrantName string `json:"registrantName,omitempty"`
 }
 
@@ -64,7 +66,6 @@ func (m *ContactAuExtensions) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ContactAuExtensions) validateEligibilityIDType(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.EligibilityIDType) { // not required
 		return nil
 	}
@@ -72,6 +73,8 @@ func (m *ContactAuExtensions) validateEligibilityIDType(formats strfmt.Registry)
 	if err := m.EligibilityIDType.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("eligibilityIdType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("eligibilityIdType")
 		}
 		return err
 	}
@@ -80,7 +83,6 @@ func (m *ContactAuExtensions) validateEligibilityIDType(formats strfmt.Registry)
 }
 
 func (m *ContactAuExtensions) validateEligibilityType(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.EligibilityType) { // not required
 		return nil
 	}
@@ -88,6 +90,8 @@ func (m *ContactAuExtensions) validateEligibilityType(formats strfmt.Registry) e
 	if err := m.EligibilityType.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("eligibilityType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("eligibilityType")
 		}
 		return err
 	}
@@ -96,7 +100,6 @@ func (m *ContactAuExtensions) validateEligibilityType(formats strfmt.Registry) e
 }
 
 func (m *ContactAuExtensions) validateRegistrantIDType(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.RegistrantIDType) { // not required
 		return nil
 	}
@@ -104,6 +107,84 @@ func (m *ContactAuExtensions) validateRegistrantIDType(formats strfmt.Registry) 
 	if err := m.RegistrantIDType.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("registrantIdType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("registrantIdType")
+		}
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this contact au extensions based on the context it is used
+func (m *ContactAuExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateEligibilityIDType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateEligibilityType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRegistrantIDType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ContactAuExtensions) contextValidateEligibilityIDType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.EligibilityIDType) { // not required
+		return nil
+	}
+
+	if err := m.EligibilityIDType.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("eligibilityIdType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("eligibilityIdType")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *ContactAuExtensions) contextValidateEligibilityType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.EligibilityType) { // not required
+		return nil
+	}
+
+	if err := m.EligibilityType.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("eligibilityType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("eligibilityType")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *ContactAuExtensions) contextValidateRegistrantIDType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.RegistrantIDType) { // not required
+		return nil
+	}
+
+	if err := m.RegistrantIDType.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("registrantIdType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("registrantIdType")
 		}
 		return err
 	}

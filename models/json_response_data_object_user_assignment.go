@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -18,22 +19,22 @@ import (
 // swagger:model JsonResponseDataObjectUserAssignment
 type JSONResponseDataObjectUserAssignment struct {
 
-	// The client transaction id for the response.
+	// The CTID (Client Transaction ID) of the response.
 	Ctid string `json:"ctid,omitempty"`
 
-	// The data for the response. The type of the objects are depending on the request and are also specified in the responseObject value of the response.
+	// The data for the response. The type of the objects are depending on the request and are also specified in the ResponseObject value of the response.
 	Data []*ObjectUserAssignment `json:"data"`
 
 	// The messages belonging to the response.
 	Messages []*Message `json:"messages"`
 
-	// The object of the response.
+	// The response object.
 	Object *ResponseObject `json:"object,omitempty"`
 
 	// The status of the response.
 	Status *ResponseStatus `json:"status,omitempty"`
 
-	// The server transaction id for the response.
+	// The server transaction ID for the response.
 	Stid string `json:"stid,omitempty"`
 }
 
@@ -64,7 +65,6 @@ func (m *JSONResponseDataObjectUserAssignment) Validate(formats strfmt.Registry)
 }
 
 func (m *JSONResponseDataObjectUserAssignment) validateData(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Data) { // not required
 		return nil
 	}
@@ -78,6 +78,8 @@ func (m *JSONResponseDataObjectUserAssignment) validateData(formats strfmt.Regis
 			if err := m.Data[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("data" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("data" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -89,7 +91,6 @@ func (m *JSONResponseDataObjectUserAssignment) validateData(formats strfmt.Regis
 }
 
 func (m *JSONResponseDataObjectUserAssignment) validateMessages(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Messages) { // not required
 		return nil
 	}
@@ -103,6 +104,8 @@ func (m *JSONResponseDataObjectUserAssignment) validateMessages(formats strfmt.R
 			if err := m.Messages[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("messages" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("messages" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -114,7 +117,6 @@ func (m *JSONResponseDataObjectUserAssignment) validateMessages(formats strfmt.R
 }
 
 func (m *JSONResponseDataObjectUserAssignment) validateObject(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Object) { // not required
 		return nil
 	}
@@ -123,6 +125,8 @@ func (m *JSONResponseDataObjectUserAssignment) validateObject(formats strfmt.Reg
 		if err := m.Object.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("object")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("object")
 			}
 			return err
 		}
@@ -132,7 +136,6 @@ func (m *JSONResponseDataObjectUserAssignment) validateObject(formats strfmt.Reg
 }
 
 func (m *JSONResponseDataObjectUserAssignment) validateStatus(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Status) { // not required
 		return nil
 	}
@@ -141,6 +144,126 @@ func (m *JSONResponseDataObjectUserAssignment) validateStatus(formats strfmt.Reg
 		if err := m.Status.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("status")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("status")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this Json response data object user assignment based on the context it is used
+func (m *JSONResponseDataObjectUserAssignment) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateMessages(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateObject(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *JSONResponseDataObjectUserAssignment) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Data); i++ {
+
+		if m.Data[i] != nil {
+
+			if swag.IsZero(m.Data[i]) { // not required
+				return nil
+			}
+
+			if err := m.Data[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("data" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("data" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *JSONResponseDataObjectUserAssignment) contextValidateMessages(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Messages); i++ {
+
+		if m.Messages[i] != nil {
+
+			if swag.IsZero(m.Messages[i]) { // not required
+				return nil
+			}
+
+			if err := m.Messages[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("messages" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("messages" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *JSONResponseDataObjectUserAssignment) contextValidateObject(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Object != nil {
+
+		if swag.IsZero(m.Object) { // not required
+			return nil
+		}
+
+		if err := m.Object.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("object")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("object")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *JSONResponseDataObjectUserAssignment) contextValidateStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Status != nil {
+
+		if swag.IsZero(m.Status) { // not required
+			return nil
+		}
+
+		if err := m.Status.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("status")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("status")
 			}
 			return err
 		}

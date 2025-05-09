@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,53 +19,55 @@ import (
 // swagger:model Redirect
 type Redirect struct {
 
-	// Alternative URLs for frame redirect
+	// Backup destinations for the redirects. If the first destination cannot be reached, the domain is automatically redirected to the substitute destination (domain redirection, frame redirect).
 	// Max Items: 3
 	// Min Items: 0
 	Backups []string `json:"backups"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// The domain, which the redirect belongs.
+	// Domain that is to be redirected, e.g. example.com.
 	Domain string `json:"domain,omitempty"`
 
-	// The last dns connection.
+	// The last DNS connection. Used for analytics, to keep track of when the DNS has been used.
 	// Format: date-time
 	LastSeen strfmt.DateTime `json:"lastSeen,omitempty"`
 
-	// Redirect mode
+	// The redirect mode of domain and email forwarding.
 	// Required: true
-	Mode RedirectModeConstants `json:"mode"`
+	Mode *RedirectModeConstants `json:"mode"`
 
-	// The owner of the object.
+	// The object owner.
 	Owner *BasicUser `json:"owner,omitempty"`
 
-	// The domain to be redirected. Enter the domain with or without "www".
-	Source string `json:"source,omitempty"`
+	// Domain that is to be redirected, e.g. test.example.com.
+	// Required: true
+	Source *string `json:"source"`
 
-	// The IDN version of the domain to be redirected. Enter the domain with or without "www".
+	// The IDN version of the domain name. Domains can be entered with or without "www".
 	SourceIdn string `json:"sourceIdn,omitempty"`
 
-	// The URL of the target domain. Enter the domain without "http://"
-	Target string `json:"target,omitempty"`
+	// The URL of the target domain. Enter the domain without "https://".
+	// Required: true
+	Target *string `json:"target"`
 
-	// The IDN version of the URL of the target domain. Enter the domain without "http://"
+	// The Punycode syntax (IDN) version of the target domain URL. Enter the domain without "https://".
 	TargetIdn string `json:"targetIdn,omitempty"`
 
-	// Name of the redirection
+	// Only for the 'frame' mode. Page title to be displayed in the browser title bar.
 	Title string `json:"title,omitempty"`
 
-	// Redirect type
+	// The type of redirect.
 	// Required: true
-	Type RedirectTypeConstants `json:"type"`
+	Type *RedirectTypeConstants `json:"type"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The updater of the object.
+	// User who performed the last update.
 	Updater *BasicUser `json:"updater,omitempty"`
 }
 
@@ -91,6 +95,14 @@ func (m *Redirect) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateSource(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTarget(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateType(formats); err != nil {
 		res = append(res, err)
 	}
@@ -110,7 +122,6 @@ func (m *Redirect) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Redirect) validateBackups(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Backups) { // not required
 		return nil
 	}
@@ -129,7 +140,6 @@ func (m *Redirect) validateBackups(formats strfmt.Registry) error {
 }
 
 func (m *Redirect) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -142,7 +152,6 @@ func (m *Redirect) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *Redirect) validateLastSeen(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.LastSeen) { // not required
 		return nil
 	}
@@ -156,26 +165,20 @@ func (m *Redirect) validateLastSeen(formats strfmt.Registry) error {
 
 func (m *Redirect) validateMode(formats strfmt.Registry) error {
 
-	if err := m.Mode.Validate(formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("mode")
-		}
+	if err := validate.Required("mode", "body", m.Mode); err != nil {
 		return err
 	}
 
-	return nil
-}
-
-func (m *Redirect) validateOwner(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Owner) { // not required
-		return nil
+	if err := validate.Required("mode", "body", m.Mode); err != nil {
+		return err
 	}
 
-	if m.Owner != nil {
-		if err := m.Owner.Validate(formats); err != nil {
+	if m.Mode != nil {
+		if err := m.Mode.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("owner")
+				return ve.ValidateName("mode")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("mode")
 			}
 			return err
 		}
@@ -184,20 +187,68 @@ func (m *Redirect) validateOwner(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Redirect) validateType(formats strfmt.Registry) error {
+func (m *Redirect) validateOwner(formats strfmt.Registry) error {
+	if swag.IsZero(m.Owner) { // not required
+		return nil
+	}
 
-	if err := m.Type.Validate(formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("type")
+	if m.Owner != nil {
+		if err := m.Owner.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *Redirect) validateSource(formats strfmt.Registry) error {
+
+	if err := validate.Required("source", "body", m.Source); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (m *Redirect) validateUpdated(formats strfmt.Registry) error {
+func (m *Redirect) validateTarget(formats strfmt.Registry) error {
 
+	if err := validate.Required("target", "body", m.Target); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Redirect) validateType(formats strfmt.Registry) error {
+
+	if err := validate.Required("type", "body", m.Type); err != nil {
+		return err
+	}
+
+	if err := validate.Required("type", "body", m.Type); err != nil {
+		return err
+	}
+
+	if m.Type != nil {
+		if err := m.Type.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("type")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("type")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Redirect) validateUpdated(formats strfmt.Registry) error {
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -210,7 +261,6 @@ func (m *Redirect) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *Redirect) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -219,6 +269,110 @@ func (m *Redirect) validateUpdater(formats strfmt.Registry) error {
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this redirect based on the context it is used
+func (m *Redirect) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateMode(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Redirect) contextValidateMode(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Mode != nil {
+
+		if err := m.Mode.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("mode")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("mode")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Redirect) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Redirect) contextValidateType(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Type != nil {
+
+		if err := m.Type.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("type")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("type")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Redirect) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}

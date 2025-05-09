@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model RecipientRole
 type RecipientRole string
+
+func NewRecipientRole(value RecipientRole) *RecipientRole {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated RecipientRole.
+func (m RecipientRole) Pointer() *RecipientRole {
+	return &m
+}
 
 const (
 
@@ -62,5 +72,10 @@ func (m RecipientRole) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this recipient role based on context it is used
+func (m RecipientRole) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

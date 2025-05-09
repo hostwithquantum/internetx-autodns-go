@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,50 +19,53 @@ import (
 // swagger:model DomainCancelation
 type DomainCancelation struct {
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// disconnect
+	// Specifies whether the domain is disconnected during a transit. Only possible with transit, for which it is necessary. Default value = false
+	// Example: false
 	Disconnect bool `json:"disconnect,omitempty"`
 
-	// domain
-	// Required: true
-	Domain *string `json:"domain"`
+	// Domain to be cancelled.
+	Domain string `json:"domain,omitempty"`
 
-	// The execution type.
-	// Required: true
-	Execution ExecutionTypeConstants `json:"execution"`
+	// Date and Time at which the domain is to be canceled.
+	Execution ExecutionTypeConstants `json:"execution,omitempty"`
 
-	// gaining registrar
+	// The registrar to which the domain is to be transferred. Only possible with preack, for which it is required.
+	//  accept_all = All registrars are accepted
+	//  Designated registrar (e.g. DENIC-104).
+	// Ask the registry for the provider ID of your reseller. The transfer is then only possible to the selected registrar.
 	GainingRegistrar string `json:"gainingRegistrar,omitempty"`
 
-	// log Id
+	// Identifier specifically used for this transfer.
 	LogID int64 `json:"logId,omitempty"`
 
 	// Some remarks
 	Notice string `json:"notice,omitempty"`
 
-	// The owner of the object.
+	// The object owner.
 	Owner *BasicUser `json:"owner,omitempty"`
 
 	// registry status
 	RegistryStatus RegistryStatusConstants `json:"registryStatus,omitempty"`
 
-	// The date of the execution. Only necessary when ExecutionType equals DATE.
-	// Required: true
+	// The date on which the registry should perform the domain cancelation. Only necessary when ExecutionType equals DATE.
 	// Format: date-time
-	RegistryWhen *strfmt.DateTime `json:"registryWhen"`
+	RegistryWhen strfmt.DateTime `json:"registryWhen,omitempty"`
+
+	// Status of the cancelation request.
+	Status CancelationStatusConstants `json:"status,omitempty"`
 
 	// The cancelation type. TRANSIT is only possible for certain TLDs.
-	// Required: true
-	Type CancelationTypeConstants `json:"type"`
+	Type CancelationTypeConstants `json:"type,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The updater of the object.
+	// User who performed the last update.
 	Updater *BasicUser `json:"updater,omitempty"`
 }
 
@@ -69,10 +74,6 @@ func (m *DomainCancelation) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateCreated(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateDomain(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -89,6 +90,10 @@ func (m *DomainCancelation) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateRegistryWhen(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -111,7 +116,6 @@ func (m *DomainCancelation) Validate(formats strfmt.Registry) error {
 }
 
 func (m *DomainCancelation) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -123,20 +127,16 @@ func (m *DomainCancelation) validateCreated(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *DomainCancelation) validateDomain(formats strfmt.Registry) error {
-
-	if err := validate.Required("domain", "body", m.Domain); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *DomainCancelation) validateExecution(formats strfmt.Registry) error {
+	if swag.IsZero(m.Execution) { // not required
+		return nil
+	}
 
 	if err := m.Execution.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("execution")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("execution")
 		}
 		return err
 	}
@@ -145,7 +145,6 @@ func (m *DomainCancelation) validateExecution(formats strfmt.Registry) error {
 }
 
 func (m *DomainCancelation) validateOwner(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -154,6 +153,8 @@ func (m *DomainCancelation) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -163,7 +164,6 @@ func (m *DomainCancelation) validateOwner(formats strfmt.Registry) error {
 }
 
 func (m *DomainCancelation) validateRegistryStatus(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.RegistryStatus) { // not required
 		return nil
 	}
@@ -171,6 +171,8 @@ func (m *DomainCancelation) validateRegistryStatus(formats strfmt.Registry) erro
 	if err := m.RegistryStatus.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("registryStatus")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("registryStatus")
 		}
 		return err
 	}
@@ -179,9 +181,8 @@ func (m *DomainCancelation) validateRegistryStatus(formats strfmt.Registry) erro
 }
 
 func (m *DomainCancelation) validateRegistryWhen(formats strfmt.Registry) error {
-
-	if err := validate.Required("registryWhen", "body", m.RegistryWhen); err != nil {
-		return err
+	if swag.IsZero(m.RegistryWhen) { // not required
+		return nil
 	}
 
 	if err := validate.FormatOf("registryWhen", "body", "date-time", m.RegistryWhen.String(), formats); err != nil {
@@ -191,11 +192,33 @@ func (m *DomainCancelation) validateRegistryWhen(formats strfmt.Registry) error 
 	return nil
 }
 
+func (m *DomainCancelation) validateStatus(formats strfmt.Registry) error {
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	if err := m.Status.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
+		}
+		return err
+	}
+
+	return nil
+}
+
 func (m *DomainCancelation) validateType(formats strfmt.Registry) error {
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
 
 	if err := m.Type.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
 		}
 		return err
 	}
@@ -204,7 +227,6 @@ func (m *DomainCancelation) validateType(formats strfmt.Registry) error {
 }
 
 func (m *DomainCancelation) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -217,7 +239,6 @@ func (m *DomainCancelation) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *DomainCancelation) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -226,6 +247,156 @@ func (m *DomainCancelation) validateUpdater(formats strfmt.Registry) error {
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this domain cancelation based on the context it is used
+func (m *DomainCancelation) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateExecution(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRegistryStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *DomainCancelation) contextValidateExecution(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Execution) { // not required
+		return nil
+	}
+
+	if err := m.Execution.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("execution")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("execution")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *DomainCancelation) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainCancelation) contextValidateRegistryStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.RegistryStatus) { // not required
+		return nil
+	}
+
+	if err := m.RegistryStatus.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("registryStatus")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("registryStatus")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *DomainCancelation) contextValidateStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	if err := m.Status.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *DomainCancelation) contextValidateType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	if err := m.Type.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("type")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("type")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *DomainCancelation) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}

@@ -6,6 +6,7 @@ package redirect_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *RedirectInfoReader) ReadResponse(response runtime.ClientResponse, consu
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[GET /redirect/{source}] redirectInfo", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewRedirectInfoOK() *RedirectInfoOK {
 	return &RedirectInfoOK{}
 }
 
-/*RedirectInfoOK handles this case with default header values.
+/*
+RedirectInfoOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type RedirectInfoOK struct {
 	Payload *models.JSONResponseDataRedirect
 }
 
+// IsSuccess returns true when this redirect info o k response has a 2xx status code
+func (o *RedirectInfoOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this redirect info o k response has a 3xx status code
+func (o *RedirectInfoOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this redirect info o k response has a 4xx status code
+func (o *RedirectInfoOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this redirect info o k response has a 5xx status code
+func (o *RedirectInfoOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this redirect info o k response a status code equal to that given
+func (o *RedirectInfoOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the redirect info o k response
+func (o *RedirectInfoOK) Code() int {
+	return 200
+}
+
 func (o *RedirectInfoOK) Error() string {
-	return fmt.Sprintf("[GET /redirect/{source}][%d] redirectInfoOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /redirect/{source}][%d] redirectInfoOK %s", 200, payload)
+}
+
+func (o *RedirectInfoOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /redirect/{source}][%d] redirectInfoOK %s", 200, payload)
 }
 
 func (o *RedirectInfoOK) GetPayload() *models.JSONResponseDataRedirect {

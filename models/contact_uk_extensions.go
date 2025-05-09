@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -16,7 +18,9 @@ import (
 // swagger:model ContactUkExtensions
 type ContactUkExtensions struct {
 
-	// The entity type.
+	// Organization type.
+	//  For the sub domains ltd.uk, net.uk and plc.uk the selection of <uk _type> is mandatory.
+	//  For co.uk and me.uk the selection of <uk_type> is not mandatory.
 	EntityType UkTypeConstants `json:"entityType,omitempty"`
 }
 
@@ -35,7 +39,6 @@ func (m *ContactUkExtensions) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ContactUkExtensions) validateEntityType(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.EntityType) { // not required
 		return nil
 	}
@@ -43,6 +46,40 @@ func (m *ContactUkExtensions) validateEntityType(formats strfmt.Registry) error 
 	if err := m.EntityType.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("entityType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("entityType")
+		}
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this contact uk extensions based on the context it is used
+func (m *ContactUkExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateEntityType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ContactUkExtensions) contextValidateEntityType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.EntityType) { // not required
+		return nil
+	}
+
+	if err := m.EntityType.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("entityType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("entityType")
 		}
 		return err
 	}

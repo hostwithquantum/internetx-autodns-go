@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -19,81 +20,99 @@ import (
 // swagger:model Zone
 type Zone struct {
 
-	// Additional nameserver check is proceeded
+	// Additional nameserver check is proceeded.
 	Action NameserverActionConstants `json:"action,omitempty"`
 
-	// Allow AXFR
+	// Allow zone transfer for the defined zone grants
 	AllowTransfer bool `json:"allowTransfer,omitempty"`
 
 	// A custom field. Can only be updated via PUT /zone/{name}/{nameserver}/_comment. Requires appropriate ACLs.
 	Comment string `json:"comment,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// Enables dnssec
+	// Date of search.
+	// Format: date-time
+	Date strfmt.DateTime `json:"date,omitempty"`
+
+	// If true dnssec signing for the zone is active.
 	Dnssec bool `json:"dnssec,omitempty"`
 
-	// true if the domain is represented in the domain safe
+	// Denotes of the zone is present in the DomainSafe service.
 	Domainsafe bool `json:"domainsafe,omitempty"`
 
-	// The free text records.
+	// Freely definable resource records to be entered in BIND Syntax.
 	FreeText []string `json:"freeText"`
 
-	// The grants where transfer (axfr) can be done from.
+	// A list of IP addresses from which a zone transfer (AXFR) by be started from for this zone.
 	Grants []string `json:"grants"`
 
-	// The idn version of the origin.
+	// Punycode version of the origin.
 	Idn string `json:"idn,omitempty"`
 
 	// The id of the related log-entry.
 	LogID int64 `json:"logId,omitempty"`
 
-	// IP address of the zone (A record)
+	// Main IP address of the zone. Required for ns_action "primary" and "complete".
 	Main *MainIP `json:"main,omitempty"`
 
-	// The name of the name server group, if the zone is managed by
+	// Name of the nameserver group.
 	NameServerGroup string `json:"nameServerGroup,omitempty"`
 
-	// List of name servers
+	// List of hostnames to be used as name severs.
 	NameServers []*NameServer `json:"nameServers"`
 
 	// Zone name
-	// Required: true
-	Origin *string `json:"origin"`
+	Origin string `json:"origin,omitempty"`
 
-	// The owner of the object
+	// Owner of the zone object
 	Owner *BasicUser `json:"owner,omitempty"`
 
+	// Date on which the zone is purged (removed) from the system.
+	// Format: date-time
+	PurgeDate strfmt.DateTime `json:"purgeDate,omitempty"`
+
+	// Setting for automatic zone deletion.
+	PurgeType PurgeTypes `json:"purgeType,omitempty"`
+
 	// The resource records.
-	// Max Items: 10000
-	// Min Items: 0
 	ResourceRecords []*ResourceRecord `json:"resourceRecords"`
 
-	// The resource object identifier of the zone
+	// The resource object identifier of the zone.
+	// Example: 1
 	Roid int32 `json:"roid,omitempty"`
 
 	// Only for ns_action: "primary"  and "complete"
 	Soa *Soa `json:"soa,omitempty"`
 
-	// Nameserver, the zone is copied from via AXFR (for zone_import)
+	// Name server from which a zone is copied via AXFR (with zone_import).
 	Source string `json:"source,omitempty"`
 
 	// System name server to look up the zone to copy
 	SourceVirtualHostname string `json:"sourceVirtualHostname,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The updating user of the object
+	// User who last updated the zone.
 	Updater *BasicUser `json:"updater,omitempty"`
 
 	// The first nameserver managed by the system
 	VirtualNameServer string `json:"virtualNameServer,omitempty"`
 
-	// Automatic generation of resource records "www"
+	// Create a www A-record automatically?
+	//
+	// false = no
+	// true = yes
+	//
+	//
+	// Default = true
+	//
+	//
+	// For XML, 0 (false) and 1 (true) can also be used.
 	WwwInclude bool `json:"wwwInclude,omitempty"`
 }
 
@@ -109,6 +128,10 @@ func (m *Zone) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateDate(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateMain(formats); err != nil {
 		res = append(res, err)
 	}
@@ -117,11 +140,15 @@ func (m *Zone) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateOrigin(formats); err != nil {
+	if err := m.validateOwner(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateOwner(formats); err != nil {
+	if err := m.validatePurgeDate(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePurgeType(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -148,7 +175,6 @@ func (m *Zone) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Zone) validateAction(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Action) { // not required
 		return nil
 	}
@@ -156,6 +182,8 @@ func (m *Zone) validateAction(formats strfmt.Registry) error {
 	if err := m.Action.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("action")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("action")
 		}
 		return err
 	}
@@ -164,7 +192,6 @@ func (m *Zone) validateAction(formats strfmt.Registry) error {
 }
 
 func (m *Zone) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -176,8 +203,19 @@ func (m *Zone) validateCreated(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Zone) validateMain(formats strfmt.Registry) error {
+func (m *Zone) validateDate(formats strfmt.Registry) error {
+	if swag.IsZero(m.Date) { // not required
+		return nil
+	}
 
+	if err := validate.FormatOf("date", "body", "date-time", m.Date.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Zone) validateMain(formats strfmt.Registry) error {
 	if swag.IsZero(m.Main) { // not required
 		return nil
 	}
@@ -186,6 +224,8 @@ func (m *Zone) validateMain(formats strfmt.Registry) error {
 		if err := m.Main.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("main")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("main")
 			}
 			return err
 		}
@@ -195,7 +235,6 @@ func (m *Zone) validateMain(formats strfmt.Registry) error {
 }
 
 func (m *Zone) validateNameServers(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.NameServers) { // not required
 		return nil
 	}
@@ -209,6 +248,8 @@ func (m *Zone) validateNameServers(formats strfmt.Registry) error {
 			if err := m.NameServers[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("nameServers" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nameServers" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -219,17 +260,7 @@ func (m *Zone) validateNameServers(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Zone) validateOrigin(formats strfmt.Registry) error {
-
-	if err := validate.Required("origin", "body", m.Origin); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *Zone) validateOwner(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -238,6 +269,8 @@ func (m *Zone) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -246,20 +279,38 @@ func (m *Zone) validateOwner(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Zone) validateResourceRecords(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.ResourceRecords) { // not required
+func (m *Zone) validatePurgeDate(formats strfmt.Registry) error {
+	if swag.IsZero(m.PurgeDate) { // not required
 		return nil
 	}
 
-	iResourceRecordsSize := int64(len(m.ResourceRecords))
-
-	if err := validate.MinItems("resourceRecords", "body", iResourceRecordsSize, 0); err != nil {
+	if err := validate.FormatOf("purgeDate", "body", "date-time", m.PurgeDate.String(), formats); err != nil {
 		return err
 	}
 
-	if err := validate.MaxItems("resourceRecords", "body", iResourceRecordsSize, 10000); err != nil {
+	return nil
+}
+
+func (m *Zone) validatePurgeType(formats strfmt.Registry) error {
+	if swag.IsZero(m.PurgeType) { // not required
+		return nil
+	}
+
+	if err := m.PurgeType.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("purgeType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("purgeType")
+		}
 		return err
+	}
+
+	return nil
+}
+
+func (m *Zone) validateResourceRecords(formats strfmt.Registry) error {
+	if swag.IsZero(m.ResourceRecords) { // not required
+		return nil
 	}
 
 	for i := 0; i < len(m.ResourceRecords); i++ {
@@ -271,6 +322,8 @@ func (m *Zone) validateResourceRecords(formats strfmt.Registry) error {
 			if err := m.ResourceRecords[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("resourceRecords" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("resourceRecords" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -282,7 +335,6 @@ func (m *Zone) validateResourceRecords(formats strfmt.Registry) error {
 }
 
 func (m *Zone) validateSoa(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Soa) { // not required
 		return nil
 	}
@@ -291,6 +343,8 @@ func (m *Zone) validateSoa(formats strfmt.Registry) error {
 		if err := m.Soa.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("soa")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("soa")
 			}
 			return err
 		}
@@ -300,7 +354,6 @@ func (m *Zone) validateSoa(formats strfmt.Registry) error {
 }
 
 func (m *Zone) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -313,7 +366,6 @@ func (m *Zone) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *Zone) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -322,6 +374,220 @@ func (m *Zone) validateUpdater(formats strfmt.Registry) error {
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this zone based on the context it is used
+func (m *Zone) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateAction(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateMain(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateNameServers(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePurgeType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateResourceRecords(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSoa(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Zone) contextValidateAction(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Action) { // not required
+		return nil
+	}
+
+	if err := m.Action.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("action")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("action")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *Zone) contextValidateMain(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Main != nil {
+
+		if swag.IsZero(m.Main) { // not required
+			return nil
+		}
+
+		if err := m.Main.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("main")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("main")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Zone) contextValidateNameServers(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.NameServers); i++ {
+
+		if m.NameServers[i] != nil {
+
+			if swag.IsZero(m.NameServers[i]) { // not required
+				return nil
+			}
+
+			if err := m.NameServers[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("nameServers" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nameServers" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *Zone) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Zone) contextValidatePurgeType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.PurgeType) { // not required
+		return nil
+	}
+
+	if err := m.PurgeType.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("purgeType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("purgeType")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *Zone) contextValidateResourceRecords(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.ResourceRecords); i++ {
+
+		if m.ResourceRecords[i] != nil {
+
+			if swag.IsZero(m.ResourceRecords[i]) { // not required
+				return nil
+			}
+
+			if err := m.ResourceRecords[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("resourceRecords" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("resourceRecords" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *Zone) contextValidateSoa(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Soa != nil {
+
+		if swag.IsZero(m.Soa) { // not required
+			return nil
+		}
+
+		if err := m.Soa.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("soa")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("soa")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Zone) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}

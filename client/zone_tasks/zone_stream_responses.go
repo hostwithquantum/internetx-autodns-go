@@ -6,6 +6,7 @@ package zone_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *ZoneStreamReader) ReadResponse(response runtime.ClientResponse, consume
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[POST /zone/{name}/_stream] zoneStream", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewZoneStreamOK() *ZoneStreamOK {
 	return &ZoneStreamOK{}
 }
 
-/*ZoneStreamOK handles this case with default header values.
+/*
+ZoneStreamOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type ZoneStreamOK struct {
 	Payload *models.JSONResponseDataZone
 }
 
+// IsSuccess returns true when this zone stream o k response has a 2xx status code
+func (o *ZoneStreamOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this zone stream o k response has a 3xx status code
+func (o *ZoneStreamOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this zone stream o k response has a 4xx status code
+func (o *ZoneStreamOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this zone stream o k response has a 5xx status code
+func (o *ZoneStreamOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this zone stream o k response a status code equal to that given
+func (o *ZoneStreamOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the zone stream o k response
+func (o *ZoneStreamOK) Code() int {
+	return 200
+}
+
 func (o *ZoneStreamOK) Error() string {
-	return fmt.Sprintf("[POST /zone/{name}/_stream][%d] zoneStreamOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /zone/{name}/_stream][%d] zoneStreamOK %s", 200, payload)
+}
+
+func (o *ZoneStreamOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /zone/{name}/_stream][%d] zoneStreamOK %s", 200, payload)
 }
 
 func (o *ZoneStreamOK) GetPayload() *models.JSONResponseDataZone {

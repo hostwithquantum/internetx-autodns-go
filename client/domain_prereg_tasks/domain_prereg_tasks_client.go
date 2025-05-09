@@ -9,12 +9,38 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime"
+	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new domain prereg tasks API client.
 func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new domain prereg tasks API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new domain prereg tasks API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -25,37 +51,47 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
 // ClientService is the interface for Client methods
 type ClientService interface {
-	ConfirmPrereg(params *ConfirmPreregParams) (*ConfirmPreregOK, error)
+	ConfirmPrereg(params *ConfirmPreregParams, opts ...ClientOption) (*ConfirmPreregOK, error)
 
-	CreateAndConfirmPrereg(params *CreateAndConfirmPreregParams) (*CreateAndConfirmPreregOK, error)
+	CreateAndConfirmPrereg(params *CreateAndConfirmPreregParams, opts ...ClientOption) (*CreateAndConfirmPreregOK, error)
 
-	DomainPreregCreate(params *DomainPreregCreateParams) (*DomainPreregCreateOK, error)
+	DomainPreregConfimrs(params *DomainPreregConfimrsParams, opts ...ClientOption) (*DomainPreregConfimrsOK, error)
 
-	DomainPreregDelete(params *DomainPreregDeleteParams) (*DomainPreregDeleteOK, error)
+	DomainPreregCreate(params *DomainPreregCreateParams, opts ...ClientOption) (*DomainPreregCreateOK, error)
 
-	DomainPreregInfo(params *DomainPreregInfoParams) (*DomainPreregInfoOK, error)
+	DomainPreregCreates(params *DomainPreregCreatesParams, opts ...ClientOption) (*DomainPreregCreatesOK, error)
 
-	DomainPreregList(params *DomainPreregListParams) (*DomainPreregListOK, error)
+	DomainPreregDelete(params *DomainPreregDeleteParams, opts ...ClientOption) (*DomainPreregDeleteOK, error)
 
-	DomainPreregUpdate(params *DomainPreregUpdateParams) (*DomainPreregUpdateOK, error)
+	DomainPreregDeletes(params *DomainPreregDeletesParams, opts ...ClientOption) (*DomainPreregDeletesOK, error)
+
+	DomainPreregInfo(params *DomainPreregInfoParams, opts ...ClientOption) (*DomainPreregInfoOK, error)
+
+	DomainPreregList(params *DomainPreregListParams, opts ...ClientOption) (*DomainPreregListOK, error)
+
+	DomainPreregPatches(params *DomainPreregPatchesParams, opts ...ClientOption) (*DomainPreregPatchesOK, error)
+
+	DomainPreregUpdate(params *DomainPreregUpdateParams, opts ...ClientOption) (*DomainPreregUpdateOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
 
 /*
-  ConfirmPrereg domains prereg confirm
+ConfirmPrereg domains prereg confirm 0110007
 
-  Confirming an existing domain preregistration.
+Confirming an existing domain preregistration.
 */
-func (a *Client) ConfirmPrereg(params *ConfirmPreregParams) (*ConfirmPreregOK, error) {
+func (a *Client) ConfirmPrereg(params *ConfirmPreregParams, opts ...ClientOption) (*ConfirmPreregOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewConfirmPreregParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "confirmPrereg",
 		Method:             "PUT",
 		PathPattern:        "/domainPrereg/{reference}/_confirm",
@@ -66,7 +102,12 @@ func (a *Client) ConfirmPrereg(params *ConfirmPreregParams) (*ConfirmPreregOK, e
 		Reader:             &ConfirmPreregReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -81,17 +122,16 @@ func (a *Client) ConfirmPrereg(params *ConfirmPreregParams) (*ConfirmPreregOK, e
 }
 
 /*
-  CreateAndConfirmPrereg domains prereg create
+CreateAndConfirmPrereg domains prereg create 0110001
 
-  Creating and confirming an existing domain preregistration.
+Creating and confirming an existing domain preregistration.
 */
-func (a *Client) CreateAndConfirmPrereg(params *CreateAndConfirmPreregParams) (*CreateAndConfirmPreregOK, error) {
+func (a *Client) CreateAndConfirmPrereg(params *CreateAndConfirmPreregParams, opts ...ClientOption) (*CreateAndConfirmPreregOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateAndConfirmPreregParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "createAndConfirmPrereg",
 		Method:             "POST",
 		PathPattern:        "/domainPrereg/_confirm",
@@ -102,7 +142,12 @@ func (a *Client) CreateAndConfirmPrereg(params *CreateAndConfirmPreregParams) (*
 		Reader:             &CreateAndConfirmPreregReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -117,17 +162,56 @@ func (a *Client) CreateAndConfirmPrereg(params *CreateAndConfirmPreregParams) (*
 }
 
 /*
-  DomainPreregCreate domains prereg create
+DomainPreregConfimrs domains prereg confirm bulk 0110007
 
-  Creating a new domain preregistration.
+Confirming several domain preregistrations with one request.
 */
-func (a *Client) DomainPreregCreate(params *DomainPreregCreateParams) (*DomainPreregCreateOK, error) {
+func (a *Client) DomainPreregConfimrs(params *DomainPreregConfimrsParams, opts ...ClientOption) (*DomainPreregConfimrsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainPreregConfimrsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainPreregConfimrs",
+		Method:             "PUT",
+		PathPattern:        "/bulk/domainPrereg/_confirm",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainPreregConfimrsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainPreregConfimrsOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainPreregConfimrs: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainPreregCreate domains prereg create 0110001
+
+Creating a new domain preregistration.
+*/
+func (a *Client) DomainPreregCreate(params *DomainPreregCreateParams, opts ...ClientOption) (*DomainPreregCreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainPreregCreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainPreregCreate",
 		Method:             "POST",
 		PathPattern:        "/domainPrereg",
@@ -138,7 +222,12 @@ func (a *Client) DomainPreregCreate(params *DomainPreregCreateParams) (*DomainPr
 		Reader:             &DomainPreregCreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -153,17 +242,56 @@ func (a *Client) DomainPreregCreate(params *DomainPreregCreateParams) (*DomainPr
 }
 
 /*
-  DomainPreregDelete domains prereg delete
+DomainPreregCreates domains prereg create bulk 0110001
 
-  Deleting an existing domain preregistration.
+Creating several domain preregistrations with one request.
 */
-func (a *Client) DomainPreregDelete(params *DomainPreregDeleteParams) (*DomainPreregDeleteOK, error) {
+func (a *Client) DomainPreregCreates(params *DomainPreregCreatesParams, opts ...ClientOption) (*DomainPreregCreatesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainPreregCreatesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainPreregCreates",
+		Method:             "POST",
+		PathPattern:        "/bulk/domainPrereg",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainPreregCreatesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainPreregCreatesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainPreregCreates: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainPreregDelete domains prereg delete 0110003
+
+Deleting an existing domain preregistration.
+*/
+func (a *Client) DomainPreregDelete(params *DomainPreregDeleteParams, opts ...ClientOption) (*DomainPreregDeleteOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainPreregDeleteParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainPreregDelete",
 		Method:             "DELETE",
 		PathPattern:        "/domainPrereg/{reference}",
@@ -174,7 +302,12 @@ func (a *Client) DomainPreregDelete(params *DomainPreregDeleteParams) (*DomainPr
 		Reader:             &DomainPreregDeleteReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -189,17 +322,56 @@ func (a *Client) DomainPreregDelete(params *DomainPreregDeleteParams) (*DomainPr
 }
 
 /*
-  DomainPreregInfo domains prereg info
+DomainPreregDeletes domains prereg delete bulk 0110003
 
-  Inquiring the data of a specified domain preregistration.
+Deleting several domain preregistrations with one request.
 */
-func (a *Client) DomainPreregInfo(params *DomainPreregInfoParams) (*DomainPreregInfoOK, error) {
+func (a *Client) DomainPreregDeletes(params *DomainPreregDeletesParams, opts ...ClientOption) (*DomainPreregDeletesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainPreregDeletesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainPreregDeletes",
+		Method:             "DELETE",
+		PathPattern:        "/bulk/domainPrereg",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainPreregDeletesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainPreregDeletesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainPreregDeletes: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainPreregInfo domains prereg info 0110004
+
+Inquiring the data of a specified domain preregistration.
+*/
+func (a *Client) DomainPreregInfo(params *DomainPreregInfoParams, opts ...ClientOption) (*DomainPreregInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainPreregInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainPreregInfo",
 		Method:             "GET",
 		PathPattern:        "/domainPrereg/{reference}",
@@ -210,7 +382,12 @@ func (a *Client) DomainPreregInfo(params *DomainPreregInfoParams) (*DomainPrereg
 		Reader:             &DomainPreregInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -225,17 +402,16 @@ func (a *Client) DomainPreregInfo(params *DomainPreregInfoParams) (*DomainPrereg
 }
 
 /*
-  DomainPreregList domains prereg list
+DomainPreregList domains prereg list 0110005
 
-  Inquiring a list of domain preregistrations with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: orderReference, techc, phase, nsentry, period, created, sld, ownerc, updated, status, confirmed, adminc,  zonec, nserver, tld, recommended, subtld.
+Inquiring a list of domain preregistrations with certain details. The following keys can be used for filtering, ordering and fetching additional data via query parameter: orderReference, techc, phase, nsentry, period, created, sld, ownerc, updated, status, confirmed, adminc,  zonec, nserver, tld, recommended, subtld.
 */
-func (a *Client) DomainPreregList(params *DomainPreregListParams) (*DomainPreregListOK, error) {
+func (a *Client) DomainPreregList(params *DomainPreregListParams, opts ...ClientOption) (*DomainPreregListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainPreregListParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainPreregList",
 		Method:             "POST",
 		PathPattern:        "/domainPrereg/_search",
@@ -246,7 +422,12 @@ func (a *Client) DomainPreregList(params *DomainPreregListParams) (*DomainPrereg
 		Reader:             &DomainPreregListReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -261,17 +442,56 @@ func (a *Client) DomainPreregList(params *DomainPreregListParams) (*DomainPrereg
 }
 
 /*
-  DomainPreregUpdate domains prereg update
+DomainPreregPatches domains prereg update bulk 0110002
 
-  Updating an existing domain preregistration.
+Updating several domain preregistrations with one request.
 */
-func (a *Client) DomainPreregUpdate(params *DomainPreregUpdateParams) (*DomainPreregUpdateOK, error) {
+func (a *Client) DomainPreregPatches(params *DomainPreregPatchesParams, opts ...ClientOption) (*DomainPreregPatchesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDomainPreregPatchesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "domainPreregPatches",
+		Method:             "PATCH",
+		PathPattern:        "/bulk/domainPrereg",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DomainPreregPatchesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DomainPreregPatchesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for domainPreregPatches: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+DomainPreregUpdate domains prereg update 0110002
+
+Updating an existing domain preregistration.
+*/
+func (a *Client) DomainPreregUpdate(params *DomainPreregUpdateParams, opts ...ClientOption) (*DomainPreregUpdateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDomainPreregUpdateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "domainPreregUpdate",
 		Method:             "PUT",
 		PathPattern:        "/domainPrereg/{reference}",
@@ -282,7 +502,12 @@ func (a *Client) DomainPreregUpdate(params *DomainPreregUpdateParams) (*DomainPr
 		Reader:             &DomainPreregUpdateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}

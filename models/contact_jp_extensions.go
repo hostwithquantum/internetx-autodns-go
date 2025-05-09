@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -15,27 +17,32 @@ import (
 // swagger:model ContactJpExtensions
 type ContactJpExtensions struct {
 
-	// The first line of the address.
+	// First address line. Japanese characters must be used.
 	AdressLine1 string `json:"adressLine1,omitempty"`
 
-	// The second line of the address.
+	// Second address line. Japanese characters must be used.
 	AdressLine2 string `json:"adressLine2,omitempty"`
 
-	// The third line of the address.
+	// Third address line. Japanese characters must be used.
 	AdressLine3 string `json:"adressLine3,omitempty"`
 
-	// The first name.
+	// First Name. Japanese characters must be used.
 	First string `json:"first,omitempty"`
 
-	// The last name.
+	// Last Name. Japanese characters must be used.
 	Last string `json:"last,omitempty"`
 
-	// The organization.
+	// Organization Name. Japanese characters must be used.
 	Organization string `json:"organization,omitempty"`
 }
 
 // Validate validates this contact jp extensions
 func (m *ContactJpExtensions) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this contact jp extensions based on context it is used
+func (m *ContactJpExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

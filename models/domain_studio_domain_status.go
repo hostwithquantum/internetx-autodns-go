@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model DomainStudioDomainStatus
 type DomainStudioDomainStatus string
+
+func NewDomainStudioDomainStatus(value DomainStudioDomainStatus) *DomainStudioDomainStatus {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated DomainStudioDomainStatus.
+func (m DomainStudioDomainStatus) Pointer() *DomainStudioDomainStatus {
+	return &m
+}
 
 const (
 
@@ -49,6 +59,9 @@ const (
 
 	// DomainStudioDomainStatusCLAIM captures enum value "CLAIM"
 	DomainStudioDomainStatusCLAIM DomainStudioDomainStatus = "CLAIM"
+
+	// DomainStudioDomainStatusOFFER captures enum value "OFFER"
+	DomainStudioDomainStatusOFFER DomainStudioDomainStatus = "OFFER"
 )
 
 // for schema
@@ -56,7 +69,7 @@ var domainStudioDomainStatusEnum []interface{}
 
 func init() {
 	var res []DomainStudioDomainStatus
-	if err := json.Unmarshal([]byte(`["FREE","ASSIGNED","MARKET","PREMIUM","INVALID","ERROR","TIMEOUT","RESERVED","PREMIUM_CLAIM","CLAIM"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["FREE","ASSIGNED","MARKET","PREMIUM","INVALID","ERROR","TIMEOUT","RESERVED","PREMIUM_CLAIM","CLAIM","OFFER"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -83,5 +96,10 @@ func (m DomainStudioDomainStatus) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this domain studio domain status based on context it is used
+func (m DomainStudioDomainStatus) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

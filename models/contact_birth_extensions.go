@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,17 +19,19 @@ import (
 // swagger:model ContactBirthExtensions
 type ContactBirthExtensions struct {
 
-	// The country.
+	// Birth country (ISO 3166 Country Code).
+	// Example: DE
 	Country string `json:"country,omitempty"`
 
-	// The day.
-	// Format: date-time
-	Day strfmt.DateTime `json:"day,omitempty"`
+	// Birthday (yyyy-MM-dd).
+	// Example: 1987-10-04
+	// Format: date
+	Day strfmt.Date `json:"day,omitempty"`
 
-	// The place.
+	// Birth place.
 	Place string `json:"place,omitempty"`
 
-	// The postalCode.
+	// Postal code of the birth place.
 	PostalCode string `json:"postalCode,omitempty"`
 }
 
@@ -46,15 +50,19 @@ func (m *ContactBirthExtensions) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ContactBirthExtensions) validateDay(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Day) { // not required
 		return nil
 	}
 
-	if err := validate.FormatOf("day", "body", "date-time", m.Day.String(), formats); err != nil {
+	if err := validate.FormatOf("day", "body", "date", m.Day.String(), formats); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this contact birth extensions based on context it is used
+func (m *ContactBirthExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

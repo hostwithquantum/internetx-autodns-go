@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model CertificateTransparencyPrivacyConstants
 type CertificateTransparencyPrivacyConstants string
+
+func NewCertificateTransparencyPrivacyConstants(value CertificateTransparencyPrivacyConstants) *CertificateTransparencyPrivacyConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated CertificateTransparencyPrivacyConstants.
+func (m CertificateTransparencyPrivacyConstants) Pointer() *CertificateTransparencyPrivacyConstants {
+	return &m
+}
 
 const (
 
@@ -59,5 +69,10 @@ func (m CertificateTransparencyPrivacyConstants) Validate(formats strfmt.Registr
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this certificate transparency privacy constants based on context it is used
+func (m CertificateTransparencyPrivacyConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

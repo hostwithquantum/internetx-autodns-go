@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model RegistryStatusConstants
 type RegistryStatusConstants string
+
+func NewRegistryStatusConstants(value RegistryStatusConstants) *RegistryStatusConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated RegistryStatusConstants.
+func (m RegistryStatusConstants) Pointer() *RegistryStatusConstants {
+	return &m
+}
 
 const (
 
@@ -80,5 +90,10 @@ func (m RegistryStatusConstants) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this registry status constants based on context it is used
+func (m RegistryStatusConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

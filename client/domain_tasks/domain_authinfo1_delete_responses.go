@@ -6,6 +6,7 @@ package domain_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *DomainAuthinfo1DeleteReader) ReadResponse(response runtime.ClientRespon
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[DELETE /domain/{name}/_authinfo1] domainAuthinfo1Delete", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewDomainAuthinfo1DeleteOK() *DomainAuthinfo1DeleteOK {
 	return &DomainAuthinfo1DeleteOK{}
 }
 
-/*DomainAuthinfo1DeleteOK handles this case with default header values.
+/*
+DomainAuthinfo1DeleteOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type DomainAuthinfo1DeleteOK struct {
 	Payload *models.JSONResponseDataJSONNoData
 }
 
+// IsSuccess returns true when this domain authinfo1 delete o k response has a 2xx status code
+func (o *DomainAuthinfo1DeleteOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this domain authinfo1 delete o k response has a 3xx status code
+func (o *DomainAuthinfo1DeleteOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this domain authinfo1 delete o k response has a 4xx status code
+func (o *DomainAuthinfo1DeleteOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this domain authinfo1 delete o k response has a 5xx status code
+func (o *DomainAuthinfo1DeleteOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this domain authinfo1 delete o k response a status code equal to that given
+func (o *DomainAuthinfo1DeleteOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the domain authinfo1 delete o k response
+func (o *DomainAuthinfo1DeleteOK) Code() int {
+	return 200
+}
+
 func (o *DomainAuthinfo1DeleteOK) Error() string {
-	return fmt.Sprintf("[DELETE /domain/{name}/_authinfo1][%d] domainAuthinfo1DeleteOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /domain/{name}/_authinfo1][%d] domainAuthinfo1DeleteOK %s", 200, payload)
+}
+
+func (o *DomainAuthinfo1DeleteOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /domain/{name}/_authinfo1][%d] domainAuthinfo1DeleteOK %s", 200, payload)
 }
 
 func (o *DomainAuthinfo1DeleteOK) GetPayload() *models.JSONResponseDataJSONNoData {

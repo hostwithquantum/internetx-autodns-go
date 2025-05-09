@@ -9,12 +9,38 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime"
+	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new redirect tasks API client.
 func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new redirect tasks API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new redirect tasks API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -25,33 +51,41 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
 // ClientService is the interface for Client methods
 type ClientService interface {
-	RedirectCreate(params *RedirectCreateParams) (*RedirectCreateOK, error)
+	RedirectCreate(params *RedirectCreateParams, opts ...ClientOption) (*RedirectCreateOK, error)
 
-	RedirectDelete(params *RedirectDeleteParams) (*RedirectDeleteOK, error)
+	RedirectCreates(params *RedirectCreatesParams, opts ...ClientOption) (*RedirectCreatesOK, error)
 
-	RedirectInfo(params *RedirectInfoParams) (*RedirectInfoOK, error)
+	RedirectDelete(params *RedirectDeleteParams, opts ...ClientOption) (*RedirectDeleteOK, error)
 
-	RedirectList(params *RedirectListParams) (*RedirectListOK, error)
+	RedirectDeletes(params *RedirectDeletesParams, opts ...ClientOption) (*RedirectDeletesOK, error)
 
-	RedirectUpdate(params *RedirectUpdateParams) (*RedirectUpdateOK, error)
+	RedirectInfo(params *RedirectInfoParams, opts ...ClientOption) (*RedirectInfoOK, error)
+
+	RedirectList(params *RedirectListParams, opts ...ClientOption) (*RedirectListOK, error)
+
+	RedirectPatches(params *RedirectPatchesParams, opts ...ClientOption) (*RedirectPatchesOK, error)
+
+	RedirectUpdate(params *RedirectUpdateParams, opts ...ClientOption) (*RedirectUpdateOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
 
 /*
-  RedirectCreate redirects create
+RedirectCreate redirects create 0501
 
-  Creating a new redirect.
+Creating a new redirect.
 */
-func (a *Client) RedirectCreate(params *RedirectCreateParams) (*RedirectCreateOK, error) {
+func (a *Client) RedirectCreate(params *RedirectCreateParams, opts ...ClientOption) (*RedirectCreateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewRedirectCreateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "redirectCreate",
 		Method:             "POST",
 		PathPattern:        "/redirect",
@@ -62,7 +96,12 @@ func (a *Client) RedirectCreate(params *RedirectCreateParams) (*RedirectCreateOK
 		Reader:             &RedirectCreateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -77,17 +116,56 @@ func (a *Client) RedirectCreate(params *RedirectCreateParams) (*RedirectCreateOK
 }
 
 /*
-  RedirectDelete redirects delete
+RedirectCreates redirects create bulk 0501
 
-  Deleting an existing redirect.
+Creating several redirects in one request.
 */
-func (a *Client) RedirectDelete(params *RedirectDeleteParams) (*RedirectDeleteOK, error) {
+func (a *Client) RedirectCreates(params *RedirectCreatesParams, opts ...ClientOption) (*RedirectCreatesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewRedirectCreatesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "redirectCreates",
+		Method:             "POST",
+		PathPattern:        "/bulk/redirect",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &RedirectCreatesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*RedirectCreatesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for redirectCreates: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+RedirectDelete redirects delete 0503
+
+Deleting an existing redirect.
+*/
+func (a *Client) RedirectDelete(params *RedirectDeleteParams, opts ...ClientOption) (*RedirectDeleteOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewRedirectDeleteParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "redirectDelete",
 		Method:             "DELETE",
 		PathPattern:        "/redirect/{source}",
@@ -98,7 +176,12 @@ func (a *Client) RedirectDelete(params *RedirectDeleteParams) (*RedirectDeleteOK
 		Reader:             &RedirectDeleteReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -113,17 +196,56 @@ func (a *Client) RedirectDelete(params *RedirectDeleteParams) (*RedirectDeleteOK
 }
 
 /*
-  RedirectInfo redirects info
+RedirectDeletes redirects delete bulk 0503
 
-  Inquiring the data for a specified redirect.
+Deleting several redirects in one request.
 */
-func (a *Client) RedirectInfo(params *RedirectInfoParams) (*RedirectInfoOK, error) {
+func (a *Client) RedirectDeletes(params *RedirectDeletesParams, opts ...ClientOption) (*RedirectDeletesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewRedirectDeletesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "redirectDeletes",
+		Method:             "DELETE",
+		PathPattern:        "/bulk/redirect",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &RedirectDeletesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*RedirectDeletesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for redirectDeletes: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+RedirectInfo redirects info 0504
+
+Inquiring the data for a specified redirect.
+*/
+func (a *Client) RedirectInfo(params *RedirectInfoParams, opts ...ClientOption) (*RedirectInfoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewRedirectInfoParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "redirectInfo",
 		Method:             "GET",
 		PathPattern:        "/redirect/{source}",
@@ -134,7 +256,12 @@ func (a *Client) RedirectInfo(params *RedirectInfoParams) (*RedirectInfoOK, erro
 		Reader:             &RedirectInfoReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -149,17 +276,16 @@ func (a *Client) RedirectInfo(params *RedirectInfoParams) (*RedirectInfoOK, erro
 }
 
 /*
-  RedirectList redirects list
+RedirectList redirects list 0504
 
-  Inquiring a list of redirects with certain details. The following keys can be used for filtering, ordering and inquiring additional data via query parameter: mode, created, domain, source, type, title, updated, target.
+Inquiring a list of redirects with certain details. The following keys can be used for filtering, ordering and inquiring additional data via query parameter: mode, created, domain, source, type, title, updated, target.
 */
-func (a *Client) RedirectList(params *RedirectListParams) (*RedirectListOK, error) {
+func (a *Client) RedirectList(params *RedirectListParams, opts ...ClientOption) (*RedirectListOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewRedirectListParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "redirectList",
 		Method:             "POST",
 		PathPattern:        "/redirect/_search",
@@ -170,7 +296,12 @@ func (a *Client) RedirectList(params *RedirectListParams) (*RedirectListOK, erro
 		Reader:             &RedirectListReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -185,17 +316,56 @@ func (a *Client) RedirectList(params *RedirectListParams) (*RedirectListOK, erro
 }
 
 /*
-  RedirectUpdate redirects update
+RedirectPatches redirects update bulk 0502
 
-  Updating an existing redirect.
+Updating several redirects in one request.
 */
-func (a *Client) RedirectUpdate(params *RedirectUpdateParams) (*RedirectUpdateOK, error) {
+func (a *Client) RedirectPatches(params *RedirectPatchesParams, opts ...ClientOption) (*RedirectPatchesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewRedirectPatchesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "redirectPatches",
+		Method:             "PATCH",
+		PathPattern:        "/bulk/redirect",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &RedirectPatchesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*RedirectPatchesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for redirectPatches: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+RedirectUpdate redirects update 0502
+
+Updating an existing redirect.
+*/
+func (a *Client) RedirectUpdate(params *RedirectUpdateParams, opts ...ClientOption) (*RedirectUpdateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewRedirectUpdateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "redirectUpdate",
 		Method:             "PUT",
 		PathPattern:        "/redirect/{source}",
@@ -206,7 +376,12 @@ func (a *Client) RedirectUpdate(params *RedirectUpdateParams) (*RedirectUpdateOK
 		Reader:             &RedirectUpdateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}

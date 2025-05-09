@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model ACLRestriction
 type ACLRestriction string
+
+func NewACLRestriction(value ACLRestriction) *ACLRestriction {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated ACLRestriction.
+func (m ACLRestriction) Pointer() *ACLRestriction {
+	return &m
+}
 
 const (
 
@@ -65,5 +75,10 @@ func (m ACLRestriction) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this ACL restriction based on context it is used
+func (m ACLRestriction) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

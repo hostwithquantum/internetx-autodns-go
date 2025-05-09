@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,13 +19,28 @@ import (
 // swagger:model CustomerContract
 type CustomerContract struct {
 
-	// The contract.
-	// Required: true
-	Contract *GenericLabelEntity `json:"contract"`
+	// The name of the manager.
+	AccountManager *AccountManager `json:"accountManager,omitempty"`
 
-	// The created date.
+	// The classification.
+	Classification string `json:"classification,omitempty"`
+
+	// The contract.
+	Contract *GenericLabelEntity `json:"contract,omitempty"`
+
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
+
+	// The unique identifier of the customerContract
+	// Example: 1
+	ID int32 `json:"id,omitempty"`
+
+	// The invoiceNotice.
+	InvoiceNotice string `json:"invoiceNotice,omitempty"`
+
+	// If sap is set or not
+	NoSap bool `json:"noSap,omitempty"`
 
 	// The notices.
 	Notice string `json:"notice,omitempty"`
@@ -31,7 +48,7 @@ type CustomerContract struct {
 	// The ticketing number if available.
 	TicketNumber string `json:"ticketNumber,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 }
@@ -39,6 +56,10 @@ type CustomerContract struct {
 // Validate validates this customer contract
 func (m *CustomerContract) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateAccountManager(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateContract(formats); err != nil {
 		res = append(res, err)
@@ -58,16 +79,36 @@ func (m *CustomerContract) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *CustomerContract) validateContract(formats strfmt.Registry) error {
+func (m *CustomerContract) validateAccountManager(formats strfmt.Registry) error {
+	if swag.IsZero(m.AccountManager) { // not required
+		return nil
+	}
 
-	if err := validate.Required("contract", "body", m.Contract); err != nil {
-		return err
+	if m.AccountManager != nil {
+		if err := m.AccountManager.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("accountManager")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("accountManager")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *CustomerContract) validateContract(formats strfmt.Registry) error {
+	if swag.IsZero(m.Contract) { // not required
+		return nil
 	}
 
 	if m.Contract != nil {
 		if err := m.Contract.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("contract")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("contract")
 			}
 			return err
 		}
@@ -77,7 +118,6 @@ func (m *CustomerContract) validateContract(formats strfmt.Registry) error {
 }
 
 func (m *CustomerContract) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -90,13 +130,72 @@ func (m *CustomerContract) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *CustomerContract) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
 
 	if err := validate.FormatOf("updated", "body", "date-time", m.Updated.String(), formats); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this customer contract based on the context it is used
+func (m *CustomerContract) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateAccountManager(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateContract(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *CustomerContract) contextValidateAccountManager(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.AccountManager != nil {
+
+		if swag.IsZero(m.AccountManager) { // not required
+			return nil
+		}
+
+		if err := m.AccountManager.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("accountManager")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("accountManager")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *CustomerContract) contextValidateContract(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Contract != nil {
+
+		if swag.IsZero(m.Contract) { // not required
+			return nil
+		}
+
+		if err := m.Contract.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("contract")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("contract")
+			}
+			return err
+		}
 	}
 
 	return nil

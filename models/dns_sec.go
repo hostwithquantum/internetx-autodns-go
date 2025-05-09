@@ -6,10 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"github.com/go-openapi/errors"
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // DNSSec DNS sec
@@ -18,96 +18,28 @@ import (
 type DNSSec struct {
 
 	// The algorithm.
-	// Required: true
-	Algorithm *int32 `json:"algorithm"`
+	Algorithm int32 `json:"algorithm,omitempty"`
 
-	// The flags.
-	// Required: true
-	// Maximum: 257
-	// Minimum: 256
-	Flags *int32 `json:"flags"`
+	// DNSSEC type
+	// Supported values:
+	// 256 (zone signing key)
+	// 257 (key signing key)
+	Flags int32 `json:"flags,omitempty"`
 
 	// The protocol.
-	// Required: true
-	Protocol *int32 `json:"protocol"`
+	Protocol int32 `json:"protocol,omitempty"`
 
-	// The public key.
-	// Required: true
-	// Pattern: ^[\sA-Za-z0-9+\/]+[=]*$
-	PublicKey *string `json:"publicKey"`
+	// The public key. With the pattern ^[\sA-Za-z0-9+\/]+[=]*$
+	PublicKey string `json:"publicKey,omitempty"`
 }
 
 // Validate validates this DNS sec
 func (m *DNSSec) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateAlgorithm(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateFlags(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateProtocol(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validatePublicKey(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 
-func (m *DNSSec) validateAlgorithm(formats strfmt.Registry) error {
-
-	if err := validate.Required("algorithm", "body", m.Algorithm); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *DNSSec) validateFlags(formats strfmt.Registry) error {
-
-	if err := validate.Required("flags", "body", m.Flags); err != nil {
-		return err
-	}
-
-	if err := validate.MinimumInt("flags", "body", int64(*m.Flags), 256, false); err != nil {
-		return err
-	}
-
-	if err := validate.MaximumInt("flags", "body", int64(*m.Flags), 257, false); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *DNSSec) validateProtocol(formats strfmt.Registry) error {
-
-	if err := validate.Required("protocol", "body", m.Protocol); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *DNSSec) validatePublicKey(formats strfmt.Registry) error {
-
-	if err := validate.Required("publicKey", "body", m.PublicKey); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("publicKey", "body", string(*m.PublicKey), `^[\sA-Za-z0-9+\/]+[=]*$`); err != nil {
-		return err
-	}
-
+// ContextValidate validates this DNS sec based on context it is used
+func (m *DNSSec) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

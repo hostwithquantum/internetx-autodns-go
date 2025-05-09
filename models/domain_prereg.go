@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -22,78 +23,88 @@ type DomainPrereg struct {
 	// The administrative contact.
 	Adminc *Contact `json:"adminc,omitempty"`
 
-	// The authinfo.
+	// AuthInfo for the domain.
 	Authinfo string `json:"authinfo,omitempty"`
 
-	// The confirmation date.
+	// The date on which the preregistration was confirmed by the user.
 	// Format: date-time
 	Confirmed strfmt.DateTime `json:"confirmed,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// The domain created date.
+	// Date on which the domain was registered at the registry.
 	// Format: date-time
 	DomainCreated strfmt.DateTime `json:"domainCreated,omitempty"`
 
-	// The domain expire date.
+	// Date on which the domain expires at the registry.
 	// Format: date-time
 	DomainExpire strfmt.DateTime `json:"domainExpire,omitempty"`
 
 	// The preregistration extensions.
 	Extension *DomainPreregAddon `json:"extension,omitempty"`
 
-	// The idn version of the name.
+	// The domain written in IDN form (Punycode syntax).
 	Idn string `json:"idn,omitempty"`
 
-	// The name of the domain.
+	// Name of the domain to be pre-registered.
 	Name string `json:"name,omitempty"`
 
-	// The nameserver entries.
+	// The nameserver hostnames used for connecting the domain in the DNS.
+	// Is only used for .de domains.
 	NameServerEntries []string `json:"nameServerEntries"`
 
-	// The nameservers.
+	// The nameserver hostnames used for the domain which contains the DNS information.
 	NameServers []*NameServer `json:"nameServers"`
 
-	// The unique order reference.
+	// The unique reference value of the domain preregistration order.
 	OrderReference string `json:"orderReference,omitempty"`
 
-	// The owner of the object.
+	// The object owner.
 	Owner *BasicUser `json:"owner,omitempty"`
 
 	// The owner contact.
 	Ownerc *Contact `json:"ownerc,omitempty"`
 
-	// The preregistration phase.
+	// The name of the preregistration phase whose name depends on the TLD.
 	Phase string `json:"phase,omitempty"`
 
 	// The preregistration configuration.
 	PreregConfig *PreregConfig `json:"preregConfig,omitempty"`
 
-	// Recommended
+	// "Setting for visibility in list view. Recommended preregistrations
+	// are visible for power users only.
+	// false = Not recommended
+	// true = Recommended
+	// Default value = false
+	// For XML, 0 (false) and 1 (true) can also be used."
 	Recommended bool `json:"recommended,omitempty"`
 
-	// The registry status.
+	// Status of the domain at the registry.
 	RegistryStatus RegistryStatusConstants `json:"registryStatus,omitempty"`
 
-	// The preregistration status of the domain.
+	// Preregistration status.
 	Status DomainPreregStatusConstants `json:"status,omitempty"`
 
 	// The technical contact reference.
 	Techc *Contact `json:"techc,omitempty"`
 
-	// The tmchmark.
+	// TMCH mark reference number.
 	TmchMark *TmchMark `json:"tmchMark,omitempty"`
 
-	// Trustee active or not.
+	// Is a trustee used or not?
+	// false = No trustee is used
+	// true = A trustee is used
+	// Default value = false
+	// For XML, 0 (false) and 1 (true) can also be used..
 	Trustee bool `json:"trustee,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The updater of the object.
+	// User who performed the last update.
 	Updater *BasicUser `json:"updater,omitempty"`
 
 	// The dns contact.
@@ -179,7 +190,6 @@ func (m *DomainPrereg) Validate(formats strfmt.Registry) error {
 }
 
 func (m *DomainPrereg) validateAdminc(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Adminc) { // not required
 		return nil
 	}
@@ -188,6 +198,8 @@ func (m *DomainPrereg) validateAdminc(formats strfmt.Registry) error {
 		if err := m.Adminc.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("adminc")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("adminc")
 			}
 			return err
 		}
@@ -197,7 +209,6 @@ func (m *DomainPrereg) validateAdminc(formats strfmt.Registry) error {
 }
 
 func (m *DomainPrereg) validateConfirmed(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Confirmed) { // not required
 		return nil
 	}
@@ -210,7 +221,6 @@ func (m *DomainPrereg) validateConfirmed(formats strfmt.Registry) error {
 }
 
 func (m *DomainPrereg) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -223,7 +233,6 @@ func (m *DomainPrereg) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *DomainPrereg) validateDomainCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.DomainCreated) { // not required
 		return nil
 	}
@@ -236,7 +245,6 @@ func (m *DomainPrereg) validateDomainCreated(formats strfmt.Registry) error {
 }
 
 func (m *DomainPrereg) validateDomainExpire(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.DomainExpire) { // not required
 		return nil
 	}
@@ -249,7 +257,6 @@ func (m *DomainPrereg) validateDomainExpire(formats strfmt.Registry) error {
 }
 
 func (m *DomainPrereg) validateExtension(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Extension) { // not required
 		return nil
 	}
@@ -258,6 +265,8 @@ func (m *DomainPrereg) validateExtension(formats strfmt.Registry) error {
 		if err := m.Extension.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("extension")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("extension")
 			}
 			return err
 		}
@@ -267,7 +276,6 @@ func (m *DomainPrereg) validateExtension(formats strfmt.Registry) error {
 }
 
 func (m *DomainPrereg) validateNameServers(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.NameServers) { // not required
 		return nil
 	}
@@ -281,6 +289,8 @@ func (m *DomainPrereg) validateNameServers(formats strfmt.Registry) error {
 			if err := m.NameServers[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("nameServers" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nameServers" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -292,7 +302,6 @@ func (m *DomainPrereg) validateNameServers(formats strfmt.Registry) error {
 }
 
 func (m *DomainPrereg) validateOwner(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -301,6 +310,8 @@ func (m *DomainPrereg) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -310,7 +321,6 @@ func (m *DomainPrereg) validateOwner(formats strfmt.Registry) error {
 }
 
 func (m *DomainPrereg) validateOwnerc(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Ownerc) { // not required
 		return nil
 	}
@@ -319,6 +329,8 @@ func (m *DomainPrereg) validateOwnerc(formats strfmt.Registry) error {
 		if err := m.Ownerc.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("ownerc")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("ownerc")
 			}
 			return err
 		}
@@ -328,7 +340,6 @@ func (m *DomainPrereg) validateOwnerc(formats strfmt.Registry) error {
 }
 
 func (m *DomainPrereg) validatePreregConfig(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.PreregConfig) { // not required
 		return nil
 	}
@@ -337,6 +348,8 @@ func (m *DomainPrereg) validatePreregConfig(formats strfmt.Registry) error {
 		if err := m.PreregConfig.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("preregConfig")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("preregConfig")
 			}
 			return err
 		}
@@ -346,7 +359,6 @@ func (m *DomainPrereg) validatePreregConfig(formats strfmt.Registry) error {
 }
 
 func (m *DomainPrereg) validateRegistryStatus(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.RegistryStatus) { // not required
 		return nil
 	}
@@ -354,6 +366,8 @@ func (m *DomainPrereg) validateRegistryStatus(formats strfmt.Registry) error {
 	if err := m.RegistryStatus.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("registryStatus")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("registryStatus")
 		}
 		return err
 	}
@@ -362,7 +376,6 @@ func (m *DomainPrereg) validateRegistryStatus(formats strfmt.Registry) error {
 }
 
 func (m *DomainPrereg) validateStatus(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Status) { // not required
 		return nil
 	}
@@ -370,6 +383,8 @@ func (m *DomainPrereg) validateStatus(formats strfmt.Registry) error {
 	if err := m.Status.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
 		}
 		return err
 	}
@@ -378,7 +393,6 @@ func (m *DomainPrereg) validateStatus(formats strfmt.Registry) error {
 }
 
 func (m *DomainPrereg) validateTechc(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Techc) { // not required
 		return nil
 	}
@@ -387,6 +401,8 @@ func (m *DomainPrereg) validateTechc(formats strfmt.Registry) error {
 		if err := m.Techc.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("techc")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("techc")
 			}
 			return err
 		}
@@ -396,7 +412,6 @@ func (m *DomainPrereg) validateTechc(formats strfmt.Registry) error {
 }
 
 func (m *DomainPrereg) validateTmchMark(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.TmchMark) { // not required
 		return nil
 	}
@@ -405,6 +420,8 @@ func (m *DomainPrereg) validateTmchMark(formats strfmt.Registry) error {
 		if err := m.TmchMark.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("tmchMark")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("tmchMark")
 			}
 			return err
 		}
@@ -414,7 +431,6 @@ func (m *DomainPrereg) validateTmchMark(formats strfmt.Registry) error {
 }
 
 func (m *DomainPrereg) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -427,7 +443,6 @@ func (m *DomainPrereg) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *DomainPrereg) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -436,6 +451,8 @@ func (m *DomainPrereg) validateUpdater(formats strfmt.Registry) error {
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}
@@ -445,7 +462,6 @@ func (m *DomainPrereg) validateUpdater(formats strfmt.Registry) error {
 }
 
 func (m *DomainPrereg) validateZonec(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Zonec) { // not required
 		return nil
 	}
@@ -454,6 +470,316 @@ func (m *DomainPrereg) validateZonec(formats strfmt.Registry) error {
 		if err := m.Zonec.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("zonec")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("zonec")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this domain prereg based on the context it is used
+func (m *DomainPrereg) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateAdminc(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateExtension(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateNameServers(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwnerc(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePreregConfig(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRegistryStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTechc(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTmchMark(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateZonec(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *DomainPrereg) contextValidateAdminc(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Adminc != nil {
+
+		if swag.IsZero(m.Adminc) { // not required
+			return nil
+		}
+
+		if err := m.Adminc.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("adminc")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("adminc")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainPrereg) contextValidateExtension(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Extension != nil {
+
+		if swag.IsZero(m.Extension) { // not required
+			return nil
+		}
+
+		if err := m.Extension.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("extension")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("extension")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainPrereg) contextValidateNameServers(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.NameServers); i++ {
+
+		if m.NameServers[i] != nil {
+
+			if swag.IsZero(m.NameServers[i]) { // not required
+				return nil
+			}
+
+			if err := m.NameServers[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("nameServers" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nameServers" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *DomainPrereg) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainPrereg) contextValidateOwnerc(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Ownerc != nil {
+
+		if swag.IsZero(m.Ownerc) { // not required
+			return nil
+		}
+
+		if err := m.Ownerc.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("ownerc")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("ownerc")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainPrereg) contextValidatePreregConfig(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.PreregConfig != nil {
+
+		if swag.IsZero(m.PreregConfig) { // not required
+			return nil
+		}
+
+		if err := m.PreregConfig.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("preregConfig")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("preregConfig")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainPrereg) contextValidateRegistryStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.RegistryStatus) { // not required
+		return nil
+	}
+
+	if err := m.RegistryStatus.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("registryStatus")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("registryStatus")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *DomainPrereg) contextValidateStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	if err := m.Status.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *DomainPrereg) contextValidateTechc(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Techc != nil {
+
+		if swag.IsZero(m.Techc) { // not required
+			return nil
+		}
+
+		if err := m.Techc.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("techc")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("techc")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainPrereg) contextValidateTmchMark(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.TmchMark != nil {
+
+		if swag.IsZero(m.TmchMark) { // not required
+			return nil
+		}
+
+		if err := m.TmchMark.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("tmchMark")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("tmchMark")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainPrereg) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainPrereg) contextValidateZonec(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Zonec != nil {
+
+		if swag.IsZero(m.Zonec) { // not required
+			return nil
+		}
+
+		if err := m.Zonec.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("zonec")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("zonec")
 			}
 			return err
 		}

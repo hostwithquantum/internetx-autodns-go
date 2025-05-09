@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -21,17 +22,20 @@ type QueryFilter struct {
 	// filters
 	Filters []*QueryFilter `json:"filters"`
 
-	// key
+	// Name of keyword.
 	Key string `json:"key,omitempty"`
 
 	// link
 	Link ConditionType `json:"link,omitempty"`
 
-	// operator
+	// Comparison operator.
 	Operator Operator `json:"operator,omitempty"`
 
-	// value
+	// Value after which filtering is to be performed.
 	Value string `json:"value,omitempty"`
+
+	// values
+	Values []string `json:"values"`
 }
 
 // Validate validates this query filter
@@ -57,7 +61,6 @@ func (m *QueryFilter) Validate(formats strfmt.Registry) error {
 }
 
 func (m *QueryFilter) validateFilters(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Filters) { // not required
 		return nil
 	}
@@ -71,6 +74,8 @@ func (m *QueryFilter) validateFilters(formats strfmt.Registry) error {
 			if err := m.Filters[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("filters" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("filters" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -82,7 +87,6 @@ func (m *QueryFilter) validateFilters(formats strfmt.Registry) error {
 }
 
 func (m *QueryFilter) validateLink(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Link) { // not required
 		return nil
 	}
@@ -90,6 +94,8 @@ func (m *QueryFilter) validateLink(formats strfmt.Registry) error {
 	if err := m.Link.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("link")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("link")
 		}
 		return err
 	}
@@ -98,7 +104,6 @@ func (m *QueryFilter) validateLink(formats strfmt.Registry) error {
 }
 
 func (m *QueryFilter) validateOperator(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Operator) { // not required
 		return nil
 	}
@@ -106,6 +111,91 @@ func (m *QueryFilter) validateOperator(formats strfmt.Registry) error {
 	if err := m.Operator.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("operator")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("operator")
+		}
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this query filter based on the context it is used
+func (m *QueryFilter) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateFilters(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateLink(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOperator(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *QueryFilter) contextValidateFilters(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Filters); i++ {
+
+		if m.Filters[i] != nil {
+
+			if swag.IsZero(m.Filters[i]) { // not required
+				return nil
+			}
+
+			if err := m.Filters[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("filters" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("filters" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *QueryFilter) contextValidateLink(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Link) { // not required
+		return nil
+	}
+
+	if err := m.Link.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("link")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("link")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *QueryFilter) contextValidateOperator(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Operator) { // not required
+		return nil
+	}
+
+	if err := m.Operator.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("operator")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("operator")
 		}
 		return err
 	}

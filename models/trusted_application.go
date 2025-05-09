@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -18,13 +20,12 @@ import (
 type TrustedApplication struct {
 
 	// The kind of application.
-	// Required: true
-	Application *Application `json:"application"`
+	Application *Application `json:"application,omitempty"`
 
 	// A comment for the trusted application.
 	Comment string `json:"comment,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
@@ -34,7 +35,7 @@ type TrustedApplication struct {
 	// The wrapper of the allowed functions for the trusted application.
 	Functions *TrustedApplicationFunctions `json:"functions,omitempty"`
 
-	// The owner of the object.
+	// The object owner.
 	Owner *BasicUser `json:"owner,omitempty"`
 
 	// The password for the trusted application.
@@ -43,19 +44,19 @@ type TrustedApplication struct {
 	// The wrapper of the ip restrictions for the trusted application.
 	Restrictions *IPRestrictions `json:"restrictions,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
-	// The updating user of the object.
+	// User who performed the last update.
 	Updater *BasicUser `json:"updater,omitempty"`
 
 	// The user the trusted application belongs to.
 	User *BasicUser `json:"user,omitempty"`
 
 	// The unique identifier for the trusted application.
-	// Required: true
-	UUID *string `json:"uuid"`
+	// Example: cb3e0fa4-2404-1ad
+	UUID string `json:"uuid,omitempty"`
 }
 
 // Validate validates this trusted application
@@ -94,10 +95,6 @@ func (m *TrustedApplication) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateUUID(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -105,15 +102,16 @@ func (m *TrustedApplication) Validate(formats strfmt.Registry) error {
 }
 
 func (m *TrustedApplication) validateApplication(formats strfmt.Registry) error {
-
-	if err := validate.Required("application", "body", m.Application); err != nil {
-		return err
+	if swag.IsZero(m.Application) { // not required
+		return nil
 	}
 
 	if m.Application != nil {
 		if err := m.Application.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("application")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("application")
 			}
 			return err
 		}
@@ -123,7 +121,6 @@ func (m *TrustedApplication) validateApplication(formats strfmt.Registry) error 
 }
 
 func (m *TrustedApplication) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -136,7 +133,6 @@ func (m *TrustedApplication) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *TrustedApplication) validateFunctions(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Functions) { // not required
 		return nil
 	}
@@ -145,6 +141,8 @@ func (m *TrustedApplication) validateFunctions(formats strfmt.Registry) error {
 		if err := m.Functions.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("functions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("functions")
 			}
 			return err
 		}
@@ -154,7 +152,6 @@ func (m *TrustedApplication) validateFunctions(formats strfmt.Registry) error {
 }
 
 func (m *TrustedApplication) validateOwner(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -163,6 +160,8 @@ func (m *TrustedApplication) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -172,7 +171,6 @@ func (m *TrustedApplication) validateOwner(formats strfmt.Registry) error {
 }
 
 func (m *TrustedApplication) validateRestrictions(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Restrictions) { // not required
 		return nil
 	}
@@ -181,6 +179,8 @@ func (m *TrustedApplication) validateRestrictions(formats strfmt.Registry) error
 		if err := m.Restrictions.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("restrictions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("restrictions")
 			}
 			return err
 		}
@@ -190,7 +190,6 @@ func (m *TrustedApplication) validateRestrictions(formats strfmt.Registry) error
 }
 
 func (m *TrustedApplication) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -203,7 +202,6 @@ func (m *TrustedApplication) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *TrustedApplication) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -212,6 +210,8 @@ func (m *TrustedApplication) validateUpdater(formats strfmt.Registry) error {
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}
@@ -221,7 +221,6 @@ func (m *TrustedApplication) validateUpdater(formats strfmt.Registry) error {
 }
 
 func (m *TrustedApplication) validateUser(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.User) { // not required
 		return nil
 	}
@@ -230,6 +229,8 @@ func (m *TrustedApplication) validateUser(formats strfmt.Registry) error {
 		if err := m.User.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("user")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("user")
 			}
 			return err
 		}
@@ -238,10 +239,161 @@ func (m *TrustedApplication) validateUser(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *TrustedApplication) validateUUID(formats strfmt.Registry) error {
+// ContextValidate validate this trusted application based on the context it is used
+func (m *TrustedApplication) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
 
-	if err := validate.Required("uuid", "body", m.UUID); err != nil {
-		return err
+	if err := m.contextValidateApplication(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateFunctions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRestrictions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUser(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *TrustedApplication) contextValidateApplication(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Application != nil {
+
+		if swag.IsZero(m.Application) { // not required
+			return nil
+		}
+
+		if err := m.Application.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("application")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("application")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *TrustedApplication) contextValidateFunctions(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Functions != nil {
+
+		if swag.IsZero(m.Functions) { // not required
+			return nil
+		}
+
+		if err := m.Functions.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("functions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("functions")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *TrustedApplication) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *TrustedApplication) contextValidateRestrictions(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Restrictions != nil {
+
+		if swag.IsZero(m.Restrictions) { // not required
+			return nil
+		}
+
+		if err := m.Restrictions.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("restrictions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("restrictions")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *TrustedApplication) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *TrustedApplication) contextValidateUser(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.User != nil {
+
+		if swag.IsZero(m.User) { // not required
+			return nil
+		}
+
+		if err := m.User.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("user")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("user")
+			}
+			return err
+		}
 	}
 
 	return nil

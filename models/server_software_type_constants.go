@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model ServerSoftwareTypeConstants
 type ServerSoftwareTypeConstants string
+
+func NewServerSoftwareTypeConstants(value ServerSoftwareTypeConstants) *ServerSoftwareTypeConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated ServerSoftwareTypeConstants.
+func (m ServerSoftwareTypeConstants) Pointer() *ServerSoftwareTypeConstants {
+	return &m
+}
 
 const (
 
@@ -74,5 +84,10 @@ func (m ServerSoftwareTypeConstants) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this server software type constants based on context it is used
+func (m ServerSoftwareTypeConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -16,6 +18,7 @@ import (
 type DomainParkingExtensions struct {
 
 	// The currency of the sale
+	// Example: EUR
 	Currency string `json:"currency,omitempty"`
 
 	// The parking
@@ -42,6 +45,11 @@ type DomainParkingExtensions struct {
 
 // Validate validates this domain parking extensions
 func (m *DomainParkingExtensions) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this domain parking extensions based on context it is used
+func (m *DomainParkingExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

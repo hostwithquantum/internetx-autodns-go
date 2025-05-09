@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -19,28 +20,33 @@ import (
 // swagger:model User
 type User struct {
 
-	// Wrapper for the user acls.
+	// User privileges.
 	Acls *UserAcls `json:"acls,omitempty"`
 
 	// The ancestors of the user.
 	Ancestors []*BasicUser `json:"ancestors"`
 
-	// Holds the used applications.
+	// Trusted applications of the user.
 	Applications []*TrustedApplication `json:"applications"`
 
-	// The users authorization method.
+	// Authentication type, e.g. password or TOTP.
 	AuthType AuthType `json:"authType,omitempty"`
 
-	// The context.
-	// Required: true
-	Context *int32 `json:"context"`
+	// The client accounting datas for the user.
+	ClientAccounts []*ExternalAccounting `json:"clientAccounts"`
+
+	// The context. A separated section.
+	Context int32 `json:"context,omitempty"`
 
 	// The user created date.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// The customer belonging to the user.
+	// Customer to which this user belongs.
 	Customer *BasicCustomer `json:"customer,omitempty"`
+
+	// The actual customer level for the user.
+	CustomerLevel int32 `json:"customerLevel,omitempty"`
 
 	// The default email.
 	DefaultEmail string `json:"defaultEmail,omitempty"`
@@ -48,50 +54,77 @@ type User struct {
 	// The user details.
 	Details *UserDetails `json:"details,omitempty"`
 
-	// direct customer
+	// Specifies whether the user is a direct customer of the user.
+	// false = No direct customer
+	// true = direct customer
+	// Default value = false
+	// For XML, 0 (false) and 1 (true) can also be used.
 	DirectCustomer bool `json:"directCustomer,omitempty"`
 
-	// The language.
+	// The language for the user. The setting affects
+	// the user interface language and system messages.
+	// Possible values:
+	// de
+	// en
+	// es.
 	Language string `json:"language,omitempty"`
 
-	// The lock status of the user.
+	// Defines the type of user lock.
 	Lock UserLock `json:"lock,omitempty"`
 
 	// The available name server groups
 	NameServerGroups []*VirtualNameServerGroup `json:"nameServerGroups"`
 
-	// The parent.
+	// The old password.
+	OldPassword string `json:"oldPassword,omitempty"`
+
+	// Parent user.
 	Parent *User `json:"parent,omitempty"`
 
-	// The password.
+	// User password.
 	Password string `json:"password,omitempty"`
 
-	// Wrapper for the user profiles.
+	// The date on which the password has changed
+	// Format: date-time
+	PasswordChanged strfmt.DateTime `json:"passwordChanged,omitempty"`
+
+	// Is the current password expired
+	PasswordExpired bool `json:"passwordExpired,omitempty"`
+
+	// The date on which the password will expire
+	// Format: date-time
+	PasswordExpires strfmt.DateTime `json:"passwordExpires,omitempty"`
+
+	// User profile.
 	Profiles *UserProfileViews `json:"profiles,omitempty"`
 
-	// The wrapper of the ip restrictions for the user.
+	// Grouping object for specifying the user's IP networks.
 	Restrictions *IPRestrictions `json:"restrictions,omitempty"`
 
 	// Wrapper for the service user profiles.
 	ServiceProfiles *ServiceProfiles `json:"serviceProfiles,omitempty"`
 
-	// The status.
+	// User status.
 	Status int32 `json:"status,omitempty"`
 
-	// Wrapper for the subscriptions.
+	// Different subscriptions of the users.
 	Subscriptions []*Subscription `json:"subscriptions"`
 
-	// The substatus.
+	// User substatus of the User.
 	Substatus int32 `json:"substatus,omitempty"`
+
+	// The task limits of the user.
+	Tasklimits []*TaskLimit `json:"tasklimits"`
+
+	// The trustee Contacts of the user.
+	TrusteeContacts []*TrusteeContact `json:"trusteeContacts"`
 
 	// The user updated date.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
 	// The user name.
-	// Required: true
-	// Pattern: ^[^_].*
-	User *string `json:"user"`
+	User string `json:"user,omitempty"`
 }
 
 // Validate validates this user
@@ -114,7 +147,7 @@ func (m *User) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateContext(formats); err != nil {
+	if err := m.validateClientAccounts(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -142,6 +175,14 @@ func (m *User) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validatePasswordChanged(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePasswordExpires(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateProfiles(formats); err != nil {
 		res = append(res, err)
 	}
@@ -158,11 +199,15 @@ func (m *User) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateUpdated(formats); err != nil {
+	if err := m.validateTasklimits(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateUser(formats); err != nil {
+	if err := m.validateTrusteeContacts(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateUpdated(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -173,7 +218,6 @@ func (m *User) Validate(formats strfmt.Registry) error {
 }
 
 func (m *User) validateAcls(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Acls) { // not required
 		return nil
 	}
@@ -182,6 +226,8 @@ func (m *User) validateAcls(formats strfmt.Registry) error {
 		if err := m.Acls.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("acls")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("acls")
 			}
 			return err
 		}
@@ -191,7 +237,6 @@ func (m *User) validateAcls(formats strfmt.Registry) error {
 }
 
 func (m *User) validateAncestors(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Ancestors) { // not required
 		return nil
 	}
@@ -205,6 +250,8 @@ func (m *User) validateAncestors(formats strfmt.Registry) error {
 			if err := m.Ancestors[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("ancestors" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("ancestors" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -216,7 +263,6 @@ func (m *User) validateAncestors(formats strfmt.Registry) error {
 }
 
 func (m *User) validateApplications(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Applications) { // not required
 		return nil
 	}
@@ -230,6 +276,8 @@ func (m *User) validateApplications(formats strfmt.Registry) error {
 			if err := m.Applications[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("applications" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("applications" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -241,7 +289,6 @@ func (m *User) validateApplications(formats strfmt.Registry) error {
 }
 
 func (m *User) validateAuthType(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.AuthType) { // not required
 		return nil
 	}
@@ -249,6 +296,8 @@ func (m *User) validateAuthType(formats strfmt.Registry) error {
 	if err := m.AuthType.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("authType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("authType")
 		}
 		return err
 	}
@@ -256,17 +305,33 @@ func (m *User) validateAuthType(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *User) validateContext(formats strfmt.Registry) error {
+func (m *User) validateClientAccounts(formats strfmt.Registry) error {
+	if swag.IsZero(m.ClientAccounts) { // not required
+		return nil
+	}
 
-	if err := validate.Required("context", "body", m.Context); err != nil {
-		return err
+	for i := 0; i < len(m.ClientAccounts); i++ {
+		if swag.IsZero(m.ClientAccounts[i]) { // not required
+			continue
+		}
+
+		if m.ClientAccounts[i] != nil {
+			if err := m.ClientAccounts[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("clientAccounts" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("clientAccounts" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil
 }
 
 func (m *User) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -279,7 +344,6 @@ func (m *User) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *User) validateCustomer(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Customer) { // not required
 		return nil
 	}
@@ -288,6 +352,8 @@ func (m *User) validateCustomer(formats strfmt.Registry) error {
 		if err := m.Customer.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("customer")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("customer")
 			}
 			return err
 		}
@@ -297,7 +363,6 @@ func (m *User) validateCustomer(formats strfmt.Registry) error {
 }
 
 func (m *User) validateDetails(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Details) { // not required
 		return nil
 	}
@@ -306,6 +371,8 @@ func (m *User) validateDetails(formats strfmt.Registry) error {
 		if err := m.Details.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("details")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("details")
 			}
 			return err
 		}
@@ -315,7 +382,6 @@ func (m *User) validateDetails(formats strfmt.Registry) error {
 }
 
 func (m *User) validateLock(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Lock) { // not required
 		return nil
 	}
@@ -323,6 +389,8 @@ func (m *User) validateLock(formats strfmt.Registry) error {
 	if err := m.Lock.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("lock")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("lock")
 		}
 		return err
 	}
@@ -331,7 +399,6 @@ func (m *User) validateLock(formats strfmt.Registry) error {
 }
 
 func (m *User) validateNameServerGroups(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.NameServerGroups) { // not required
 		return nil
 	}
@@ -345,6 +412,8 @@ func (m *User) validateNameServerGroups(formats strfmt.Registry) error {
 			if err := m.NameServerGroups[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("nameServerGroups" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nameServerGroups" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -356,7 +425,6 @@ func (m *User) validateNameServerGroups(formats strfmt.Registry) error {
 }
 
 func (m *User) validateParent(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Parent) { // not required
 		return nil
 	}
@@ -365,6 +433,8 @@ func (m *User) validateParent(formats strfmt.Registry) error {
 		if err := m.Parent.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("parent")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("parent")
 			}
 			return err
 		}
@@ -373,8 +443,31 @@ func (m *User) validateParent(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *User) validateProfiles(formats strfmt.Registry) error {
+func (m *User) validatePasswordChanged(formats strfmt.Registry) error {
+	if swag.IsZero(m.PasswordChanged) { // not required
+		return nil
+	}
 
+	if err := validate.FormatOf("passwordChanged", "body", "date-time", m.PasswordChanged.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *User) validatePasswordExpires(formats strfmt.Registry) error {
+	if swag.IsZero(m.PasswordExpires) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("passwordExpires", "body", "date-time", m.PasswordExpires.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *User) validateProfiles(formats strfmt.Registry) error {
 	if swag.IsZero(m.Profiles) { // not required
 		return nil
 	}
@@ -383,6 +476,8 @@ func (m *User) validateProfiles(formats strfmt.Registry) error {
 		if err := m.Profiles.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("profiles")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("profiles")
 			}
 			return err
 		}
@@ -392,7 +487,6 @@ func (m *User) validateProfiles(formats strfmt.Registry) error {
 }
 
 func (m *User) validateRestrictions(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Restrictions) { // not required
 		return nil
 	}
@@ -401,6 +495,8 @@ func (m *User) validateRestrictions(formats strfmt.Registry) error {
 		if err := m.Restrictions.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("restrictions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("restrictions")
 			}
 			return err
 		}
@@ -410,7 +506,6 @@ func (m *User) validateRestrictions(formats strfmt.Registry) error {
 }
 
 func (m *User) validateServiceProfiles(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ServiceProfiles) { // not required
 		return nil
 	}
@@ -419,6 +514,8 @@ func (m *User) validateServiceProfiles(formats strfmt.Registry) error {
 		if err := m.ServiceProfiles.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("serviceProfiles")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("serviceProfiles")
 			}
 			return err
 		}
@@ -428,7 +525,6 @@ func (m *User) validateServiceProfiles(formats strfmt.Registry) error {
 }
 
 func (m *User) validateSubscriptions(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Subscriptions) { // not required
 		return nil
 	}
@@ -442,6 +538,60 @@ func (m *User) validateSubscriptions(formats strfmt.Registry) error {
 			if err := m.Subscriptions[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("subscriptions" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("subscriptions" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *User) validateTasklimits(formats strfmt.Registry) error {
+	if swag.IsZero(m.Tasklimits) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Tasklimits); i++ {
+		if swag.IsZero(m.Tasklimits[i]) { // not required
+			continue
+		}
+
+		if m.Tasklimits[i] != nil {
+			if err := m.Tasklimits[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("tasklimits" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("tasklimits" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *User) validateTrusteeContacts(formats strfmt.Registry) error {
+	if swag.IsZero(m.TrusteeContacts) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.TrusteeContacts); i++ {
+		if swag.IsZero(m.TrusteeContacts[i]) { // not required
+			continue
+		}
+
+		if m.TrusteeContacts[i] != nil {
+			if err := m.TrusteeContacts[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("trusteeContacts" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("trusteeContacts" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -453,7 +603,6 @@ func (m *User) validateSubscriptions(formats strfmt.Registry) error {
 }
 
 func (m *User) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -465,14 +614,433 @@ func (m *User) validateUpdated(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *User) validateUser(formats strfmt.Registry) error {
+// ContextValidate validate this user based on the context it is used
+func (m *User) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
 
-	if err := validate.Required("user", "body", m.User); err != nil {
+	if err := m.contextValidateAcls(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateAncestors(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateApplications(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateAuthType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateClientAccounts(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateCustomer(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateDetails(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateLock(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateNameServerGroups(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateParent(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateProfiles(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRestrictions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateServiceProfiles(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSubscriptions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTasklimits(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTrusteeContacts(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *User) contextValidateAcls(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Acls != nil {
+
+		if swag.IsZero(m.Acls) { // not required
+			return nil
+		}
+
+		if err := m.Acls.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("acls")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("acls")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *User) contextValidateAncestors(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Ancestors); i++ {
+
+		if m.Ancestors[i] != nil {
+
+			if swag.IsZero(m.Ancestors[i]) { // not required
+				return nil
+			}
+
+			if err := m.Ancestors[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("ancestors" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("ancestors" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *User) contextValidateApplications(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Applications); i++ {
+
+		if m.Applications[i] != nil {
+
+			if swag.IsZero(m.Applications[i]) { // not required
+				return nil
+			}
+
+			if err := m.Applications[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("applications" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("applications" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *User) contextValidateAuthType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.AuthType) { // not required
+		return nil
+	}
+
+	if err := m.AuthType.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("authType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("authType")
+		}
 		return err
 	}
 
-	if err := validate.Pattern("user", "body", string(*m.User), `^[^_].*`); err != nil {
+	return nil
+}
+
+func (m *User) contextValidateClientAccounts(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.ClientAccounts); i++ {
+
+		if m.ClientAccounts[i] != nil {
+
+			if swag.IsZero(m.ClientAccounts[i]) { // not required
+				return nil
+			}
+
+			if err := m.ClientAccounts[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("clientAccounts" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("clientAccounts" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *User) contextValidateCustomer(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Customer != nil {
+
+		if swag.IsZero(m.Customer) { // not required
+			return nil
+		}
+
+		if err := m.Customer.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("customer")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("customer")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *User) contextValidateDetails(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Details != nil {
+
+		if swag.IsZero(m.Details) { // not required
+			return nil
+		}
+
+		if err := m.Details.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("details")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("details")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *User) contextValidateLock(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Lock) { // not required
+		return nil
+	}
+
+	if err := m.Lock.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("lock")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("lock")
+		}
 		return err
+	}
+
+	return nil
+}
+
+func (m *User) contextValidateNameServerGroups(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.NameServerGroups); i++ {
+
+		if m.NameServerGroups[i] != nil {
+
+			if swag.IsZero(m.NameServerGroups[i]) { // not required
+				return nil
+			}
+
+			if err := m.NameServerGroups[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("nameServerGroups" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nameServerGroups" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *User) contextValidateParent(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Parent != nil {
+
+		if swag.IsZero(m.Parent) { // not required
+			return nil
+		}
+
+		if err := m.Parent.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("parent")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("parent")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *User) contextValidateProfiles(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Profiles != nil {
+
+		if swag.IsZero(m.Profiles) { // not required
+			return nil
+		}
+
+		if err := m.Profiles.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("profiles")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("profiles")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *User) contextValidateRestrictions(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Restrictions != nil {
+
+		if swag.IsZero(m.Restrictions) { // not required
+			return nil
+		}
+
+		if err := m.Restrictions.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("restrictions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("restrictions")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *User) contextValidateServiceProfiles(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.ServiceProfiles != nil {
+
+		if swag.IsZero(m.ServiceProfiles) { // not required
+			return nil
+		}
+
+		if err := m.ServiceProfiles.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("serviceProfiles")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("serviceProfiles")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *User) contextValidateSubscriptions(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Subscriptions); i++ {
+
+		if m.Subscriptions[i] != nil {
+
+			if swag.IsZero(m.Subscriptions[i]) { // not required
+				return nil
+			}
+
+			if err := m.Subscriptions[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("subscriptions" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("subscriptions" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *User) contextValidateTasklimits(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Tasklimits); i++ {
+
+		if m.Tasklimits[i] != nil {
+
+			if swag.IsZero(m.Tasklimits[i]) { // not required
+				return nil
+			}
+
+			if err := m.Tasklimits[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("tasklimits" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("tasklimits" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *User) contextValidateTrusteeContacts(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.TrusteeContacts); i++ {
+
+		if m.TrusteeContacts[i] != nil {
+
+			if swag.IsZero(m.TrusteeContacts[i]) { // not required
+				return nil
+			}
+
+			if err := m.TrusteeContacts[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("trusteeContacts" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("trusteeContacts" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil

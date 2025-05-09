@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -16,6 +18,9 @@ import (
 //
 // swagger:model CertificateHistory
 type CertificateHistory struct {
+
+	// The unique certificate order number
+	OrderID string `json:"orderId,omitempty"`
 
 	// The revoked date of the certificate.
 	// Format: date-time
@@ -40,7 +45,6 @@ func (m *CertificateHistory) Validate(formats strfmt.Registry) error {
 }
 
 func (m *CertificateHistory) validateRevoked(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Revoked) { // not required
 		return nil
 	}
@@ -49,6 +53,11 @@ func (m *CertificateHistory) validateRevoked(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this certificate history based on context it is used
+func (m *CertificateHistory) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

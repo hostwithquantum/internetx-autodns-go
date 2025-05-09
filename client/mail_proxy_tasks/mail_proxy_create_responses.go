@@ -6,6 +6,7 @@ package mail_proxy_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *MailProxyCreateReader) ReadResponse(response runtime.ClientResponse, co
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[POST /mailProxy] mailProxyCreate", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewMailProxyCreateOK() *MailProxyCreateOK {
 	return &MailProxyCreateOK{}
 }
 
-/*MailProxyCreateOK handles this case with default header values.
+/*
+MailProxyCreateOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type MailProxyCreateOK struct {
 	Payload *models.JSONResponseDataJSONNoData
 }
 
+// IsSuccess returns true when this mail proxy create o k response has a 2xx status code
+func (o *MailProxyCreateOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this mail proxy create o k response has a 3xx status code
+func (o *MailProxyCreateOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this mail proxy create o k response has a 4xx status code
+func (o *MailProxyCreateOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this mail proxy create o k response has a 5xx status code
+func (o *MailProxyCreateOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this mail proxy create o k response a status code equal to that given
+func (o *MailProxyCreateOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the mail proxy create o k response
+func (o *MailProxyCreateOK) Code() int {
+	return 200
+}
+
 func (o *MailProxyCreateOK) Error() string {
-	return fmt.Sprintf("[POST /mailProxy][%d] mailProxyCreateOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /mailProxy][%d] mailProxyCreateOK %s", 200, payload)
+}
+
+func (o *MailProxyCreateOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /mailProxy][%d] mailProxyCreateOK %s", 200, payload)
 }
 
 func (o *MailProxyCreateOK) GetPayload() *models.JSONResponseDataJSONNoData {

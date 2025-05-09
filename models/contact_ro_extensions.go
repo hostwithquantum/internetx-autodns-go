@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -16,7 +18,7 @@ import (
 // swagger:model ContactRoExtensions
 type ContactRoExtensions struct {
 
-	// The entity person type.
+	// Type of group that the contact belongs to.
 	PersonType RoPersonTypeConstants `json:"personType,omitempty"`
 }
 
@@ -35,7 +37,6 @@ func (m *ContactRoExtensions) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ContactRoExtensions) validatePersonType(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.PersonType) { // not required
 		return nil
 	}
@@ -43,6 +44,40 @@ func (m *ContactRoExtensions) validatePersonType(formats strfmt.Registry) error 
 	if err := m.PersonType.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("personType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("personType")
+		}
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this contact ro extensions based on the context it is used
+func (m *ContactRoExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidatePersonType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ContactRoExtensions) contextValidatePersonType(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.PersonType) { // not required
+		return nil
+	}
+
+	if err := m.PersonType.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("personType")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("personType")
 		}
 		return err
 	}

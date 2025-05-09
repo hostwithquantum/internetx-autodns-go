@@ -6,6 +6,7 @@ package tmch_mark_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *TmchMarkDocumentInfoReader) ReadResponse(response runtime.ClientRespons
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[GET /tmchMark/{reference}/document/{type}] tmchMarkDocumentInfo", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewTmchMarkDocumentInfoOK() *TmchMarkDocumentInfoOK {
 	return &TmchMarkDocumentInfoOK{}
 }
 
-/*TmchMarkDocumentInfoOK handles this case with default header values.
+/*
+TmchMarkDocumentInfoOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type TmchMarkDocumentInfoOK struct {
 	Payload *models.JSONResponseDataTmchMarkDocument
 }
 
+// IsSuccess returns true when this tmch mark document info o k response has a 2xx status code
+func (o *TmchMarkDocumentInfoOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this tmch mark document info o k response has a 3xx status code
+func (o *TmchMarkDocumentInfoOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this tmch mark document info o k response has a 4xx status code
+func (o *TmchMarkDocumentInfoOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this tmch mark document info o k response has a 5xx status code
+func (o *TmchMarkDocumentInfoOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this tmch mark document info o k response a status code equal to that given
+func (o *TmchMarkDocumentInfoOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the tmch mark document info o k response
+func (o *TmchMarkDocumentInfoOK) Code() int {
+	return 200
+}
+
 func (o *TmchMarkDocumentInfoOK) Error() string {
-	return fmt.Sprintf("[GET /tmchMark/{reference}/document/{type}][%d] tmchMarkDocumentInfoOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /tmchMark/{reference}/document/{type}][%d] tmchMarkDocumentInfoOK %s", 200, payload)
+}
+
+func (o *TmchMarkDocumentInfoOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /tmchMark/{reference}/document/{type}][%d] tmchMarkDocumentInfoOK %s", 200, payload)
 }
 
 func (o *TmchMarkDocumentInfoOK) GetPayload() *models.JSONResponseDataTmchMarkDocument {

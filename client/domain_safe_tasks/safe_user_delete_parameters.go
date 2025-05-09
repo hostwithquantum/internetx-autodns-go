@@ -16,58 +16,75 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-// NewSafeUserDeleteParams creates a new SafeUserDeleteParams object
-// with the default values initialized.
+// NewSafeUserDeleteParams creates a new SafeUserDeleteParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewSafeUserDeleteParams() *SafeUserDeleteParams {
-	var ()
 	return &SafeUserDeleteParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewSafeUserDeleteParamsWithTimeout creates a new SafeUserDeleteParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewSafeUserDeleteParamsWithTimeout(timeout time.Duration) *SafeUserDeleteParams {
-	var ()
 	return &SafeUserDeleteParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewSafeUserDeleteParamsWithContext creates a new SafeUserDeleteParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewSafeUserDeleteParamsWithContext(ctx context.Context) *SafeUserDeleteParams {
-	var ()
 	return &SafeUserDeleteParams{
-
 		Context: ctx,
 	}
 }
 
 // NewSafeUserDeleteParamsWithHTTPClient creates a new SafeUserDeleteParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewSafeUserDeleteParamsWithHTTPClient(client *http.Client) *SafeUserDeleteParams {
-	var ()
 	return &SafeUserDeleteParams{
 		HTTPClient: client,
 	}
 }
 
-/*SafeUserDeleteParams contains all the parameters to send to the API endpoint
-for the safe user delete operation typically these are written to a http.Request
+/*
+SafeUserDeleteParams contains all the parameters to send to the API endpoint
+
+	for the safe user delete operation.
+
+	Typically these are written to a http.Request.
 */
 type SafeUserDeleteParams struct {
 
-	/*Context*/
+	// Context.
 	Context string
-	/*User*/
+
+	// User.
 	User string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the safe user delete params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *SafeUserDeleteParams) WithDefaults() *SafeUserDeleteParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the safe user delete params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *SafeUserDeleteParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the safe user delete params

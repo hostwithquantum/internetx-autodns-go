@@ -17,85 +17,129 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// NewUserUpdateLockParams creates a new UserUpdateLockParams object
-// with the default values initialized.
+// NewUserUpdateLockParams creates a new UserUpdateLockParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewUserUpdateLockParams() *UserUpdateLockParams {
-	var ()
 	return &UserUpdateLockParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewUserUpdateLockParamsWithTimeout creates a new UserUpdateLockParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewUserUpdateLockParamsWithTimeout(timeout time.Duration) *UserUpdateLockParams {
-	var ()
 	return &UserUpdateLockParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewUserUpdateLockParamsWithContext creates a new UserUpdateLockParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewUserUpdateLockParamsWithContext(ctx context.Context) *UserUpdateLockParams {
-	var ()
 	return &UserUpdateLockParams{
-
 		Context: ctx,
 	}
 }
 
 // NewUserUpdateLockParamsWithHTTPClient creates a new UserUpdateLockParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewUserUpdateLockParamsWithHTTPClient(client *http.Client) *UserUpdateLockParams {
-	var ()
 	return &UserUpdateLockParams{
 		HTTPClient: client,
 	}
 }
 
-/*UserUpdateLockParams contains all the parameters to send to the API endpoint
-for the user update lock operation typically these are written to a http.Request
+/*
+UserUpdateLockParams contains all the parameters to send to the API endpoint
+
+	for the user update lock operation.
+
+	Typically these are written to a http.Request.
 */
 type UserUpdateLockParams struct {
 
-	/*XDomainrobotBulkLimit*/
-	XDomainrobotBulkLimit *int32
-	/*XDomainrobotContext*/
-	XDomainrobotContext *int32
-	/*XDomainrobotDemo*/
-	XDomainrobotDemo *bool
-	/*XDomainrobotDomainSafePin*/
-	XDomainrobotDomainSafePin *string
-	/*XDomainrobotDomainSafeTan*/
-	XDomainrobotDomainSafeTan *string
-	/*XDomainrobotDomainSafeTransaction*/
-	XDomainrobotDomainSafeTransaction *string
-	/*XDomainrobotDomainSafeTransactionExpire*/
-	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
-	/*XDomainrobotOwnerContext*/
-	XDomainrobotOwnerContext *int32
-	/*XDomainrobotOwnerUser*/
-	XDomainrobotOwnerUser *string
-	/*XDomainrobotSessionID*/
-	XDomainrobotSessionID *string
-	/*XDomainrobotWS*/
-	XDomainrobotWS *string
-	/*Context*/
-	Context string
-	/*Keys
-	  Specifies whether the children should be unlocked as well. Example : ?keys[]=children
+	// XDomainrobot2FAToken.
+	//
+	// Format: int32
+	XDomainrobot2FAToken *int32
 
+	// XDomainrobotBulkLimit.
+	//
+	// Format: int32
+	XDomainrobotBulkLimit *int32
+
+	// XDomainrobotContext.
+	//
+	// Format: int32
+	XDomainrobotContext *int32
+
+	// XDomainrobotDemo.
+	XDomainrobotDemo *bool
+
+	// XDomainrobotDomainSafePin.
+	XDomainrobotDomainSafePin *string
+
+	// XDomainrobotDomainSafeTan.
+	XDomainrobotDomainSafeTan *string
+
+	// XDomainrobotDomainSafeTransaction.
+	XDomainrobotDomainSafeTransaction *string
+
+	// XDomainrobotDomainSafeTransactionExpire.
+	//
+	// Format: date-time
+	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
+
+	// XDomainrobotOwnerContext.
+	//
+	// Format: int32
+	XDomainrobotOwnerContext *int32
+
+	// XDomainrobotOwnerUser.
+	XDomainrobotOwnerUser *string
+
+	// XDomainrobotSessionID.
+	XDomainrobotSessionID *string
+
+	// XDomainrobotWS.
+	XDomainrobotWS *string
+
+	// Context.
+	//
+	// Format: int32
+	Context int32
+
+	/* Keys.
+
+	   Specifies whether the children should be unlocked as well. Example : ?keys[]=children
 	*/
 	Keys []string
-	/*Name*/
+
+	// Name.
 	Name string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the user update lock params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UserUpdateLockParams) WithDefaults() *UserUpdateLockParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the user update lock params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UserUpdateLockParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the user update lock params
@@ -129,6 +173,17 @@ func (o *UserUpdateLockParams) WithHTTPClient(client *http.Client) *UserUpdateLo
 // SetHTTPClient adds the HTTPClient to the user update lock params
 func (o *UserUpdateLockParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithXDomainrobot2FAToken adds the xDomainrobot2FAToken to the user update lock params
+func (o *UserUpdateLockParams) WithXDomainrobot2FAToken(xDomainrobot2FAToken *int32) *UserUpdateLockParams {
+	o.SetXDomainrobot2FAToken(xDomainrobot2FAToken)
+	return o
+}
+
+// SetXDomainrobot2FAToken adds the xDomainrobot2FAToken to the user update lock params
+func (o *UserUpdateLockParams) SetXDomainrobot2FAToken(xDomainrobot2FAToken *int32) {
+	o.XDomainrobot2FAToken = xDomainrobot2FAToken
 }
 
 // WithXDomainrobotBulkLimit adds the xDomainrobotBulkLimit to the user update lock params
@@ -253,13 +308,13 @@ func (o *UserUpdateLockParams) SetXDomainrobotWS(xDomainrobotWS *string) {
 }
 
 // WithContext adds the context to the user update lock params
-func (o *UserUpdateLockParams) WithContext(context string) *UserUpdateLockParams {
+func (o *UserUpdateLockParams) WithContext(context int32) *UserUpdateLockParams {
 	o.SetContext(context)
 	return o
 }
 
 // SetContext adds the context to the user update lock params
-func (o *UserUpdateLockParams) SetContext(context string) {
+func (o *UserUpdateLockParams) SetContext(context int32) {
 	o.Context = context
 }
 
@@ -293,13 +348,20 @@ func (o *UserUpdateLockParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 	}
 	var res []error
 
+	if o.XDomainrobot2FAToken != nil {
+
+		// header param X-Domainrobot-2FA-Token
+		if err := r.SetHeaderParam("X-Domainrobot-2FA-Token", swag.FormatInt32(*o.XDomainrobot2FAToken)); err != nil {
+			return err
+		}
+	}
+
 	if o.XDomainrobotBulkLimit != nil {
 
 		// header param X-Domainrobot-Bulk-Limit
 		if err := r.SetHeaderParam("X-Domainrobot-Bulk-Limit", swag.FormatInt32(*o.XDomainrobotBulkLimit)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotContext != nil {
@@ -308,7 +370,6 @@ func (o *UserUpdateLockParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if err := r.SetHeaderParam("X-Domainrobot-Context", swag.FormatInt32(*o.XDomainrobotContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDemo != nil {
@@ -317,7 +378,6 @@ func (o *UserUpdateLockParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if err := r.SetHeaderParam("X-Domainrobot-Demo", swag.FormatBool(*o.XDomainrobotDemo)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafePin != nil {
@@ -326,7 +386,6 @@ func (o *UserUpdateLockParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Pin", *o.XDomainrobotDomainSafePin); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTan != nil {
@@ -335,7 +394,6 @@ func (o *UserUpdateLockParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Tan", *o.XDomainrobotDomainSafeTan); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransaction != nil {
@@ -344,7 +402,6 @@ func (o *UserUpdateLockParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction", *o.XDomainrobotDomainSafeTransaction); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransactionExpire != nil {
@@ -353,7 +410,6 @@ func (o *UserUpdateLockParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction-Expire", o.XDomainrobotDomainSafeTransactionExpire.String()); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerContext != nil {
@@ -362,7 +418,6 @@ func (o *UserUpdateLockParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-Context", swag.FormatInt32(*o.XDomainrobotOwnerContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerUser != nil {
@@ -371,7 +426,6 @@ func (o *UserUpdateLockParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-User", *o.XDomainrobotOwnerUser); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotSessionID != nil {
@@ -380,7 +434,6 @@ func (o *UserUpdateLockParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if err := r.SetHeaderParam("X-Domainrobot-SessionId", *o.XDomainrobotSessionID); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotWS != nil {
@@ -389,20 +442,22 @@ func (o *UserUpdateLockParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if err := r.SetHeaderParam("X-Domainrobot-WS", *o.XDomainrobotWS); err != nil {
 			return err
 		}
-
 	}
 
 	// path param context
-	if err := r.SetPathParam("context", o.Context); err != nil {
+	if err := r.SetPathParam("context", swag.FormatInt32(o.Context)); err != nil {
 		return err
 	}
 
-	valuesKeys := o.Keys
+	if o.Keys != nil {
 
-	joinedKeys := swag.JoinByFormat(valuesKeys, "multi")
-	// query array param keys
-	if err := r.SetQueryParam("keys", joinedKeys...); err != nil {
-		return err
+		// binding items for keys
+		joinedKeys := o.bindParamKeys(reg)
+
+		// query array param keys
+		if err := r.SetQueryParam("keys", joinedKeys...); err != nil {
+			return err
+		}
 	}
 
 	// path param name
@@ -414,4 +469,21 @@ func (o *UserUpdateLockParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
+}
+
+// bindParamUserUpdateLock binds the parameter keys
+func (o *UserUpdateLockParams) bindParamKeys(formats strfmt.Registry) []string {
+	keysIR := o.Keys
+
+	var keysIC []string
+	for _, keysIIR := range keysIR { // explode []string
+
+		keysIIV := keysIIR // string as string
+		keysIC = append(keysIC, keysIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	keysIS := swag.JoinByFormat(keysIC, "multi")
+
+	return keysIS
 }

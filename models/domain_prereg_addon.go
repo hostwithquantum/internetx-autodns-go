@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,50 +19,55 @@ import (
 // swagger:model DomainPreregAddon
 type DomainPreregAddon struct {
 
-	// The confirm ip.
+	// IP from which the trademark registration was confirmed.
 	ConfirmIP string `json:"confirmIp,omitempty"`
 
-	// Confirm order.
+	// Confirmation of the order
+	//
+	// false = No confirmation
+	// true = Confirmation
+	// Default value = false
 	ConfirmOrder bool `json:"confirmOrder,omitempty"`
 
-	// The confirmed date.
+	// Date on which the trademark registration was confirmed.
 	// Format: date-time
 	Confirmed strfmt.DateTime `json:"confirmed,omitempty"`
 
-	// The external reference.
+	// Reference of the trademark entry.
 	ExternalReference string `json:"externalReference,omitempty"`
 
 	// The Irp App Capacity.
 	IrpAppCapacit string `json:"irpAppCapacit,omitempty"`
 
-	// The Irp App Date.
+	// Date on which the trademark was applied for.
 	// Format: date-time
 	IrpAppDate strfmt.DateTime `json:"irpAppDate,omitempty"`
 
-	// The Irp Cc Locality.
+	// Country code of where the trademark is registered.
 	IrpCcLocality string `json:"irpCcLocality,omitempty"`
 
-	// The Irp Name.
+	// Name of the right or trademark.
 	IrpName string `json:"irpName,omitempty"`
 
-	// The Irp Number.
+	// Number of the right or trademark.
 	IrpNumber string `json:"irpNumber,omitempty"`
 
-	// The Irp Pvrc.
+	// The pre-validation code.
 	IrpPvrc string `json:"irpPvrc,omitempty"`
 
-	// The Irp Reg Date.
+	// Date on which the mark was assigned.
 	// Format: date-time
 	IrpRegDate strfmt.DateTime `json:"irpRegDate,omitempty"`
 
-	// The addon update mode.
+	// The addon update mode, defining the procedure upon updating addons.
+	// Example: MERGE, REPLACE
 	Mode string `json:"mode,omitempty"`
 
-	// The not after date.
+	// Date until which the trademark registration is valid.
 	// Format: date-time
 	NotAfter strfmt.DateTime `json:"notAfter,omitempty"`
 
-	// The price class.
+	// Price class of the domain.
 	PriceClass string `json:"priceClass,omitempty"`
 }
 
@@ -91,7 +98,6 @@ func (m *DomainPreregAddon) Validate(formats strfmt.Registry) error {
 }
 
 func (m *DomainPreregAddon) validateConfirmed(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Confirmed) { // not required
 		return nil
 	}
@@ -104,7 +110,6 @@ func (m *DomainPreregAddon) validateConfirmed(formats strfmt.Registry) error {
 }
 
 func (m *DomainPreregAddon) validateIrpAppDate(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.IrpAppDate) { // not required
 		return nil
 	}
@@ -117,7 +122,6 @@ func (m *DomainPreregAddon) validateIrpAppDate(formats strfmt.Registry) error {
 }
 
 func (m *DomainPreregAddon) validateIrpRegDate(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.IrpRegDate) { // not required
 		return nil
 	}
@@ -130,7 +134,6 @@ func (m *DomainPreregAddon) validateIrpRegDate(formats strfmt.Registry) error {
 }
 
 func (m *DomainPreregAddon) validateNotAfter(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.NotAfter) { // not required
 		return nil
 	}
@@ -139,6 +142,11 @@ func (m *DomainPreregAddon) validateNotAfter(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this domain prereg addon based on context it is used
+func (m *DomainPreregAddon) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

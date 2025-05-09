@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -19,8 +21,17 @@ type DomainExtensions struct {
 	// cancelation extensions
 	CancelationExtensions *DomainCancelationExtensions `json:"cancelationExtensions,omitempty"`
 
+	// domain autodelete extensions
+	DomainAutodeleteExtensions *DomainAutodeleteExtensions `json:"domainAutodeleteExtensions,omitempty"`
+
+	// domain buy extensions
+	DomainBuyExtensions *DomainBuyExtensions `json:"domainBuyExtensions,omitempty"`
+
 	// parking extensions
 	ParkingExtensions *DomainParkingExtensions `json:"parkingExtensions,omitempty"`
+
+	// sell extensions
+	SellExtensions *DomainSellExtensions `json:"sellExtensions,omitempty"`
 
 	// tmch claims notice extensions
 	TmchClaimsNoticeExtensions *DomainTmchClaimNoticeExtensions `json:"tmchClaimsNoticeExtensions,omitempty"`
@@ -37,7 +48,19 @@ func (m *DomainExtensions) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateDomainAutodeleteExtensions(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateDomainBuyExtensions(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateParkingExtensions(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSellExtensions(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -56,7 +79,6 @@ func (m *DomainExtensions) Validate(formats strfmt.Registry) error {
 }
 
 func (m *DomainExtensions) validateCancelationExtensions(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.CancelationExtensions) { // not required
 		return nil
 	}
@@ -65,6 +87,46 @@ func (m *DomainExtensions) validateCancelationExtensions(formats strfmt.Registry
 		if err := m.CancelationExtensions.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("cancelationExtensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("cancelationExtensions")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainExtensions) validateDomainAutodeleteExtensions(formats strfmt.Registry) error {
+	if swag.IsZero(m.DomainAutodeleteExtensions) { // not required
+		return nil
+	}
+
+	if m.DomainAutodeleteExtensions != nil {
+		if err := m.DomainAutodeleteExtensions.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("domainAutodeleteExtensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("domainAutodeleteExtensions")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainExtensions) validateDomainBuyExtensions(formats strfmt.Registry) error {
+	if swag.IsZero(m.DomainBuyExtensions) { // not required
+		return nil
+	}
+
+	if m.DomainBuyExtensions != nil {
+		if err := m.DomainBuyExtensions.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("domainBuyExtensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("domainBuyExtensions")
 			}
 			return err
 		}
@@ -74,7 +136,6 @@ func (m *DomainExtensions) validateCancelationExtensions(formats strfmt.Registry
 }
 
 func (m *DomainExtensions) validateParkingExtensions(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ParkingExtensions) { // not required
 		return nil
 	}
@@ -83,6 +144,27 @@ func (m *DomainExtensions) validateParkingExtensions(formats strfmt.Registry) er
 		if err := m.ParkingExtensions.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("parkingExtensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("parkingExtensions")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainExtensions) validateSellExtensions(formats strfmt.Registry) error {
+	if swag.IsZero(m.SellExtensions) { // not required
+		return nil
+	}
+
+	if m.SellExtensions != nil {
+		if err := m.SellExtensions.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("sellExtensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("sellExtensions")
 			}
 			return err
 		}
@@ -92,7 +174,6 @@ func (m *DomainExtensions) validateParkingExtensions(formats strfmt.Registry) er
 }
 
 func (m *DomainExtensions) validateTmchClaimsNoticeExtensions(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.TmchClaimsNoticeExtensions) { // not required
 		return nil
 	}
@@ -101,6 +182,8 @@ func (m *DomainExtensions) validateTmchClaimsNoticeExtensions(formats strfmt.Reg
 		if err := m.TmchClaimsNoticeExtensions.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("tmchClaimsNoticeExtensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("tmchClaimsNoticeExtensions")
 			}
 			return err
 		}
@@ -110,7 +193,6 @@ func (m *DomainExtensions) validateTmchClaimsNoticeExtensions(formats strfmt.Reg
 }
 
 func (m *DomainExtensions) validateVerificationExtensions(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.VerificationExtensions) { // not required
 		return nil
 	}
@@ -119,6 +201,193 @@ func (m *DomainExtensions) validateVerificationExtensions(formats strfmt.Registr
 		if err := m.VerificationExtensions.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("verificationExtensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("verificationExtensions")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this domain extensions based on the context it is used
+func (m *DomainExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateCancelationExtensions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateDomainAutodeleteExtensions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateDomainBuyExtensions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateParkingExtensions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSellExtensions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTmchClaimsNoticeExtensions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateVerificationExtensions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *DomainExtensions) contextValidateCancelationExtensions(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.CancelationExtensions != nil {
+
+		if swag.IsZero(m.CancelationExtensions) { // not required
+			return nil
+		}
+
+		if err := m.CancelationExtensions.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("cancelationExtensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("cancelationExtensions")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainExtensions) contextValidateDomainAutodeleteExtensions(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.DomainAutodeleteExtensions != nil {
+
+		if swag.IsZero(m.DomainAutodeleteExtensions) { // not required
+			return nil
+		}
+
+		if err := m.DomainAutodeleteExtensions.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("domainAutodeleteExtensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("domainAutodeleteExtensions")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainExtensions) contextValidateDomainBuyExtensions(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.DomainBuyExtensions != nil {
+
+		if swag.IsZero(m.DomainBuyExtensions) { // not required
+			return nil
+		}
+
+		if err := m.DomainBuyExtensions.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("domainBuyExtensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("domainBuyExtensions")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainExtensions) contextValidateParkingExtensions(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.ParkingExtensions != nil {
+
+		if swag.IsZero(m.ParkingExtensions) { // not required
+			return nil
+		}
+
+		if err := m.ParkingExtensions.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("parkingExtensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("parkingExtensions")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainExtensions) contextValidateSellExtensions(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.SellExtensions != nil {
+
+		if swag.IsZero(m.SellExtensions) { // not required
+			return nil
+		}
+
+		if err := m.SellExtensions.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("sellExtensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("sellExtensions")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainExtensions) contextValidateTmchClaimsNoticeExtensions(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.TmchClaimsNoticeExtensions != nil {
+
+		if swag.IsZero(m.TmchClaimsNoticeExtensions) { // not required
+			return nil
+		}
+
+		if err := m.TmchClaimsNoticeExtensions.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("tmchClaimsNoticeExtensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("tmchClaimsNoticeExtensions")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainExtensions) contextValidateVerificationExtensions(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.VerificationExtensions != nil {
+
+		if swag.IsZero(m.VerificationExtensions) { // not required
+			return nil
+		}
+
+		if err := m.VerificationExtensions.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("verificationExtensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("verificationExtensions")
 			}
 			return err
 		}

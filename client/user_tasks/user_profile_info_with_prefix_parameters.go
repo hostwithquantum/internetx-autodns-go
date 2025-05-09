@@ -19,85 +19,132 @@ import (
 	"github.com/hostwithquantum/internetx-autodns-go/models"
 )
 
-// NewUserProfileInfoWithPrefixParams creates a new UserProfileInfoWithPrefixParams object
-// with the default values initialized.
+// NewUserProfileInfoWithPrefixParams creates a new UserProfileInfoWithPrefixParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewUserProfileInfoWithPrefixParams() *UserProfileInfoWithPrefixParams {
-	var ()
 	return &UserProfileInfoWithPrefixParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewUserProfileInfoWithPrefixParamsWithTimeout creates a new UserProfileInfoWithPrefixParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewUserProfileInfoWithPrefixParamsWithTimeout(timeout time.Duration) *UserProfileInfoWithPrefixParams {
-	var ()
 	return &UserProfileInfoWithPrefixParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewUserProfileInfoWithPrefixParamsWithContext creates a new UserProfileInfoWithPrefixParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewUserProfileInfoWithPrefixParamsWithContext(ctx context.Context) *UserProfileInfoWithPrefixParams {
-	var ()
 	return &UserProfileInfoWithPrefixParams{
-
 		Context: ctx,
 	}
 }
 
 // NewUserProfileInfoWithPrefixParamsWithHTTPClient creates a new UserProfileInfoWithPrefixParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewUserProfileInfoWithPrefixParamsWithHTTPClient(client *http.Client) *UserProfileInfoWithPrefixParams {
-	var ()
 	return &UserProfileInfoWithPrefixParams{
 		HTTPClient: client,
 	}
 }
 
-/*UserProfileInfoWithPrefixParams contains all the parameters to send to the API endpoint
-for the user profile info with prefix operation typically these are written to a http.Request
+/*
+UserProfileInfoWithPrefixParams contains all the parameters to send to the API endpoint
+
+	for the user profile info with prefix operation.
+
+	Typically these are written to a http.Request.
 */
 type UserProfileInfoWithPrefixParams struct {
 
-	/*XDomainrobotBulkLimit*/
-	XDomainrobotBulkLimit *int32
-	/*XDomainrobotContext*/
-	XDomainrobotContext *int32
-	/*XDomainrobotDemo*/
-	XDomainrobotDemo *bool
-	/*XDomainrobotDomainSafePin*/
-	XDomainrobotDomainSafePin *string
-	/*XDomainrobotDomainSafeTan*/
-	XDomainrobotDomainSafeTan *string
-	/*XDomainrobotDomainSafeTransaction*/
-	XDomainrobotDomainSafeTransaction *string
-	/*XDomainrobotDomainSafeTransactionExpire*/
-	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
-	/*XDomainrobotOwnerContext*/
-	XDomainrobotOwnerContext *int32
-	/*XDomainrobotOwnerUser*/
-	XDomainrobotOwnerUser *string
-	/*XDomainrobotSessionID*/
-	XDomainrobotSessionID *string
-	/*XDomainrobotWS*/
-	XDomainrobotWS *string
-	/*Body
-	  user
+	// XDomainrobot2FAToken.
+	//
+	// Format: int32
+	XDomainrobot2FAToken *int32
 
+	// XDomainrobotBulkLimit.
+	//
+	// Format: int32
+	XDomainrobotBulkLimit *int32
+
+	// XDomainrobotContext.
+	//
+	// Format: int32
+	XDomainrobotContext *int32
+
+	// XDomainrobotDemo.
+	XDomainrobotDemo *bool
+
+	// XDomainrobotDomainSafePin.
+	XDomainrobotDomainSafePin *string
+
+	// XDomainrobotDomainSafeTan.
+	XDomainrobotDomainSafeTan *string
+
+	// XDomainrobotDomainSafeTransaction.
+	XDomainrobotDomainSafeTransaction *string
+
+	// XDomainrobotDomainSafeTransactionExpire.
+	//
+	// Format: date-time
+	XDomainrobotDomainSafeTransactionExpire *strfmt.DateTime
+
+	// XDomainrobotOwnerContext.
+	//
+	// Format: int32
+	XDomainrobotOwnerContext *int32
+
+	// XDomainrobotOwnerUser.
+	XDomainrobotOwnerUser *string
+
+	// XDomainrobotSessionID.
+	XDomainrobotSessionID *string
+
+	// XDomainrobotWS.
+	XDomainrobotWS *string
+
+	/* Body.
+
+	   user
 	*/
 	Body *models.User
-	/*Context*/
-	Context string
-	/*Name*/
+
+	// Context.
+	//
+	// Format: int32
+	Context int32
+
+	// Name.
 	Name string
+
+	// Prefix.
+	Prefix string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the user profile info with prefix params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UserProfileInfoWithPrefixParams) WithDefaults() *UserProfileInfoWithPrefixParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the user profile info with prefix params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UserProfileInfoWithPrefixParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the user profile info with prefix params
@@ -131,6 +178,17 @@ func (o *UserProfileInfoWithPrefixParams) WithHTTPClient(client *http.Client) *U
 // SetHTTPClient adds the HTTPClient to the user profile info with prefix params
 func (o *UserProfileInfoWithPrefixParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithXDomainrobot2FAToken adds the xDomainrobot2FAToken to the user profile info with prefix params
+func (o *UserProfileInfoWithPrefixParams) WithXDomainrobot2FAToken(xDomainrobot2FAToken *int32) *UserProfileInfoWithPrefixParams {
+	o.SetXDomainrobot2FAToken(xDomainrobot2FAToken)
+	return o
+}
+
+// SetXDomainrobot2FAToken adds the xDomainrobot2FAToken to the user profile info with prefix params
+func (o *UserProfileInfoWithPrefixParams) SetXDomainrobot2FAToken(xDomainrobot2FAToken *int32) {
+	o.XDomainrobot2FAToken = xDomainrobot2FAToken
 }
 
 // WithXDomainrobotBulkLimit adds the xDomainrobotBulkLimit to the user profile info with prefix params
@@ -266,13 +324,13 @@ func (o *UserProfileInfoWithPrefixParams) SetBody(body *models.User) {
 }
 
 // WithContext adds the context to the user profile info with prefix params
-func (o *UserProfileInfoWithPrefixParams) WithContext(context string) *UserProfileInfoWithPrefixParams {
+func (o *UserProfileInfoWithPrefixParams) WithContext(context int32) *UserProfileInfoWithPrefixParams {
 	o.SetContext(context)
 	return o
 }
 
 // SetContext adds the context to the user profile info with prefix params
-func (o *UserProfileInfoWithPrefixParams) SetContext(context string) {
+func (o *UserProfileInfoWithPrefixParams) SetContext(context int32) {
 	o.Context = context
 }
 
@@ -287,6 +345,17 @@ func (o *UserProfileInfoWithPrefixParams) SetName(name string) {
 	o.Name = name
 }
 
+// WithPrefix adds the prefix to the user profile info with prefix params
+func (o *UserProfileInfoWithPrefixParams) WithPrefix(prefix string) *UserProfileInfoWithPrefixParams {
+	o.SetPrefix(prefix)
+	return o
+}
+
+// SetPrefix adds the prefix to the user profile info with prefix params
+func (o *UserProfileInfoWithPrefixParams) SetPrefix(prefix string) {
+	o.Prefix = prefix
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *UserProfileInfoWithPrefixParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -295,13 +364,20 @@ func (o *UserProfileInfoWithPrefixParams) WriteToRequest(r runtime.ClientRequest
 	}
 	var res []error
 
+	if o.XDomainrobot2FAToken != nil {
+
+		// header param X-Domainrobot-2FA-Token
+		if err := r.SetHeaderParam("X-Domainrobot-2FA-Token", swag.FormatInt32(*o.XDomainrobot2FAToken)); err != nil {
+			return err
+		}
+	}
+
 	if o.XDomainrobotBulkLimit != nil {
 
 		// header param X-Domainrobot-Bulk-Limit
 		if err := r.SetHeaderParam("X-Domainrobot-Bulk-Limit", swag.FormatInt32(*o.XDomainrobotBulkLimit)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotContext != nil {
@@ -310,7 +386,6 @@ func (o *UserProfileInfoWithPrefixParams) WriteToRequest(r runtime.ClientRequest
 		if err := r.SetHeaderParam("X-Domainrobot-Context", swag.FormatInt32(*o.XDomainrobotContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDemo != nil {
@@ -319,7 +394,6 @@ func (o *UserProfileInfoWithPrefixParams) WriteToRequest(r runtime.ClientRequest
 		if err := r.SetHeaderParam("X-Domainrobot-Demo", swag.FormatBool(*o.XDomainrobotDemo)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafePin != nil {
@@ -328,7 +402,6 @@ func (o *UserProfileInfoWithPrefixParams) WriteToRequest(r runtime.ClientRequest
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Pin", *o.XDomainrobotDomainSafePin); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTan != nil {
@@ -337,7 +410,6 @@ func (o *UserProfileInfoWithPrefixParams) WriteToRequest(r runtime.ClientRequest
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Tan", *o.XDomainrobotDomainSafeTan); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransaction != nil {
@@ -346,7 +418,6 @@ func (o *UserProfileInfoWithPrefixParams) WriteToRequest(r runtime.ClientRequest
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction", *o.XDomainrobotDomainSafeTransaction); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotDomainSafeTransactionExpire != nil {
@@ -355,7 +426,6 @@ func (o *UserProfileInfoWithPrefixParams) WriteToRequest(r runtime.ClientRequest
 		if err := r.SetHeaderParam("X-Domainrobot-Domain-Safe-Transaction-Expire", o.XDomainrobotDomainSafeTransactionExpire.String()); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerContext != nil {
@@ -364,7 +434,6 @@ func (o *UserProfileInfoWithPrefixParams) WriteToRequest(r runtime.ClientRequest
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-Context", swag.FormatInt32(*o.XDomainrobotOwnerContext)); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotOwnerUser != nil {
@@ -373,7 +442,6 @@ func (o *UserProfileInfoWithPrefixParams) WriteToRequest(r runtime.ClientRequest
 		if err := r.SetHeaderParam("X-Domainrobot-Owner-User", *o.XDomainrobotOwnerUser); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotSessionID != nil {
@@ -382,7 +450,6 @@ func (o *UserProfileInfoWithPrefixParams) WriteToRequest(r runtime.ClientRequest
 		if err := r.SetHeaderParam("X-Domainrobot-SessionId", *o.XDomainrobotSessionID); err != nil {
 			return err
 		}
-
 	}
 
 	if o.XDomainrobotWS != nil {
@@ -391,9 +458,7 @@ func (o *UserProfileInfoWithPrefixParams) WriteToRequest(r runtime.ClientRequest
 		if err := r.SetHeaderParam("X-Domainrobot-WS", *o.XDomainrobotWS); err != nil {
 			return err
 		}
-
 	}
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err
@@ -401,12 +466,17 @@ func (o *UserProfileInfoWithPrefixParams) WriteToRequest(r runtime.ClientRequest
 	}
 
 	// path param context
-	if err := r.SetPathParam("context", o.Context); err != nil {
+	if err := r.SetPathParam("context", swag.FormatInt32(o.Context)); err != nil {
 		return err
 	}
 
 	// path param name
 	if err := r.SetPathParam("name", o.Name); err != nil {
+		return err
+	}
+
+	// path param prefix
+	if err := r.SetPathParam("prefix", o.Prefix); err != nil {
 		return err
 	}
 

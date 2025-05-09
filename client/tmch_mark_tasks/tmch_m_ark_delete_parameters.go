@@ -16,59 +16,72 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-// NewTmchMArkDeleteParams creates a new TmchMArkDeleteParams object
-// with the default values initialized.
+// NewTmchMArkDeleteParams creates a new TmchMArkDeleteParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewTmchMArkDeleteParams() *TmchMArkDeleteParams {
-	var ()
 	return &TmchMArkDeleteParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewTmchMArkDeleteParamsWithTimeout creates a new TmchMArkDeleteParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewTmchMArkDeleteParamsWithTimeout(timeout time.Duration) *TmchMArkDeleteParams {
-	var ()
 	return &TmchMArkDeleteParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewTmchMArkDeleteParamsWithContext creates a new TmchMArkDeleteParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewTmchMArkDeleteParamsWithContext(ctx context.Context) *TmchMArkDeleteParams {
-	var ()
 	return &TmchMArkDeleteParams{
-
 		Context: ctx,
 	}
 }
 
 // NewTmchMArkDeleteParamsWithHTTPClient creates a new TmchMArkDeleteParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewTmchMArkDeleteParamsWithHTTPClient(client *http.Client) *TmchMArkDeleteParams {
-	var ()
 	return &TmchMArkDeleteParams{
 		HTTPClient: client,
 	}
 }
 
-/*TmchMArkDeleteParams contains all the parameters to send to the API endpoint
-for the tmch m ark delete operation typically these are written to a http.Request
+/*
+TmchMArkDeleteParams contains all the parameters to send to the API endpoint
+
+	for the tmch m ark delete operation.
+
+	Typically these are written to a http.Request.
 */
 type TmchMArkDeleteParams struct {
 
-	/*Body
-	  reference
-
-	*/
-	Body string
+	// Reference.
+	Reference string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the tmch m ark delete params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *TmchMArkDeleteParams) WithDefaults() *TmchMArkDeleteParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the tmch m ark delete params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *TmchMArkDeleteParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the tmch m ark delete params
@@ -104,15 +117,15 @@ func (o *TmchMArkDeleteParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithBody adds the body to the tmch m ark delete params
-func (o *TmchMArkDeleteParams) WithBody(body string) *TmchMArkDeleteParams {
-	o.SetBody(body)
+// WithReference adds the reference to the tmch m ark delete params
+func (o *TmchMArkDeleteParams) WithReference(reference string) *TmchMArkDeleteParams {
+	o.SetReference(reference)
 	return o
 }
 
-// SetBody adds the body to the tmch m ark delete params
-func (o *TmchMArkDeleteParams) SetBody(body string) {
-	o.Body = body
+// SetReference adds the reference to the tmch m ark delete params
+func (o *TmchMArkDeleteParams) SetReference(reference string) {
+	o.Reference = reference
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -123,7 +136,8 @@ func (o *TmchMArkDeleteParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 	}
 	var res []error
 
-	if err := r.SetBodyParam(o.Body); err != nil {
+	// path param reference
+	if err := r.SetPathParam("reference", o.Reference); err != nil {
 		return err
 	}
 

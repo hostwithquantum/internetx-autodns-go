@@ -16,59 +16,72 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-// NewTmchMarkUpdateParams creates a new TmchMarkUpdateParams object
-// with the default values initialized.
+// NewTmchMarkUpdateParams creates a new TmchMarkUpdateParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewTmchMarkUpdateParams() *TmchMarkUpdateParams {
-	var ()
 	return &TmchMarkUpdateParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewTmchMarkUpdateParamsWithTimeout creates a new TmchMarkUpdateParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewTmchMarkUpdateParamsWithTimeout(timeout time.Duration) *TmchMarkUpdateParams {
-	var ()
 	return &TmchMarkUpdateParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewTmchMarkUpdateParamsWithContext creates a new TmchMarkUpdateParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewTmchMarkUpdateParamsWithContext(ctx context.Context) *TmchMarkUpdateParams {
-	var ()
 	return &TmchMarkUpdateParams{
-
 		Context: ctx,
 	}
 }
 
 // NewTmchMarkUpdateParamsWithHTTPClient creates a new TmchMarkUpdateParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewTmchMarkUpdateParamsWithHTTPClient(client *http.Client) *TmchMarkUpdateParams {
-	var ()
 	return &TmchMarkUpdateParams{
 		HTTPClient: client,
 	}
 }
 
-/*TmchMarkUpdateParams contains all the parameters to send to the API endpoint
-for the tmch mark update operation typically these are written to a http.Request
+/*
+TmchMarkUpdateParams contains all the parameters to send to the API endpoint
+
+	for the tmch mark update operation.
+
+	Typically these are written to a http.Request.
 */
 type TmchMarkUpdateParams struct {
 
-	/*Body
-	  reference
-
-	*/
-	Body string
+	// Reference.
+	Reference string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the tmch mark update params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *TmchMarkUpdateParams) WithDefaults() *TmchMarkUpdateParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the tmch mark update params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *TmchMarkUpdateParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the tmch mark update params
@@ -104,15 +117,15 @@ func (o *TmchMarkUpdateParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithBody adds the body to the tmch mark update params
-func (o *TmchMarkUpdateParams) WithBody(body string) *TmchMarkUpdateParams {
-	o.SetBody(body)
+// WithReference adds the reference to the tmch mark update params
+func (o *TmchMarkUpdateParams) WithReference(reference string) *TmchMarkUpdateParams {
+	o.SetReference(reference)
 	return o
 }
 
-// SetBody adds the body to the tmch mark update params
-func (o *TmchMarkUpdateParams) SetBody(body string) {
-	o.Body = body
+// SetReference adds the reference to the tmch mark update params
+func (o *TmchMarkUpdateParams) SetReference(reference string) {
+	o.Reference = reference
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -123,7 +136,8 @@ func (o *TmchMarkUpdateParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 	}
 	var res []error
 
-	if err := r.SetBodyParam(o.Body); err != nil {
+	// path param reference
+	if err := r.SetPathParam("reference", o.Reference); err != nil {
 		return err
 	}
 

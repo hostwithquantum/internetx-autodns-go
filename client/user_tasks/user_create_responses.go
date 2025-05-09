@@ -6,6 +6,7 @@ package user_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *UserCreateReader) ReadResponse(response runtime.ClientResponse, consume
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[POST /user] userCreate", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewUserCreateOK() *UserCreateOK {
 	return &UserCreateOK{}
 }
 
-/*UserCreateOK handles this case with default header values.
+/*
+UserCreateOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type UserCreateOK struct {
 	Payload *models.JSONResponseDataBasicUser
 }
 
+// IsSuccess returns true when this user create o k response has a 2xx status code
+func (o *UserCreateOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this user create o k response has a 3xx status code
+func (o *UserCreateOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this user create o k response has a 4xx status code
+func (o *UserCreateOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this user create o k response has a 5xx status code
+func (o *UserCreateOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this user create o k response a status code equal to that given
+func (o *UserCreateOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the user create o k response
+func (o *UserCreateOK) Code() int {
+	return 200
+}
+
 func (o *UserCreateOK) Error() string {
-	return fmt.Sprintf("[POST /user][%d] userCreateOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /user][%d] userCreateOK %s", 200, payload)
+}
+
+func (o *UserCreateOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /user][%d] userCreateOK %s", 200, payload)
 }
 
 func (o *UserCreateOK) GetPayload() *models.JSONResponseDataBasicUser {

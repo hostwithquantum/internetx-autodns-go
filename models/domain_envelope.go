@@ -6,9 +6,12 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // DomainEnvelope domain envelope
@@ -20,16 +23,22 @@ type DomainEnvelope struct {
 	DebugTime int64 `json:"debugTime,omitempty"`
 
 	// The domain
+	// Example: domain.de
 	Domain string `json:"domain,omitempty"`
 
 	// All whois checks will be done via dns check.
 	ForceDNSCheck bool `json:"forceDnsCheck,omitempty"`
 
 	// The unicode domain name
+	// Example: müller.org
 	Idn string `json:"idn,omitempty"`
 
 	// Defines whether this domain name is only available for preregistration.
-	IsPrereg bool `json:"isPrereg,omitempty"`
+	// Read Only: true
+	IsPrereg *bool `json:"isPrereg,omitempty"`
+
+	// Notification
+	Notification *Notification `json:"notification,omitempty"`
 
 	// Defines whether to return only free domain names when service WHOIS is used for a source.
 	OnlyAvailable bool `json:"onlyAvailable,omitempty"`
@@ -42,11 +51,26 @@ type DomainEnvelope struct {
 
 	// Source
 	Source DomainStudioDomainSource `json:"source,omitempty"`
+
+	// The subTld for the given domain name
+	// Example: co
+	SubTld string `json:"subTld,omitempty"`
+
+	// The tld for the given domain name
+	// Example: com
+	Tld string `json:"tld,omitempty"`
+
+	// Defines the timeout for the whois duration in seconds
+	WhoisTimeout int32 `json:"whoisTimeout,omitempty"`
 }
 
 // Validate validates this domain envelope
 func (m *DomainEnvelope) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateNotification(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateServices(formats); err != nil {
 		res = append(res, err)
@@ -62,8 +86,26 @@ func (m *DomainEnvelope) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *DomainEnvelope) validateServices(formats strfmt.Registry) error {
+func (m *DomainEnvelope) validateNotification(formats strfmt.Registry) error {
+	if swag.IsZero(m.Notification) { // not required
+		return nil
+	}
 
+	if m.Notification != nil {
+		if err := m.Notification.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("notification")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("notification")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainEnvelope) validateServices(formats strfmt.Registry) error {
 	if swag.IsZero(m.Services) { // not required
 		return nil
 	}
@@ -72,6 +114,8 @@ func (m *DomainEnvelope) validateServices(formats strfmt.Registry) error {
 		if err := m.Services.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("services")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("services")
 			}
 			return err
 		}
@@ -81,7 +125,6 @@ func (m *DomainEnvelope) validateServices(formats strfmt.Registry) error {
 }
 
 func (m *DomainEnvelope) validateSource(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Source) { // not required
 		return nil
 	}
@@ -89,6 +132,103 @@ func (m *DomainEnvelope) validateSource(formats strfmt.Registry) error {
 	if err := m.Source.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("source")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("source")
+		}
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this domain envelope based on the context it is used
+func (m *DomainEnvelope) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateIsPrereg(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateNotification(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateServices(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSource(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *DomainEnvelope) contextValidateIsPrereg(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := validate.ReadOnly(ctx, "isPrereg", "body", m.IsPrereg); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *DomainEnvelope) contextValidateNotification(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Notification != nil {
+
+		if swag.IsZero(m.Notification) { // not required
+			return nil
+		}
+
+		if err := m.Notification.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("notification")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("notification")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainEnvelope) contextValidateServices(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Services != nil {
+
+		if swag.IsZero(m.Services) { // not required
+			return nil
+		}
+
+		if err := m.Services.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("services")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("services")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DomainEnvelope) contextValidateSource(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Source) { // not required
+		return nil
+	}
+
+	if err := m.Source.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("source")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("source")
 		}
 		return err
 	}

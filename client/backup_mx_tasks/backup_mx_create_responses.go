@@ -6,6 +6,7 @@ package backup_mx_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *BackupMxCreateReader) ReadResponse(response runtime.ClientResponse, con
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[POST /backupMx] backupMxCreate", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewBackupMxCreateOK() *BackupMxCreateOK {
 	return &BackupMxCreateOK{}
 }
 
-/*BackupMxCreateOK handles this case with default header values.
+/*
+BackupMxCreateOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type BackupMxCreateOK struct {
 	Payload *models.JSONResponseDataJSONNoData
 }
 
+// IsSuccess returns true when this backup mx create o k response has a 2xx status code
+func (o *BackupMxCreateOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this backup mx create o k response has a 3xx status code
+func (o *BackupMxCreateOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this backup mx create o k response has a 4xx status code
+func (o *BackupMxCreateOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this backup mx create o k response has a 5xx status code
+func (o *BackupMxCreateOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this backup mx create o k response a status code equal to that given
+func (o *BackupMxCreateOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the backup mx create o k response
+func (o *BackupMxCreateOK) Code() int {
+	return 200
+}
+
 func (o *BackupMxCreateOK) Error() string {
-	return fmt.Sprintf("[POST /backupMx][%d] backupMxCreateOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /backupMx][%d] backupMxCreateOK %s", 200, payload)
+}
+
+func (o *BackupMxCreateOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /backupMx][%d] backupMxCreateOK %s", 200, payload)
 }
 
 func (o *BackupMxCreateOK) GetPayload() *models.JSONResponseDataJSONNoData {

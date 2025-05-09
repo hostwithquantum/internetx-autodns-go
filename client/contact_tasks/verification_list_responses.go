@@ -6,6 +6,7 @@ package contact_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *VerificationListReader) ReadResponse(response runtime.ClientResponse, c
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[POST /contact/verification/_search] verificationList", response, response.Code())
 	}
 }
 
@@ -40,7 +40,8 @@ func NewVerificationListOK() *VerificationListOK {
 	return &VerificationListOK{}
 }
 
-/*VerificationListOK handles this case with default header values.
+/*
+VerificationListOK describes a response with status code 200, with default header values.
 
 successful operation
 */
@@ -48,8 +49,44 @@ type VerificationListOK struct {
 	Payload *models.JSONResponseDataContactVerification
 }
 
+// IsSuccess returns true when this verification list o k response has a 2xx status code
+func (o *VerificationListOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this verification list o k response has a 3xx status code
+func (o *VerificationListOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this verification list o k response has a 4xx status code
+func (o *VerificationListOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this verification list o k response has a 5xx status code
+func (o *VerificationListOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this verification list o k response a status code equal to that given
+func (o *VerificationListOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the verification list o k response
+func (o *VerificationListOK) Code() int {
+	return 200
+}
+
 func (o *VerificationListOK) Error() string {
-	return fmt.Sprintf("[POST /contact/verification/_search][%d] verificationListOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /contact/verification/_search][%d] verificationListOK %s", 200, payload)
+}
+
+func (o *VerificationListOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /contact/verification/_search][%d] verificationListOK %s", 200, payload)
 }
 
 func (o *VerificationListOK) GetPayload() *models.JSONResponseDataContactVerification {

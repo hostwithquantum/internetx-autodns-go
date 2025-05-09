@@ -6,10 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"github.com/go-openapi/errors"
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // Soa soa
@@ -17,43 +17,33 @@ import (
 // swagger:model Soa
 type Soa struct {
 
-	// The email address of the responsible of the zone
-	// Required: true
-	Email *string `json:"email"`
+	// The email address of the Zone Contact
+	Email string `json:"email,omitempty"`
 
-	// The seconds after the zone data will not be delievered, if the zone could not be reached on the master.
+	// Number of seconds after which secondary name servers
+	// should stop answering request for this zone if the master does not respond.
+	// This value must be bigger than the sum of Refresh and Retry.
 	Expire int64 `json:"expire,omitempty"`
 
-	// The seconds after the secondary should refresh the zone data
+	// Number of seconds after which secondary name servers should query the master for the SOA record, to detect zone changes
 	Refresh int64 `json:"refresh,omitempty"`
 
-	// The seconds after the secondary should retry the zone data after the refresh has been timeouts
+	// Number of seconds after which secondary name servers should retry to request the serial number from the master
+	// if the master does not respond. It must be less than Refresh.
 	Retry int64 `json:"retry,omitempty"`
 
-	// ttl
+	// Time-to-live default value of the Resource Record of a zone
+	// Example: false = Check is performed\n false
 	TTL int64 `json:"ttl,omitempty"`
 }
 
 // Validate validates this soa
 func (m *Soa) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateEmail(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 
-func (m *Soa) validateEmail(formats strfmt.Registry) error {
-
-	if err := validate.Required("email", "body", m.Email); err != nil {
-		return err
-	}
-
+// ContextValidate validates this soa based on context it is used
+func (m *Soa) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -19,28 +21,33 @@ type ContactGeneralExtensions struct {
 	// The birth extensions.
 	Birth *ContactBirthExtensions `json:"birth,omitempty"`
 
-	// The citizenship.
+	// Citizenship. For EU citizens living outside the EU.
 	Citizenship string `json:"citizenship,omitempty"`
 
-	// The company number.
+	// Company number.
 	CompanyNumber string `json:"companyNumber,omitempty"`
 
-	// The gender.
+	// Gender.
 	Gender GenderConstants `json:"gender,omitempty"`
 
 	// The identification extensions.
 	Identification *ContactIdentificationExtensions `json:"identification,omitempty"`
 
-	// The language.
+	// Language of the contact RFC 3066.
+	// Example: \"de\" or \"de_ch\
 	Language string `json:"language,omitempty"`
 
-	// The mobile phonenumber.
+	// Mobile phone number.
+	// Example: +49-123-123
 	MobilePhone string `json:"mobilePhone,omitempty"`
+
+	// If strict mode should be used for the registry mapping.
+	Strict bool `json:"strict,omitempty"`
 
 	// The trademark extensions.
 	Trademark *ContactTrademarkExtensions `json:"trademark,omitempty"`
 
-	// The vatnumber.
+	// VAT number.
 	VatNumber string `json:"vatNumber,omitempty"`
 }
 
@@ -71,7 +78,6 @@ func (m *ContactGeneralExtensions) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ContactGeneralExtensions) validateBirth(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Birth) { // not required
 		return nil
 	}
@@ -80,6 +86,8 @@ func (m *ContactGeneralExtensions) validateBirth(formats strfmt.Registry) error 
 		if err := m.Birth.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("birth")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("birth")
 			}
 			return err
 		}
@@ -89,7 +97,6 @@ func (m *ContactGeneralExtensions) validateBirth(formats strfmt.Registry) error 
 }
 
 func (m *ContactGeneralExtensions) validateGender(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Gender) { // not required
 		return nil
 	}
@@ -97,6 +104,8 @@ func (m *ContactGeneralExtensions) validateGender(formats strfmt.Registry) error
 	if err := m.Gender.Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("gender")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("gender")
 		}
 		return err
 	}
@@ -105,7 +114,6 @@ func (m *ContactGeneralExtensions) validateGender(formats strfmt.Registry) error
 }
 
 func (m *ContactGeneralExtensions) validateIdentification(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Identification) { // not required
 		return nil
 	}
@@ -114,6 +122,8 @@ func (m *ContactGeneralExtensions) validateIdentification(formats strfmt.Registr
 		if err := m.Identification.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("identification")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("identification")
 			}
 			return err
 		}
@@ -123,7 +133,6 @@ func (m *ContactGeneralExtensions) validateIdentification(formats strfmt.Registr
 }
 
 func (m *ContactGeneralExtensions) validateTrademark(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Trademark) { // not required
 		return nil
 	}
@@ -132,6 +141,115 @@ func (m *ContactGeneralExtensions) validateTrademark(formats strfmt.Registry) er
 		if err := m.Trademark.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("trademark")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("trademark")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this contact general extensions based on the context it is used
+func (m *ContactGeneralExtensions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateBirth(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateGender(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateIdentification(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTrademark(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ContactGeneralExtensions) contextValidateBirth(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Birth != nil {
+
+		if swag.IsZero(m.Birth) { // not required
+			return nil
+		}
+
+		if err := m.Birth.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("birth")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("birth")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactGeneralExtensions) contextValidateGender(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Gender) { // not required
+		return nil
+	}
+
+	if err := m.Gender.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("gender")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("gender")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *ContactGeneralExtensions) contextValidateIdentification(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Identification != nil {
+
+		if swag.IsZero(m.Identification) { // not required
+			return nil
+		}
+
+		if err := m.Identification.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("identification")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("identification")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ContactGeneralExtensions) contextValidateTrademark(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Trademark != nil {
+
+		if swag.IsZero(m.Trademark) { // not required
+			return nil
+		}
+
+		if err := m.Trademark.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("trademark")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("trademark")
 			}
 			return err
 		}

@@ -6,6 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -15,12 +18,80 @@ import (
 // swagger:model NotifyMessage
 type NotifyMessage struct {
 
-	// The specific message type.
+	// The ResponseObject object contains information about the object. The object is dependent on the order.
+	// Example: domain
+	Object *ResponseObject `json:"object,omitempty"`
+
+	// Type of connected operation.
+	// Example: domain_away
 	Type string `json:"type,omitempty"`
 }
 
 // Validate validates this notify message
 func (m *NotifyMessage) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateObject(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *NotifyMessage) validateObject(formats strfmt.Registry) error {
+	if swag.IsZero(m.Object) { // not required
+		return nil
+	}
+
+	if m.Object != nil {
+		if err := m.Object.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("object")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("object")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this notify message based on the context it is used
+func (m *NotifyMessage) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateObject(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *NotifyMessage) contextValidateObject(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Object != nil {
+
+		if swag.IsZero(m.Object) { // not required
+			return nil
+		}
+
+		if err := m.Object.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("object")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("object")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

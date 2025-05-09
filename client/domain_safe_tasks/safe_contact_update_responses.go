@@ -6,6 +6,7 @@ package domain_safe_tasks
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -29,9 +30,8 @@ func (o *SafeContactUpdateReader) ReadResponse(response runtime.ClientResponse, 
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
+		return nil, runtime.NewAPIError("[PUT /domainSafeContact/{id}] safeContactUpdate", response, response.Code())
 	}
 }
 
@@ -40,25 +40,62 @@ func NewSafeContactUpdateOK() *SafeContactUpdateOK {
 	return &SafeContactUpdateOK{}
 }
 
-/*SafeContactUpdateOK handles this case with default header values.
+/*
+SafeContactUpdateOK describes a response with status code 200, with default header values.
 
 successful operation
 */
 type SafeContactUpdateOK struct {
-	Payload *models.JSONResponseDataDomainSafeUser
+	Payload *models.JSONResponseDataDomainSafeAccount
+}
+
+// IsSuccess returns true when this safe contact update o k response has a 2xx status code
+func (o *SafeContactUpdateOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this safe contact update o k response has a 3xx status code
+func (o *SafeContactUpdateOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this safe contact update o k response has a 4xx status code
+func (o *SafeContactUpdateOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this safe contact update o k response has a 5xx status code
+func (o *SafeContactUpdateOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this safe contact update o k response a status code equal to that given
+func (o *SafeContactUpdateOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the safe contact update o k response
+func (o *SafeContactUpdateOK) Code() int {
+	return 200
 }
 
 func (o *SafeContactUpdateOK) Error() string {
-	return fmt.Sprintf("[PUT /domainSafeContact/user][%d] safeContactUpdateOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /domainSafeContact/{id}][%d] safeContactUpdateOK %s", 200, payload)
 }
 
-func (o *SafeContactUpdateOK) GetPayload() *models.JSONResponseDataDomainSafeUser {
+func (o *SafeContactUpdateOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /domainSafeContact/{id}][%d] safeContactUpdateOK %s", 200, payload)
+}
+
+func (o *SafeContactUpdateOK) GetPayload() *models.JSONResponseDataDomainSafeAccount {
 	return o.Payload
 }
 
 func (o *SafeContactUpdateOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.JSONResponseDataDomainSafeUser)
+	o.Payload = new(models.JSONResponseDataDomainSafeAccount)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {

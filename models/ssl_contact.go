@@ -6,6 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"strconv"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -21,54 +24,66 @@ type SslContact struct {
 	Address []string `json:"address"`
 
 	// The city of the contact
+	// Example: Anytown
 	City string `json:"city,omitempty"`
 
 	// The country of the contact
+	// Example: DE
 	Country string `json:"country,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// The email of the contact
-	// Required: true
-	Email *string `json:"email"`
+	// The email address of the contact.
+	// Example: john.doe@domain.com
+	Email string `json:"email,omitempty"`
+
+	// The contact extensions
+	Extensions *SslContactExtensions `json:"extensions,omitempty"`
 
 	// The fax number of the contact
+	// Example: +49-123-12345
 	Fax string `json:"fax,omitempty"`
 
 	// The first name of the contact
+	// Example: John
 	Fname string `json:"fname,omitempty"`
 
 	// Unique identifier of the object
-	// Required: true
-	ID *int32 `json:"id"`
+	ID int32 `json:"id,omitempty"`
 
 	// The last name of the contact
+	// Example: Doe
 	Lname string `json:"lname,omitempty"`
 
-	// The name of the organization
-	// Required: true
-	Organization *string `json:"organization"`
+	// The name of organisation of the contact.
+	// Example: Company
+	Organization string `json:"organization,omitempty"`
 
 	// The owner of the object
 	Owner *BasicUser `json:"owner,omitempty"`
 
-	// The pcode of the contact
+	// The postal code of the contact.
+	// Example: 12345
 	Pcode string `json:"pcode,omitempty"`
 
 	// The phone number of the contact
-	// Required: true
-	Phone *string `json:"phone"`
+	// Example: +49-123-12345
+	Phone string `json:"phone,omitempty"`
+
+	// The contact references
+	References []*SslContactReference `json:"references"`
 
 	// The local country state of the contact
+	// Example: BY
 	State string `json:"state,omitempty"`
 
 	// The title of the contact
-	// Required: true
-	Title *string `json:"title"`
+	// Example: Dr.
+	Title string `json:"title,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 
@@ -84,15 +99,7 @@ func (m *SslContact) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateEmail(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateID(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateOrganization(formats); err != nil {
+	if err := m.validateExtensions(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -100,11 +107,7 @@ func (m *SslContact) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validatePhone(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateTitle(formats); err != nil {
+	if err := m.validateReferences(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -123,7 +126,6 @@ func (m *SslContact) Validate(formats strfmt.Registry) error {
 }
 
 func (m *SslContact) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -135,43 +137,17 @@ func (m *SslContact) validateCreated(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *SslContact) validateEmail(formats strfmt.Registry) error {
-
-	if err := validate.Required("email", "body", m.Email); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *SslContact) validateID(formats strfmt.Registry) error {
-
-	if err := validate.Required("id", "body", m.ID); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *SslContact) validateOrganization(formats strfmt.Registry) error {
-
-	if err := validate.Required("organization", "body", m.Organization); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *SslContact) validateOwner(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Owner) { // not required
+func (m *SslContact) validateExtensions(formats strfmt.Registry) error {
+	if swag.IsZero(m.Extensions) { // not required
 		return nil
 	}
 
-	if m.Owner != nil {
-		if err := m.Owner.Validate(formats); err != nil {
+	if m.Extensions != nil {
+		if err := m.Extensions.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("owner")
+				return ve.ValidateName("extensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("extensions")
 			}
 			return err
 		}
@@ -180,26 +156,52 @@ func (m *SslContact) validateOwner(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *SslContact) validatePhone(formats strfmt.Registry) error {
+func (m *SslContact) validateOwner(formats strfmt.Registry) error {
+	if swag.IsZero(m.Owner) { // not required
+		return nil
+	}
 
-	if err := validate.Required("phone", "body", m.Phone); err != nil {
-		return err
+	if m.Owner != nil {
+		if err := m.Owner.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
 	}
 
 	return nil
 }
 
-func (m *SslContact) validateTitle(formats strfmt.Registry) error {
+func (m *SslContact) validateReferences(formats strfmt.Registry) error {
+	if swag.IsZero(m.References) { // not required
+		return nil
+	}
 
-	if err := validate.Required("title", "body", m.Title); err != nil {
-		return err
+	for i := 0; i < len(m.References); i++ {
+		if swag.IsZero(m.References[i]) { // not required
+			continue
+		}
+
+		if m.References[i] != nil {
+			if err := m.References[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("references" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("references" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil
 }
 
 func (m *SslContact) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -212,7 +214,6 @@ func (m *SslContact) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *SslContact) validateUpdater(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updater) { // not required
 		return nil
 	}
@@ -221,6 +222,122 @@ func (m *SslContact) validateUpdater(formats strfmt.Registry) error {
 		if err := m.Updater.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this ssl contact based on the context it is used
+func (m *SslContact) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateExtensions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateReferences(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateUpdater(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *SslContact) contextValidateExtensions(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Extensions != nil {
+
+		if swag.IsZero(m.Extensions) { // not required
+			return nil
+		}
+
+		if err := m.Extensions.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("extensions")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("extensions")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SslContact) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SslContact) contextValidateReferences(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.References); i++ {
+
+		if m.References[i] != nil {
+
+			if swag.IsZero(m.References[i]) { // not required
+				return nil
+			}
+
+			if err := m.References[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("references" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("references" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *SslContact) contextValidateUpdater(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Updater != nil {
+
+		if swag.IsZero(m.Updater) { // not required
+			return nil
+		}
+
+		if err := m.Updater.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updater")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updater")
 			}
 			return err
 		}

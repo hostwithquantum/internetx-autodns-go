@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,26 +19,28 @@ import (
 // swagger:model BillingObjectLimit
 type BillingObjectLimit struct {
 
-	// article label
+	// Article name. e.g.
+	// Example: com, de
 	ArticleLabel string `json:"articleLabel,omitempty"`
 
-	// article type label
+	// Article Type designation e.g.
+	// Example: domain
 	ArticleTypeLabel string `json:"articleTypeLabel,omitempty"`
 
-	// The current count if available
+	// The current count if available of allowed api requests in a specific timeframe
 	Count int32 `json:"count,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
 
-	// limit children
+	// Limits of the sub user, of the daily, hourly or monthly ordering amount in currency.
 	LimitChildren int32 `json:"limitChildren,omitempty"`
 
-	// limit self
+	// Limits of the user, of the daily, hourly or monthly ordering amount in currency.
 	LimitSelf int32 `json:"limitSelf,omitempty"`
 
-	// The updated date.
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 }
@@ -60,7 +64,6 @@ func (m *BillingObjectLimit) Validate(formats strfmt.Registry) error {
 }
 
 func (m *BillingObjectLimit) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -73,7 +76,6 @@ func (m *BillingObjectLimit) validateCreated(formats strfmt.Registry) error {
 }
 
 func (m *BillingObjectLimit) validateUpdated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
@@ -82,6 +84,11 @@ func (m *BillingObjectLimit) validateUpdated(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this billing object limit based on context it is used
+func (m *BillingObjectLimit) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -17,6 +18,15 @@ import (
 //
 // swagger:model CryptoFormatConstants
 type CryptoFormatConstants string
+
+func NewCryptoFormatConstants(value CryptoFormatConstants) *CryptoFormatConstants {
+	return &value
+}
+
+// Pointer returns a pointer to a freshly-allocated CryptoFormatConstants.
+func (m CryptoFormatConstants) Pointer() *CryptoFormatConstants {
+	return &m
+}
 
 const (
 
@@ -62,5 +72,10 @@ func (m CryptoFormatConstants) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this crypto format constants based on context it is used
+func (m CryptoFormatConstants) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

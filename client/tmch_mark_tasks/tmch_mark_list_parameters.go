@@ -19,64 +19,81 @@ import (
 	"github.com/hostwithquantum/internetx-autodns-go/models"
 )
 
-// NewTmchMarkListParams creates a new TmchMarkListParams object
-// with the default values initialized.
+// NewTmchMarkListParams creates a new TmchMarkListParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewTmchMarkListParams() *TmchMarkListParams {
-	var ()
 	return &TmchMarkListParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewTmchMarkListParamsWithTimeout creates a new TmchMarkListParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewTmchMarkListParamsWithTimeout(timeout time.Duration) *TmchMarkListParams {
-	var ()
 	return &TmchMarkListParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewTmchMarkListParamsWithContext creates a new TmchMarkListParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewTmchMarkListParamsWithContext(ctx context.Context) *TmchMarkListParams {
-	var ()
 	return &TmchMarkListParams{
-
 		Context: ctx,
 	}
 }
 
 // NewTmchMarkListParamsWithHTTPClient creates a new TmchMarkListParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewTmchMarkListParamsWithHTTPClient(client *http.Client) *TmchMarkListParams {
-	var ()
 	return &TmchMarkListParams{
 		HTTPClient: client,
 	}
 }
 
-/*TmchMarkListParams contains all the parameters to send to the API endpoint
-for the tmch mark list operation typically these are written to a http.Request
+/*
+TmchMarkListParams contains all the parameters to send to the API endpoint
+
+	for the tmch mark list operation.
+
+	Typically these are written to a http.Request.
 */
 type TmchMarkListParams struct {
 
-	/*Body
-	  query
+	/* Body.
 
+	   query
 	*/
 	Body *models.Query
-	/*Keys
-	  The query parameter to inquire additional details.
 
+	/* Keys.
+
+	   The query parameter to inquire additional details.
 	*/
 	Keys []string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the tmch mark list params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *TmchMarkListParams) WithDefaults() *TmchMarkListParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the tmch mark list params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *TmchMarkListParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the tmch mark list params
@@ -141,23 +158,42 @@ func (o *TmchMarkListParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		return err
 	}
 	var res []error
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err
 		}
 	}
 
-	valuesKeys := o.Keys
+	if o.Keys != nil {
 
-	joinedKeys := swag.JoinByFormat(valuesKeys, "multi")
-	// query array param keys
-	if err := r.SetQueryParam("keys", joinedKeys...); err != nil {
-		return err
+		// binding items for keys
+		joinedKeys := o.bindParamKeys(reg)
+
+		// query array param keys
+		if err := r.SetQueryParam("keys", joinedKeys...); err != nil {
+			return err
+		}
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
+}
+
+// bindParamTmchMarkList binds the parameter keys
+func (o *TmchMarkListParams) bindParamKeys(formats strfmt.Registry) []string {
+	keysIR := o.Keys
+
+	var keysIC []string
+	for _, keysIIR := range keysIR { // explode []string
+
+		keysIIV := keysIIR // string as string
+		keysIC = append(keysIC, keysIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	keysIS := swag.JoinByFormat(keysIC, "multi")
+
+	return keysIS
 }

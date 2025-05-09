@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -26,24 +27,24 @@ type SEPAMandate struct {
 	Bic string `json:"bic,omitempty"`
 
 	// Flag for indicating if the confirm data has been checked
-	// Required: true
-	ConfirmChecked *bool `json:"confirmChecked"`
+	ConfirmChecked bool `json:"confirmChecked,omitempty"`
 
 	// The address of the confirm signature
-	// Required: true
-	ConfirmIP InetAddress `json:"confirmIp"`
+	ConfirmIP string `json:"confirmIp,omitempty"`
 
 	// The date of the confirm signature
-	// Required: true
 	// Format: date-time
-	ConfirmSignature *strfmt.DateTime `json:"confirmSignature"`
+	ConfirmSignature strfmt.DateTime `json:"confirmSignature,omitempty"`
 
 	// The user agent of the confirm signature
 	ConfirmUseragent string `json:"confirmUseragent,omitempty"`
 
-	// The created date.
+	// Date of creation.
 	// Format: date-time
 	Created strfmt.DateTime `json:"created,omitempty"`
+
+	// The linked pdf
+	Document *Document `json:"document,omitempty"`
 
 	// Date after the mandate will be expired
 	// Format: date-time
@@ -58,7 +59,10 @@ type SEPAMandate struct {
 	// The sepa mandate reference
 	Reference string `json:"reference,omitempty"`
 
-	// The updated date.
+	// The status of the mandate
+	Status SepaStatus `json:"status,omitempty"`
+
+	// Date of the last update.
 	// Format: date-time
 	Updated strfmt.DateTime `json:"updated,omitempty"`
 }
@@ -66,14 +70,6 @@ type SEPAMandate struct {
 // Validate validates this s e p a mandate
 func (m *SEPAMandate) Validate(formats strfmt.Registry) error {
 	var res []error
-
-	if err := m.validateConfirmChecked(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateConfirmIP(formats); err != nil {
-		res = append(res, err)
-	}
 
 	if err := m.validateConfirmSignature(formats); err != nil {
 		res = append(res, err)
@@ -83,11 +79,19 @@ func (m *SEPAMandate) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateDocument(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateExpire(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if err := m.validateHistories(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -101,28 +105,9 @@ func (m *SEPAMandate) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *SEPAMandate) validateConfirmChecked(formats strfmt.Registry) error {
-
-	if err := validate.Required("confirmChecked", "body", m.ConfirmChecked); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *SEPAMandate) validateConfirmIP(formats strfmt.Registry) error {
-
-	if err := validate.Required("confirmIp", "body", m.ConfirmIP); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *SEPAMandate) validateConfirmSignature(formats strfmt.Registry) error {
-
-	if err := validate.Required("confirmSignature", "body", m.ConfirmSignature); err != nil {
-		return err
+	if swag.IsZero(m.ConfirmSignature) { // not required
+		return nil
 	}
 
 	if err := validate.FormatOf("confirmSignature", "body", "date-time", m.ConfirmSignature.String(), formats); err != nil {
@@ -133,7 +118,6 @@ func (m *SEPAMandate) validateConfirmSignature(formats strfmt.Registry) error {
 }
 
 func (m *SEPAMandate) validateCreated(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Created) { // not required
 		return nil
 	}
@@ -145,8 +129,26 @@ func (m *SEPAMandate) validateCreated(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *SEPAMandate) validateExpire(formats strfmt.Registry) error {
+func (m *SEPAMandate) validateDocument(formats strfmt.Registry) error {
+	if swag.IsZero(m.Document) { // not required
+		return nil
+	}
 
+	if m.Document != nil {
+		if err := m.Document.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("document")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("document")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SEPAMandate) validateExpire(formats strfmt.Registry) error {
 	if swag.IsZero(m.Expire) { // not required
 		return nil
 	}
@@ -159,7 +161,6 @@ func (m *SEPAMandate) validateExpire(formats strfmt.Registry) error {
 }
 
 func (m *SEPAMandate) validateHistories(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Histories) { // not required
 		return nil
 	}
@@ -173,6 +174,8 @@ func (m *SEPAMandate) validateHistories(formats strfmt.Registry) error {
 			if err := m.Histories[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("histories" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("histories" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -183,13 +186,115 @@ func (m *SEPAMandate) validateHistories(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *SEPAMandate) validateUpdated(formats strfmt.Registry) error {
+func (m *SEPAMandate) validateStatus(formats strfmt.Registry) error {
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
 
+	if err := m.Status.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *SEPAMandate) validateUpdated(formats strfmt.Registry) error {
 	if swag.IsZero(m.Updated) { // not required
 		return nil
 	}
 
 	if err := validate.FormatOf("updated", "body", "date-time", m.Updated.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this s e p a mandate based on the context it is used
+func (m *SEPAMandate) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateDocument(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateHistories(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *SEPAMandate) contextValidateDocument(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Document != nil {
+
+		if swag.IsZero(m.Document) { // not required
+			return nil
+		}
+
+		if err := m.Document.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("document")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("document")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SEPAMandate) contextValidateHistories(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Histories); i++ {
+
+		if m.Histories[i] != nil {
+
+			if swag.IsZero(m.Histories[i]) { // not required
+				return nil
+			}
+
+			if err := m.Histories[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("histories" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("histories" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *SEPAMandate) contextValidateStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	if err := m.Status.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("status")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("status")
+		}
 		return err
 	}
 
